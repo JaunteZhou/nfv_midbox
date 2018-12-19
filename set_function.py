@@ -3,7 +3,7 @@
 #setContainer.py
 
 import remote_docker.remote_deploy
-import nfvdb
+import db_services
 
 #para:
 
@@ -20,11 +20,18 @@ import nfvdb
 #}
 
 def setFunction(para):
-    db,cursor=nfvdb.connect_db()
+    db,cursor=db_services.connect_db()
     if para["func_type"]=="container":
-        nfvdb.insert_function(db,cursor,para["func_id"],para["image_id"],para["host_id"],0,\
+        db_services.insert_function(db,cursor,para["func_id"],para["image_id"],para["host_id"],0,\
                               para["func_ip"],para["func_pwd"],para["cpu"],para["mem"],\
                               1,0,0)
-        hostip=nfvdb.select_table(db,cursor,'t_host','ip',para['host_id'])
-        hostpwd=nfvdb.select_table(db,cursor,'t_host','pwd',para['host_id'])
-        remote_deploy.container_deploy(hostip,hostpwd,)
+        hostip=db_services.select_table(db,cursor,'t_host','ip',para['host_id'])
+        hostpwd=db_services.select_table(db,cursor,'t_host','pwd',para['host_id'])
+        imagename=db_services.select_table(db,cursor,'t_image','func',para['image_id'])
+        remote_deploy.container_deploy(hostip,hostpwd,para['cpu'],para['mem'],imagename\
+            ,para['func_id'],para['func_ip'])
+    elif para["func_type"]=="vm":
+        #TODO:此处创建虚拟机
+        pass
+    db_services.close_db(db,cursor)
+    return[1,"Function Created Succesfully! IP:"+para['func_ip']];
