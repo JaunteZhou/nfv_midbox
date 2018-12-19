@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #setContainer.py
 
-import remote_docker.remote_deploy
-import db_services
+import southbound.docker.remote_deploy
+import db.db_services
 
 #para:
 
@@ -34,4 +34,4 @@ def setFunction(para):
         #TODO:此处创建虚拟机
         pass
     db_services.close_db(db,cursor)
-    return[1,"Function Created Succesfully! IP:"+para['func_ip']];
+    return[0,"Function Created Succesfully! IP:"+para['func_ip']];
