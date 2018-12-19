@@ -1,0 +1,77 @@
+getFloatingIpsList():
+[
+    {
+        'router_id': '261ecbcb-cfdb-4239-a92c-cf604e4a36a7',
+        'status': 'ACTIVE',
+        'description': '',
+        'tags': [],
+        'tenant_id': 'e922a17e84cc4b8e83a9ea441a650c0e',
+        'created_at': '2018-12-18T02:33:39Z',
+        'updated_at': '2018-12-18T02:33:42Z',
+        'floating_network_id': 'd27d54f3-f89c-41e5-a973-4e449a34a2a6',
+        'port_details': {
+            'status': 'ACTIVE',
+            'name': '',
+            'admin_state_up': True,
+            'network_id': '5aa80307-7a0a-48ec-ad2a-a2fc10be3eb7',
+            'device_owner': 'compute:nova',
+            'mac_address': 'fa:16:3e:36:09:47',
+            'device_id': '0f9940c7-eadc-4093-8ec7-0509b738cb67'
+        },
+        'fixed_ip_address': '192.168.1.116',
+        'floating_ip_address': '10.2.1.110',
+        'revision_number': 1,
+        'project_id': 'e922a17e84cc4b8e83a9ea441a650c0e',
+        'port_id': 'edc9d32f-0486-4903-a61e-8019a1177ad7',
+        'id': '2a864ea7-6b3f-46e2-bad0-80edc919e990'
+    },
+    {
+        'router_id': '261ecbcb-cfdb-4239-a92c-cf604e4a36a7',
+        'status': 'ACTIVE',
+        'description': '',
+        'tags': [],
+        'tenant_id': 'e922a17e84cc4b8e83a9ea441a650c0e',
+        'created_at': '2018-12-18T03:57:34Z',
+        'updated_at': '2018-12-18T03:57:37Z',
+        'floating_network_id': 'd27d54f3-f89c-41e5-a973-4e449a34a2a6',
+        'port_details': {
+            'status': 'ACTIVE',
+            'name': '',
+            'admin_state_up': True,
+            'network_id': '5aa80307-7a0a-48ec-ad2a-a2fc10be3eb7',
+            'device_owner': 'compute:nova',
+            'mac_address': 'fa:16:3e:3a:31:25',
+            'device_id': 'a86fd0b3-f9b1-4a91-8080-b5eda793e5e6'
+        },
+        'fixed_ip_address': '192.168.1.117',
+        'floating_ip_address': '10.2.1.108',
+        'revision_number': 1,
+        'project_id': 'e922a17e84cc4b8e83a9ea441a650c0e',
+        'port_id': '8846b24a-1f9d-4f09-a3cf-3774bddb2bcf',
+        'id': 'dbe39694-6ede-4e36-a819-050da5aa28df'},
+    {
+        'router_id': '261ecbcb-cfdb-4239-a92c-cf604e4a36a7',
+        'status': 'ACTIVE',
+        'description': '',
+        'tags': [],
+        'tenant_id': 'e922a17e84cc4b8e83a9ea441a650c0e',
+        'created_at': '2018-12-18T03:57:31Z',
+        'updated_at': '2018-12-18T03:57:34Z',
+        'floating_network_id': 'd27d54f3-f89c-41e5-a973-4e449a34a2a6',
+        'port_details': {
+            'status': 'ACTIVE',
+            'name': '', 
+            'admin_state_up': True,
+            'network_id': '5aa80307-7a0a-48ec-ad2a-a2fc10be3eb7',
+            'device_owner': 'compute:nova',
+            'mac_address': 'fa:16:3e:43:13:ec',
+            'device_id': '7e14244f-aeb2-4b51-b8f1-56413422c1e2'
+        },           
+        'fixed_ip_address': '192.168.1.106',
+        'floating_ip_address': '10.2.1.103',
+        'revision_number': 1,
+        'project_id': 'e922a17e84cc4b8e83a9ea441a650c0e',
+        'port_id': '61bc80ed-68f9-46fb-9e5e-d6c7a1713ec6',
+        'id': 'ebad0ca6-21bd-4299-9361-8d9052888e81'
+    }
+]
