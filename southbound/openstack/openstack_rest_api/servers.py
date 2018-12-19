@@ -1,10 +1,10 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#servers.py
 """This module provides a series of openstack compute APIs"""
-import sys
-sys.path.append(r"/Users/JaunteZhou/Documents/NFV30PY/nfv30py/southbound/ostk/ostk_rest_api/")
 import json
-
-import rest_requests
-from openstack_config import compute_url
+from openstack_rest_api import rest_requests
+from openstack_rest_api.openstack_config import compute_url
 
 """
 The possible server status values are:
@@ -135,13 +135,13 @@ def attachVolume(s_id, vol_id):
 
 def detachVolume(s_id, vol_id):
     """Detach Volume to Server by id."""
-    code, res = rest_requests.delete(
-            servers_url + "/" + s_id 
-            + "/os-volume_attachments"
-            + "/" + vol_id)
+    print(s_id)
+    print(vol_id)
+    code = rest_requests.delete(
+            servers_url + "/" + s_id + "/os-volume_attachments/" + vol_id)
     if code != 202:
         # TODO: log
-        return res
+        return code
     return True
 
 ### Ports interfaces ###

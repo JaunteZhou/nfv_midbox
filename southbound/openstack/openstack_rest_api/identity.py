@@ -1,6 +1,9 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#identity.py
 import json
 import requests
-import openstack_config
+from openstack_rest_api import openstack_config
 
 def composeAuthPara(user_id, password, proj_id):
     para = {

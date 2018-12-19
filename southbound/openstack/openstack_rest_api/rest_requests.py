@@ -1,8 +1,10 @@
-# import sys
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#rest_requests.py
 import json
 import requests
 
-from identity import auth_token
+from openstack_rest_api.identity import auth_token
 
 headers = {
     "Content-type": "application/json",

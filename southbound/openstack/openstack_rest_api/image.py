@@ -1,7 +1,10 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#image.py
 import json
 
-import rest_requests
-from openstack_config import image_url
+from openstack_rest_api import rest_requests
+from openstack_rest_api.openstack_config import image_url
 
 # class Images(object):
 #     """The class is about image in the cloud platform."""

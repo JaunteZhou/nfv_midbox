@@ -1,9 +1,12 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#ports.py
 """This module provides a series of openstack networkding APIs"""
 import sys
 import json
 
-import rest_requests
-from openstack_config import ports_url
+from openstack_rest_api import rest_requests
+from openstack_rest_api.openstack_config import ports_url
 
 def getPortsList():
     """Get list of Ports."""

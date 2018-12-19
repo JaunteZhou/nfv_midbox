@@ -1,7 +1,10 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#volume.py
 import json
 
-import rest_requests
-from openstack_config import volumes_url
+from openstack_rest_api import rest_requests
+from openstack_rest_api.openstack_config import volumes_url
 
 def getVolumesList():
     """Get volumes list."""
@@ -48,3 +51,6 @@ def deleteVolume(v_id):
         # TODO: log
         return False
     return True
+
+if __name__ == '__main__':
+    print(getVolumesListDetails())

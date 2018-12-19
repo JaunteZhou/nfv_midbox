@@ -1,10 +1,11 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#floating_ips.py
 """This module provides a series of openstack networkding APIs"""
-import sys
-# sys.path.append(r"/Users/JaunteZhou/Documents/NFV30py/nfv30py")
 import json
 
-import rest_requests
-from openstack_config import floating_url
+from openstack_rest_api import rest_requests
+from openstack_rest_api.openstack_config import floating_url
 
 def getFloatingIpsList():
     """Get list of FloatingIps."""

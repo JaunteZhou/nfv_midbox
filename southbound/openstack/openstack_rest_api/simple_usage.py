@@ -1,10 +1,11 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#simple_usage.py
 """This module provides a series of openstack compute APIs"""
-import sys
-sys.path.append(r"/Users/JaunteZhou/Documents/NFV30py/nfv30py")
 import json
 
-import rest_requests
-from openstack_config import simple_usage_url
+from openstack_rest_api import rest_requests
+from openstack_rest_api.openstack_config import simple_usage_url
 
 def getAllSimpleTenantUsage(detailed=0):
     """List Tenant Usage Statistics For All Tenants"""

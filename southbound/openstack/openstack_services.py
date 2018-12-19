@@ -38,7 +38,7 @@ def addServerInstance(vcpus, ram, disk, image_id, same_host):
         return -1
     v_id = v_ret["id"]
 
-    return {"server_id": s_id, "volume_id": v_id}
+    return {"serverId": s_id, "volumeId": v_id}
 
 def delServerInstance(s_id, vol_clear=True):
     err_list = []
@@ -47,14 +47,15 @@ def delServerInstance(s_id, vol_clear=True):
     print ("Volumes List: ", vol_list)
     # detach all volumes in server's attachments
     for i in range(len(vol_list)):
-        print ("server id: ", vol_list[i]["server_id"])
-        print ("volume id: ", vol_list[i]["volume_id"])
-        ret = servers.detachVolume(vol_list[i]["server_id"], vol_list[i]["volume_id"])
+        print ("server id: ", vol_list[i]["serverId"])
+        print ("volume id: ", vol_list[i]["volumeId"])
+        ret = servers.detachVolume(vol_list[i]["serverId"], vol_list[i]["volumeId"])
         if ret != True:
             print (ret)
-            err_list.append({vol_list[i]["volume_id"]: ret})
+            err_list.append({vol_list[i]["volumeId"]: ret})
 
     # delete floating ip
+    print("delete floating ip")
     floating_id = ""
     ports_id_list = getServerInterfacesIdByNet(s_id, private_net_name)
     floating_ips_list = floating_ips.getFloatingIpsList()
@@ -66,23 +67,26 @@ def delServerInstance(s_id, vol_clear=True):
         floating_ips.deleteFloatingIp(floating_id)
 
     # save ports list
+    print("get server interfaces list")
     ports_list = getAllServerInterfaces(s_id)
 
     # delete server
+    print("delete server")
     servers.deleteServer(s_id)
     # delete all volumes
     if vol_clear == True:
         print ("Start Clear Volume !")
 
         for i in range(len(vol_list)):
-            print ("volume id: ", vol_list[i]["volume_id"])
-            ret = volume.deleteVolume(vol_list[i]["volume_id"])
+            print ("volume id: ", vol_list[i]["volumeId"])
+            ret = volume.deleteVolume(vol_list[i]["volumeId"])
             if ret != True:
                 print (ret)
-                err_list.append({vol_list[i]["volume_id"]:ret})
+                err_list.append({vol_list[i]["volumeId"]:ret})
 
     # TODO: test
     # delete ports list
+    print ("delete ports list")
     for port in ports_list:
         ports.deletePort(port)
 
@@ -92,10 +96,10 @@ def attachingServerVolumeList(sv_list):
     new_list = []
     print (openstack_para.getTimestamp(), "Attaching...")
     for i in range(len(sv_list)):
-        s = servers.getServerDetail(sv_list[i]["server_id"])
+        s = servers.getServerDetail(sv_list[i]["serverId"])
         if s["status"] == "ACTIVE":
             ret, res = servers.attachVolume(
-                    sv_list[i]["server_id"], sv_list[i]["volume_id"])
+                    sv_list[i]["serverId"], sv_list[i]["volumeId"])
             if ret == False:
                 # TODO: log res
                 print (res)
@@ -112,7 +116,7 @@ def attachingServerPortList(sv_list, ports_list):
             p_id = ports_list.pop()
             para_json = openstack_para.composeInterfacePortsPara(p_id)
             ret = servers.attachPortInterfaces(
-                    sv_list[i]["server_id"], para_json)
+                    sv_list[i]["serverId"], para_json)
             if ret == -1:
                 print ("Error: [attachingServerPortList]")
                 tmp.append(i)
@@ -227,15 +231,15 @@ def addSFC(para_list=[]):
     tmp = attachingServerVolumeList(sv_list)
     while len(tmp):
         for sv_pair in tmp:
-            print ("server_id: ", sv_pair["server_id"])
-            print ("volume_id: ", sv_pair["volume_id"])
+            print ("serverId: ", sv_pair["serverId"])
+            print ("volumeId: ", sv_pair["volumeId"])
         tmp = attachingServerVolumeList(tmp)
         if len(tmp) != 0:
             time.sleep(SLEEP_SECONDS_IN_ATTACHING)
 
     # set floating ip to port in private_net
     for sv_pair in sv_list:
-        s_id = sv_pair["server_id"]
+        s_id = sv_pair["serverId"]
         ports_list = getServerInterfacesIdByNet(s_id, private_net_name)
         if len(ports_list) != 1:
             print ("Error:[addSFC] Find Server Port.")
@@ -259,13 +263,21 @@ def addSFC(para_list=[]):
 
 if __name__ == '__main__':
     # centos_image_id = "843e7950-e0d7-402f-80b5-6a1c3805708d"
-    # cirros_image_id = "7a6da8f1-c3e9-42dd-88d2-ffe9084d3b24"
-    # same_host = ""
-    # para1 = openstack_para.composeServerInstancePara(1, 256, 1, cirros_image_id, same_host)
+    cirros_image_id = "7a6da8f1-c3e9-42dd-88d2-ffe9084d3b24"
+    same_host = ""
+    para1 = openstack_para.composeServerInstancePara(1, 256, 1, cirros_image_id, same_host)
     # para2 = openstack_para.composeServerInstancePara(1, 1024, 10, centos_image_id, same_host)
-    # p_list = []
-    # p_list.append(para1)
+    p_list = []
+    p_list.append(para1)
     # p_list.append(para2)
-    # addSFC(para_list=p_list)
-    ret = ports.getPortsList()
-    print(ret)
+    addSFC(para_list=p_list)
+
+
+    # ret = ports.getPortsList()
+    # print(ret)
+
+    # delServerInstance("7e14244f-aeb2-4b51-b8f1-56413422c1e2")
+
+    # print(volume.getVolumesList())
+
+    # volume.deleteVolume('42f02a8d-b264-4ae9-8049-e823b4a4e0e3')

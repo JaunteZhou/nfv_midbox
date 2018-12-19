@@ -1,10 +1,11 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#flavor.py
 """This module provides a series of openstack compute APIs"""
-import sys
-sys.path.append(r"/Users/JaunteZhou/Documents/NFV30py/nfv30py")
 import json
 
-import rest_requests
-from openstack_config import flavor_url
+from openstack_rest_api import rest_requests
+from openstack_rest_api.openstack_config import flavor_url
 
 def getFlavorsList():
     """Get list of flavors."""
