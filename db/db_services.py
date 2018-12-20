@@ -173,7 +173,7 @@ def select_id(db, cursor, table):
 	
 if __name__ == "__main__":
 	db, cursor = connect_db()
-	#show_table(db, cursor, "t_flavor")
+	#show_table(db, cursor, "t_host")
 	#print(select_table(db, cursor, "t_host", "ip", 2))
 	#print(update_table(db, cursor, "t_host", "cpu", 2, 3))
 	#print(delete_table(db, cursor, "t_host", 1))
