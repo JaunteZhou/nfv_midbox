@@ -13,7 +13,7 @@ para:
     "chain_id": "xxxxxxxx"
 }
 """
-# 返回值：正确0，错误1，若出错则返回值为tuple，包含一个字符串错误信息
+# 返回值：返回值为tuple，包含一个指示执行结果的值（0成功，1失败）和字符串。
 def setChain(para):
     # function ids
     ids = para["func_ids"]
