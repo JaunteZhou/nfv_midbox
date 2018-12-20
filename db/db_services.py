@@ -3,8 +3,8 @@ import pymysql
 import types  
  
 def connect_db(): 
-	db=pymysql.connect("localhost","root","123456","db_nfv")
-
+	db=pymysql.connect("localhost","root","123456","db_nfv");  
+  
 	cursor=db.cursor()  
 	return db, cursor
 	
@@ -32,9 +32,19 @@ def executeSql(db, cursor, sql):
 
 #添加数据
 def insert_function(db, cursor,fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, size, ref_count):
+	fe_id=int(fe_id)
+	image_id=int(image_id)
+	host_id=int(host_id)
+	func_local_id=str(func_local_id)
+	ip=str(ip)
+	pwd=str(pwd)
+	cpu=int(cpu)
+	ram=int(ram)
+	type=int(type)
+	size=int(size)
+	ref_count=int(ref_count)
 	#插入数据  
-	sql = "INSERT INTO t_function \
-	(fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, size, ref_count) VALUES \
+	sql="INSERT INTO t_function (fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, size, ref_count) VALUES \
 	('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d')" % \
 	(fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, size, ref_count)
 
@@ -43,6 +53,9 @@ def insert_function(db, cursor,fe_id, image_id, host_id, func_local_id, ip, pwd,
 		
 def insert_image(db, cursor, image_id, func, type):
 	
+	image_id=int(image_id)
+	type=int(type)
+	func=str(func)
 	#插入数据  
 	sql="INSERT INTO t_image (image_id, func, type) VALUES \
 	('%d', '%s', '%d')" % \
@@ -52,6 +65,12 @@ def insert_image(db, cursor, image_id, func, type):
 
 		
 def insert_host(db, cursor, host_id, ip, pwd, cpu, ram, disk):
+	host_id=int(host_id)
+	ip=str(ip)
+	pwd=str(pwd)
+	cpu=int(cpu)
+	ram=int(ram)
+	disk=int(disk)
 	#插入数据  
 	sql="INSERT INTO t_host (host_id, ip, pwd, cpu, ram, disk) VALUES \
 	('%d', '%s', '%s', '%d', '%d', '%d')" % \
@@ -61,6 +80,9 @@ def insert_host(db, cursor, host_id, ip, pwd, cpu, ram, disk):
 		
 		
 def insert_flow(db, cursor, flow_id, chain, match_field):
+	flow_id=int(flow_id)
+	chain=str(chain)
+	match_field=str(match_field)
 	#插入数据  
 	sql="INSERT INTO t_flow (flow_id, chain, match_field) VALUES \
 	('%d', '%s', '%s')" % \
@@ -102,21 +124,21 @@ def show_table(db, cursor, table):
 	cursor.execute(sql)  
   
 	results=cursor.fetchall()  
-
+	
 	line = ""
 	for item in m_table_items[table]:
 		line += item + "\t"
 	print (line)
-
-	for each in results:
-		line = ""
-		for each_item in each:
-			if isinstance(each_item, (int)):
-				a=str(each_item)
-			else:
-				a=each_item
-			line += a + "\t"
-		print (line)
+	if not results:
+		for each in results:
+			line = ""
+			for each_item in each:
+				if isinstance(each_item, (int)):
+					a=str(each_item)
+				else:
+					a=each_item
+				line += a + "\t"
+			print (line)
 
 			
 def select_table(db, cursor, table, attribute, id):
@@ -127,7 +149,10 @@ def select_table(db, cursor, table, attribute, id):
 	cursor.execute(sql)  
 	results=cursor.fetchall()  
 	
-	return results[0][0]	
+	if not results:
+		return results[0][0]
+	else:
+		return results
 	
 	
 def select_function(db, cursor, host_id):
@@ -137,11 +162,14 @@ def select_function(db, cursor, host_id):
 	results=cursor.fetchall()  
 	
 	list=[]
-	
-	for each in results:
-		list.append(each[0])
-	return list
-
+	if not results:
+		for each in results:
+			list.append(each[0])
+		return list
+	else:
+		return results
+		
+		
 def select_condition(db, cursor, table, attribute, condition, value):
 	if isinstance(value, (int)):
 		a=str(value)
@@ -153,11 +181,14 @@ def select_condition(db, cursor, table, attribute, condition, value):
 	results=cursor.fetchall()  
 	
 	list=[]
-	
-	for each in results:
-		list.append(each[0])
-	return list
-
+	if not results:
+		for each in results:
+			list.append(each[0])
+		return list
+	else:
+		return results
+		
+		
 def select_id(db, cursor, table):
 	sql="select " + m_table_key[table] + " from " + table
 	
@@ -165,19 +196,20 @@ def select_id(db, cursor, table):
 	results=cursor.fetchall()  
 	
 	list=[]
-	
-	for each in results:
-		list.append(each[0])
-	return list
-	
+	if not results:
+		for each in results:
+			list.append(each[0])
+		return list
+	else:
+		return results
 	
 if __name__ == "__main__":
 	db, cursor = connect_db()
-	#show_table(db, cursor, "t_host")
+	#show_table(db, cursor, "t_image")
 	#print(select_table(db, cursor, "t_host", "ip", 2))
 	#print(update_table(db, cursor, "t_host", "cpu", 2, 3))
-	#print(delete_table(db, cursor, "t_host", 1))
-	#print(insert_host(db, cursor, 1, "192.168.1.3", "112211", 4, 64, 64))
+	#print(delete_table(db, cursor, "t_image", 1))
+	#print(insert_image(db, cursor, "1", "192.168.1.3", "1"))
 	#print(select_condition(db, cursor, "t_host", "ip", "cpu", 2))
 	#select_condition(db, cursor, "t_host", "host_id", "cpu", 2)
 	#print(select_id(db, cursor, "t_host"))
