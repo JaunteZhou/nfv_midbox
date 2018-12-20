@@ -21,12 +21,15 @@ import db.db_services
 
 def setFunction(para):
     db,cursor=db_services.connect_db()
+    hostip=db_services.select_table(db,cursor,'t_host','ip',para['host_id'])
+    if hostip==():#空tuple表示未查询到对应条目
+        return [1,"Error: Host doesn't exist."]
+    hostpwd=db_services.select_table(db,cursor,'t_host','pwd',para['host_id'])
+    
     if para["func_type"]=="container":
         db_services.insert_function(db,cursor,para["func_id"],para["image_id"],para["host_id"],0,\
                               para["func_ip"],para["func_pwd"],para["cpu"],para["mem"],\
-                              1,0,0)
-        hostip=db_services.select_table(db,cursor,'t_host','ip',para['host_id'])
-        hostpwd=db_services.select_table(db,cursor,'t_host','pwd',para['host_id'])
+                              1,0,0)        
         imagename=db_services.select_table(db,cursor,'t_image','func',para['image_id'])
         remote_deploy.container_deploy(hostip,hostpwd,para['cpu'],para['mem'],imagename\
             ,para['func_id'],para['func_ip'])
