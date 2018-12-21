@@ -3,7 +3,7 @@
 #identity.py
 import json
 import requests
-from openstack_rest_api import openstack_config
+from openstack_rest_api import openstack_config, CODE
 
 def composeAuthPara(user_id, password, proj_id):
     para = {
@@ -41,6 +41,9 @@ def getToken():
             openstack_config.auth_token_url, 
             para_json, 
             headers=headers)
+    if r.status_code != CODE.CREATED_201:
+        # TODO: log
+        return ""
     return r.headers.get('X-Subject-Token')
 
 auth_token = getToken()

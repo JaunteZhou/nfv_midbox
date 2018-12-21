@@ -1,4 +1,6 @@
-#!/bin/python
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#openstack_para.py
 import json
 import time
 
@@ -125,7 +127,7 @@ def composeFloatingIpPara(port_id,floating_network_id):
     return json.dumps(para)
 
 ### Instance ###
-def composeServerInstancePara(vcpus, ram, disk, image_id, same_host):
+def composeServerInstanceDictPara(vcpus, ram, disk, image_id, same_host):
     para = {
         "vcpus": vcpus,
         "ram": ram,

@@ -1,14 +1,11 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#openstack_services.py
+
 from openstack_rest_api import servers, flavor, image, networking, ports, volume, floating_ips
-from openstack_rest_api.openstack_config import public_net_id, private_net_id, data_flow_net_id, private_net_name
+from openstack_rest_api.openstack_config import public_net_id, private_net_id, data_flow_net_id, private_net_name, data_flow_net_name, SLEEP_SECONDS_IN_ATTACHING
 import openstack_para
 import time
-
-SLEEP_SECONDS_IN_ATTACHING = 2
-NET_OF_NF = "data-flow-net"
-
-# public_net_id = "d27d54f3-f89c-41e5-a973-4e449a34a2a6"
-# data_flow_net_id = "8053a2a5-18c2-4c47-a525-9d0c687660f9"
-# private_net_id = "5aa80307-7a0a-48ec-ad2a-a2fc10be3eb7"
 
 ########## Instance(Nova) ##########
 def addServerInstance(vcpus, ram, disk, image_id, same_host):
@@ -50,15 +47,17 @@ def delServerInstance(s_id, vol_clear=True):
         print ("server id: ", vol_list[i]["serverId"])
         print ("volume id: ", vol_list[i]["volumeId"])
         ret = servers.detachVolume(vol_list[i]["serverId"], vol_list[i]["volumeId"])
+        print("Return of Detach Volume: ", ret)
         if ret != True:
-            print (ret)
             err_list.append({vol_list[i]["volumeId"]: ret})
 
     # delete floating ip
     print("delete floating ip")
     floating_id = ""
     ports_id_list = getServerInterfacesIdByNet(s_id, private_net_name)
+    print("ports_id_list: ", ports_id_list)
     floating_ips_list = floating_ips.getFloatingIpsList()
+    print("floating_ips_list: ", floating_ips_list)
     for f_ip in floating_ips_list:
         if f_ip["port_id"] in ports_id_list:
             floating_id = f_ip["id"]
@@ -69,26 +68,29 @@ def delServerInstance(s_id, vol_clear=True):
     # save ports list
     print("get server interfaces list")
     ports_list = getAllServerInterfaces(s_id)
+    print("ports_list: ", ports_list)
 
     # delete server
     print("delete server")
-    servers.deleteServer(s_id)
-    # delete all volumes
+    ret = servers.deleteServer(s_id)
+    print("return of delete Server: ", ret)
+    RuntimeWarning# delete all volumes
     if vol_clear == True:
         print ("Start Clear Volume !")
 
         for i in range(len(vol_list)):
             print ("volume id: ", vol_list[i]["volumeId"])
             ret = volume.deleteVolume(vol_list[i]["volumeId"])
+            print ("return of delete volume: ", ret)
             if ret != True:
-                print (ret)
                 err_list.append({vol_list[i]["volumeId"]:ret})
 
     # TODO: test
     # delete ports list
     print ("delete ports list")
     for port in ports_list:
-        ports.deletePort(port)
+        ret = ports.deletePort(port)
+        print("return of delete port: ", ret)
 
     return True
 
@@ -183,7 +185,7 @@ def getAllServerInterfaces(s_id):
             ports_id_list.append(port["id"])
     return list(set(ports_id_list))
 
-def createDoublePorts(net_name=NET_OF_NF, net_id=""):
+def createDoublePorts(net_name=data_flow_net_name, net_id=""):
     net_id = getNetworkIdByName(net_name)
     return createNPorts(2, net_id)
 
@@ -252,7 +254,7 @@ def addSFC(para_list=[]):
             continue
 
     # create 2N ports and attach them to server
-    ports_list = createNPorts(len(para_list)*2, getNetworkIdByName(NET_OF_NF))
+    ports_list = createNPorts(len(para_list)*2, getNetworkIdByName(data_flow_net_name))
     
     print (ports_list)
     ports_2_list = attachingServerPortList(sv_list, ports_list)
@@ -262,22 +264,32 @@ def addSFC(para_list=[]):
 
 
 if __name__ == '__main__':
-    # centos_image_id = "843e7950-e0d7-402f-80b5-6a1c3805708d"
-    cirros_image_id = "7a6da8f1-c3e9-42dd-88d2-ffe9084d3b24"
-    same_host = ""
-    para1 = openstack_para.composeServerInstancePara(1, 256, 1, cirros_image_id, same_host)
-    # para2 = openstack_para.composeServerInstancePara(1, 1024, 10, centos_image_id, same_host)
-    p_list = []
-    p_list.append(para1)
-    # p_list.append(para2)
-    addSFC(para_list=p_list)
+    # # centos_image_id = "843e7950-e0d7-402f-80b5-6a1c3805708d"
+    # cirros_image_id = "7a6da8f1-c3e9-42dd-88d2-ffe9084d3b24"
+    # same_host = ""
+    # para1 = openstack_para.composeServerInstanceDictPara(1, 256, 1, cirros_image_id, same_host)
+    # # para2 = openstack_para.composeServerInstanceDictPara(1, 1024, 10, centos_image_id, same_host)
+    # p_list = []
+    # p_list.append(para1)
+    # # p_list.append(para2)
+    # addSFC(para_list=p_list)
 
 
     # ret = ports.getPortsList()
     # print(ret)
 
-    # delServerInstance("7e14244f-aeb2-4b51-b8f1-56413422c1e2")
 
+    # delServerInstance("05c3f204-cab3-41ca-9ddd-657be77f1d20")
+    # ret = ports.deletePort('5ddbf8e0-105b-4169-8ac5-2be6d362a083')
+    # print("return of delete port: ", ret)
+
+
+    # print(volume.createVolume(1))
     # print(volume.getVolumesList())
+    # print(volume.deleteVolume('076eb635-8a47-4053-bc3e-a7b3e7c65c58'))
 
-    # volume.deleteVolume('42f02a8d-b264-4ae9-8049-e823b4a4e0e3')
+
+    # print(floating_ips.deleteFloatingIp("0f8cd16b-364c-44ca-ba80-c10e243b96f7"))
+    # print(floating_ips.getFloatingIpsList())
+
+    pass

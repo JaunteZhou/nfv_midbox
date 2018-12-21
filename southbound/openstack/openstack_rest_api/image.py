@@ -3,44 +3,30 @@
 #image.py
 import json
 
-from openstack_rest_api import rest_requests
-from openstack_rest_api.openstack_config import image_url
+from openstack_rest_api import rest_requests, CODE
+from openstack_rest_api.openstack_config import images_url
 
-# class Images(object):
-#     """The class is about image in the cloud platform."""
-
-    # def __init__():
-    #     """Class flavors initialization."""
-images_url = image_url + "/images"
 
 def getImagesList():
-    """Get list of images."""
+    """Show list of images."""
     code, res = rest_requests.get(images_url)
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         return None
     return res["images"]
 
 def getImage(image_id):
-    """Get a image."""
+    """Show a image."""
     code, res = rest_requests.get(images_url + "/" + image_id)
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         return None
     return res
 
-# def createImages(para_json):
-#     """Create a Network."""
-#     code, res = rest_requests.post(images_url, para_json)
-#     if code != 201:
-#         # TODO: log
-#         return None
-#     return res["network"]
-
 def deleteImage(image_id):
     """Delete a Image."""
-    code = rest_requests.get(images_url + "/" + image_id)
-    if code != 204:
+    code = rest_requests.delete(images_url + "/" + image_id)
+    if code != CODE.NO_CONTENT_204:
         # TODO: log
         return False
     return True

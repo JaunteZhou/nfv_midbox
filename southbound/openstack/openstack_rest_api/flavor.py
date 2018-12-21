@@ -4,13 +4,13 @@
 """This module provides a series of openstack compute APIs"""
 import json
 
-from openstack_rest_api import rest_requests
+from openstack_rest_api import rest_requests, CODE
 from openstack_rest_api.openstack_config import flavor_url
 
 def getFlavorsList():
     """Get list of flavors."""
     code, res = rest_requests.get(flavor_url)
-    if code != 200:
+    if code != CODE.OK_200:
         return code
     fl = res["flavors"]
     for i in range(len(fl)):
@@ -20,37 +20,34 @@ def getFlavorsList():
 def getFlavorsListDetails():
     """Get list of flavors with details."""
     code, res = rest_requests.get(flavor_url + "/detail")
-    if code != 200:
+    if code != CODE.OK_200:
+        # TODO: log
         return code
     fl = res["flavors"]
     for i in range(len(fl)):
         fl[i].pop("links")
     return fl
 
-def getFlavorDetail(id):
+def getFlavorDetail(flavor_id):
     """Get a flavor with detail."""
-    code, res = rest_requests.get(flavor_url + "/" + id)
+    code, res = rest_requests.get(flavor_url + "/" + flavor_id)
+    if code != CODE.OK_200:
+        # TODO: log
+        return code
     return code, res
 
 def createFlavor(para_json):
     # send post request
     code, res = rest_requests.post(flavor_url, para_json)
-    return code, res
+    if code != CODE.OK_200:
+        # TODO: log
+        return code
+    return res["flavor"]
 
-def deleteFlavor(id):
-    """Delete a flavor by id."""
-    code = rest_requests.delete(flavor_url + "/" + id)
-    if code != 202:
+def deleteFlavor(flavor_id):
+    """Delete a flavor by flavor_id."""
+    code = rest_requests.delete(flavor_url + "/" + flavor_id)
+    if code != CODE.ACCEPTED_202:
         # TODO: log
         return False
-    return True
-
-def clearFlavors():
-    """Clear a flavor."""
-    fl = getFlavorsList()
-    for i in range(len(fl)):
-        code = deleteFlavor(fl[i]["id"])
-        if code != 200:
-            # TODO: log
-            continue
     return True

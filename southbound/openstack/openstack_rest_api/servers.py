@@ -3,8 +3,8 @@
 #servers.py
 """This module provides a series of openstack compute APIs"""
 import json
-from openstack_rest_api import rest_requests
-from openstack_rest_api.openstack_config import compute_url
+from openstack_rest_api import rest_requests, CODE
+from openstack_rest_api.openstack_config import servers_url
 
 """
 The possible server status values are:
@@ -30,7 +30,6 @@ UNKNOWN. The state of the server is unknown. Contact your cloud provider.
 VERIFY_RESIZE. System is awaiting confirmation that the server is operational after a move or resize.
 """
 
-servers_url = compute_url + "/servers"
 
 def getServersList():
     """Get list of servers.\n
@@ -44,7 +43,7 @@ def getServersList():
     ]
     """
     code, res = rest_requests.get(servers_url)
-    if code != 200:
+    if code != CODE.OK_200:
         return code
 
     sl = res["servers"]
@@ -59,7 +58,7 @@ def getServersListDetails():
     Get list of servers with details.
     """
     code, res = rest_requests.get(servers_url + "/detail")
-    if code != 200:
+    if code != CODE.OK_200:
         return code
     sl = res["servers"]
     for i in range(len(sl)):
@@ -69,7 +68,7 @@ def getServersListDetails():
 def getServerDetail(s_id):
     """Get server by id with details."""
     code, res = rest_requests.get(servers_url + "/" + s_id)
-    if code != 200:
+    if code != CODE.OK_200:
         return code
     sl = res["server"]
     sl.pop("links")
@@ -78,7 +77,7 @@ def getServerDetail(s_id):
 def createServer(para_json):
     """Create a new server with json-formed para."""
     code, res = rest_requests.post(servers_url, para_json)
-    if code != 202:
+    if code != CODE.ACCEPTED_202:
         # TODO: log
         print(res)
         return -1
@@ -91,18 +90,19 @@ def deleteServer(s_id):
     Error Return: False
     """
     code = rest_requests.delete(servers_url + "/" + s_id)
-    if code != 202:
+    if code != CODE.NO_CONTENT_204:
         # TODO: log
         return False
     return True
     # Normal response codes: 204
     # Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
+
 ### Volume Attachments ###
 def getVolumeAttachments(s_id):
     """Get Volume Attachment to Server by id."""
     code, res = rest_requests.get(servers_url + "/" + s_id + "/os-volume_attachments")
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         return None
     return res["volumeAttachments"]
@@ -128,7 +128,7 @@ def attachVolume(s_id, vol_id):
     code, res = rest_requests.post(
             servers_url + "/" + s_id + "/os-volume_attachments",
             para_json)
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         return False, res
     return True, res["volumeAttachment"]
@@ -139,16 +139,17 @@ def detachVolume(s_id, vol_id):
     print(vol_id)
     code = rest_requests.delete(
             servers_url + "/" + s_id + "/os-volume_attachments/" + vol_id)
-    if code != 202:
+    if code != CODE.ACCEPTED_202:
         # TODO: log
         return code
     return True
+
 
 ### Ports interfaces ###
 def getPortInterfaces(s_id):
     code, res = rest_requests.get(
             servers_url + "/" + s_id + "/os-interface")
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         return res
     return res["interfaceAttachments"]
@@ -157,7 +158,7 @@ def attachPortInterfaces(s_id, para_json):
     code, res = rest_requests.post(
             servers_url + "/" + s_id + "/os-interface",
             para_json)
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         print ("Error: [attachPortInterfaces]", res)
         return -1
@@ -167,7 +168,7 @@ def attachPortInterfaces(s_id, para_json):
 def getPortInterfacesDetails(s_id, p_id):
     code, res = rest_requests.get(
             servers_url + "/" + s_id + "/os-interface/" + p_id)
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         return res
     return res["interfaceAttachments"]
@@ -175,20 +176,11 @@ def getPortInterfacesDetails(s_id, p_id):
 def detachPortInterfaces(s_id, p_id):
     code, res = rest_requests.delete(
             servers_url + "/" + s_id + "/os-interface/" + p_id)
-    if code != 202:
+    if code != CODE.ACCEPTED_202:
         # TODO: log
         return res
     return True
 
-# def list_avaiable_server(:
-#     """Return the list of servers can be used as source or destination."""
-#     servers = list_servers()
-#     available_servers = []
-#     for server in servers:
-#         if len(server["name"]) <= 10:
-#             server["IP"] = get_serverIP(server["id"])
-#             available_servers.append(server)
-#     return available_servers
 
 if __name__ == '__main__':
     print ("port interfaces list: ", getPortInterfaces("ca17b74c-3ee9-4fbc-bea6-c21ce7d16abf"))

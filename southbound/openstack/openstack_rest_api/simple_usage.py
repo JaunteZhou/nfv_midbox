@@ -4,7 +4,7 @@
 """This module provides a series of openstack compute APIs"""
 import json
 
-from openstack_rest_api import rest_requests
+from openstack_rest_api import rest_requests, CODE
 from openstack_rest_api.openstack_config import simple_usage_url
 
 def getAllSimpleTenantUsage(detailed=0):
@@ -12,18 +12,18 @@ def getAllSimpleTenantUsage(detailed=0):
     # code, res = rest_requests.get(simple_usage_url + "?detailed=" + str(detailed))
     payload = {"detailed": detailed}
     code, res = rest_requests.get(simple_usage_url, payload)
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         return None
-    return res
+    return res["tenant_usage"]
 
-def getSimpleTenantUsage(id):
+def getSimpleTenantUsage(tenant_id):
     """Get usage statistics of a tenant"""
-    code, res = rest_requests.get(simple_usage_url + "/" + id)
-    if code != 200:
+    code, res = rest_requests.get(simple_usage_url + "/" + tenant_id)
+    if code != CODE.OK_200:
         # TODO: log
         return None
-    return res
+    return res["tenant_usage"]
 
 
 if __name__ == '__main__':

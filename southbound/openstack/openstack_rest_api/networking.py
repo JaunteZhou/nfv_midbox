@@ -4,13 +4,21 @@
 """This module provides a series of openstack networkding APIs"""
 import json
 
-from openstack_rest_api import rest_requests
+from openstack_rest_api import rest_requests, CODE
 from openstack_rest_api.openstack_config import networks_url
+
+def getNetworksDetails(network_id):
+    """Get details of Networks."""
+    code, res = rest_requests.get(networks_url + "/" + network_id)
+    if code != CODE.OK_200:
+        # TODO: log
+        return None
+    return res["network"]
 
 def getNetworksList():
     """Get list of Networks."""
     code, res = rest_requests.get(networks_url)
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         return None
     return res["networks"]
@@ -18,24 +26,24 @@ def getNetworksList():
 def createNetwork(para_json):
     """Create a Network."""
     code, res = rest_requests.post(networks_url, para_json)
-    if code != 201:
+    if code != CODE.CREATED_201:
         # TODO: log
         print (res)
         return None
     return res["network"]
 
-def updateNetwork(id, para_json):
+def updateNetwork(network_id, para_json):
     """Update a Network."""
-    code, res = rest_requests.put(networks_url + "/" + id, para_json)
-    if code != 200:
+    code, res = rest_requests.put(networks_url + "/" + network_id, para_json)
+    if code != CODE.OK_200:
         # TODO: log
         return None
     return res["network"]
 
 def deleteNetwork(id):
     """Delete a Network."""
-    code, res = rest_requests.get(networks_url + "/" + id)
-    if code != 204:
+    code, res = rest_requests.delete(networks_url + "/" + id)
+    if code != CODE.NO_CONTENT_204:
         # TODO: log
         return False
     return True

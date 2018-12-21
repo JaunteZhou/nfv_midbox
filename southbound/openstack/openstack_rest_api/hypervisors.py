@@ -4,7 +4,7 @@
 """This module provides a series of openstack compute APIs"""
 import json
 
-from openstack_rest_api import rest_requests
+from openstack_rest_api import rest_requests, CODE
 from openstack_rest_api.openstack_config import compute_url
 
 hypervisors_url = compute_url + "/os-hypervisors"
@@ -12,7 +12,7 @@ hypervisors_url = compute_url + "/os-hypervisors"
 def getHostsList():
     """Get the list of hypervisors."""
     code, res = rest_requests.get(hypervisors_url)
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         return None
     return res["hypervisors"]
@@ -21,7 +21,7 @@ def getHostsListDetails():
     """The function gets the state of hosts."""
     url = hypervisors_url + "/detail"
     code, res = rest_requests.get(url)
-    if code != 200:
+    if code != CODE.OK_200:
         # TODO: log
         return None
     hosts = []
@@ -35,6 +35,14 @@ def getHostsListDetails():
         hosts.append(host)
     return hosts
 
+def getHostsStatistics():
+    """The function gets the state of hosts."""
+    url = hypervisors_url + "/statistics"
+    code, res = rest_requests.get(url)
+    if code != CODE.OK_200:
+        # TODO: log
+        return None
+    return res["hypervisor_statistics"]
 
 if __name__ == '__main__':
     print (getHostsList())
