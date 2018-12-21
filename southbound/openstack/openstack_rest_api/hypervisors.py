@@ -5,9 +5,8 @@
 import json
 
 from openstack_rest_api import rest_requests, CODE
-from openstack_rest_api.openstack_config import compute_url
+from openstack_rest_api.openstack_config import hypervisors_url
 
-hypervisors_url = compute_url + "/os-hypervisors"
 
 def getHostsList():
     """Get the list of hypervisors."""
@@ -19,21 +18,11 @@ def getHostsList():
 
 def getHostsListDetails():
     """The function gets the state of hosts."""
-    url = hypervisors_url + "/detail"
-    code, res = rest_requests.get(url)
+    code, res = rest_requests.get(hypervisors_url + "/detail")
     if code != CODE.OK_200:
         # TODO: log
         return None
-    hosts = []
-    for hypervisor in res["hypervisors"]:
-        host = {
-            "name": "nova:"+hypervisor["hypervisor_hostname"],
-            "cpu": hypervisor["vcpus"] - hypervisor["vcpus_used"],
-            "memory": hypervisor["free_ram_mb"],
-            "disk": hypervisor["free_disk_gb"]
-        }
-        hosts.append(host)
-    return hosts
+    return res["hypervisors"]
 
 def getHostsStatistics():
     """The function gets the state of hosts."""
@@ -43,6 +32,3 @@ def getHostsStatistics():
         # TODO: log
         return None
     return res["hypervisor_statistics"]
-
-if __name__ == '__main__':
-    print (getHostsList())

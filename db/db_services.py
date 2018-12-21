@@ -1,9 +1,10 @@
 #!/usr/bin/python3  
 import pymysql  
-import types  
- 
+import types
+from db.mysql_config import *
+
 def connect_db(): 
-	db=pymysql.connect("localhost","root","123456","db_nfv");  
+	db=pymysql.connect(MYSQL_IP_ADDR, MYSQL_USER, MYSQL_PASSWD, MAIN_DB_NAME)
   
 	cursor=db.cursor()  
 	return db, cursor

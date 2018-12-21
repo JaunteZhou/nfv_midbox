@@ -26,15 +26,18 @@ volume_url 			= service_base_url + "/volume/v1/" + tenant_id
 volumev2_url 		= service_base_url + "/volume/v2/" + tenant_id
 volumev3_url 		= service_base_url + "/volume/v3/" + tenant_id
 
+
 auth_token_url      = identity_url + "/v3/auth/tokens"
 volumes_url         = volumev3_url + "/volumes"
 servers_url         = compute_url + "/servers"
 flavor_url          = compute_url + "/flavors"
+hypervisors_url     = compute_url + "/os-hypervisors"
+simple_usage_url    = compute_url + "/os-simple-tenant-usage"
 images_url          = image_url + "/images"
 networks_url        = networking_url + "/networks"
 floating_url        = networking_url + "/floatingips"
 ports_url           = networking_url + "/ports"
-simple_usage_url    = compute_url + "/os-simple-tenant-usage"
+
 
 # networks name and id
 public_net_id       = "d27d54f3-f89c-41e5-a973-4e449a34a2a6"

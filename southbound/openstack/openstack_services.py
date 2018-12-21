@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #openstack_services.py
 
-from openstack_rest_api import servers, flavor, image, networking, ports, volume, floating_ips
+from openstack_rest_api import servers, flavor, image, networking, ports, volume, floating_ips, hypervisors
 from openstack_rest_api.openstack_config import public_net_id, private_net_id, data_flow_net_id, private_net_name, data_flow_net_name, SLEEP_SECONDS_IN_ATTACHING
 import openstack_para
 import time
@@ -291,5 +291,9 @@ if __name__ == '__main__':
 
     # print(floating_ips.deleteFloatingIp("0f8cd16b-364c-44ca-ba80-c10e243b96f7"))
     # print(floating_ips.getFloatingIpsList())
+
+    # print (hypervisors.getHostsListDetails())
+
+    print (servers.getServersListDetails())
 
     pass

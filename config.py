@@ -2,5 +2,5 @@
 # -*- coding: utf-8 -*-
 #config.py
 
-DOCKER_TYPE = 1
-OPENSTACK_TYPE = 2
+TYPE_DOCKER = 1
+TYPE_OPENSTACK = 2
