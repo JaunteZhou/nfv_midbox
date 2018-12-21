@@ -15,6 +15,7 @@ def getHostsList():
         # TODO: log
         return None
     return res["hypervisors"]
+    # return res
 
 def getHostsListDetails():
     """The function gets the state of hosts."""
@@ -23,6 +24,7 @@ def getHostsListDetails():
         # TODO: log
         return None
     return res["hypervisors"]
+    # return res
 
 def getHostsStatistics():
     """The function gets the state of hosts."""

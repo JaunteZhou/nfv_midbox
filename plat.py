@@ -3,7 +3,6 @@
 #plat.py
 
 from flask import Flask,request
-import show_all
 import json
 
 import central_unit

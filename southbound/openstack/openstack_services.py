@@ -203,6 +203,21 @@ def createNPorts(n, net_id):
     return ports_list
 
 
+def getSameHostInstanceId(host_id):
+    host_list = hypervisors.getHostsList()
+    host_name = ''
+    for host in host_list:
+        if host['id'] == host_id:
+            host_name = host['hypervisor_hostname']
+    if host_name == '':
+        return None
+    
+    servers_list = servers.getServersListDetails()
+    for s in servers_list:
+        if s['OS-EXT-SRV-ATTR:hostname'] == host_name:
+            return s['id']
+    return None
+
 ########## SFC ##########
 def addSFC(para_list=[]):
     """
@@ -260,6 +275,9 @@ def addSFC(para_list=[]):
     ports_2_list = attachingServerPortList(sv_list, ports_list)
     print (ports_list)
     attachingServerPortList(sv_list, ports_2_list)
+
+    # TODO:
+    return {}
 
 
 

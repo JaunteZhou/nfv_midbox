@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 #function.py
 
-from southbound.docker import remote_deploy, remote_clear
-from db import db_services
-from config import TYPE_DOCKER, TYPE_OPENSTACK
+from nfv_midbox.southbound.docker import remote_deploy, remote_clear
+from nfv_midbox.southbound.openstack import openstack_services
+from nfv_midbox.southbound.openstack.openstack_para import composeServerInstanceDictPara
+from nfv_midbox.db import db_services
+from nfv_midbox.config import TYPE_DOCKER, TYPE_OPENSTACK
 
 """
 para:
@@ -13,10 +15,10 @@ para:
    "func_id":"<上层分配的功能编号>",
    "host_id":"<上层指定的部署位置>",
    "image_id":"<功能使用的镜像id>",
-   "func_ip":"<上层为功能实体分配的ip地址>",
+   "func_ip":"<上层为功能实体分配的ip地址>",        # TODO：ip 地址由上层指定？
    "func_pwd":"<功能实体ssh登录密码，若为容器则应使用默认密码>",
    "cpu":"<功能使用的CPU情况，注意区分容器和虚拟机使用的不同单位>",
-   "mem":"<功能内存限制>"
+   "ram":"<功能内存限制>"
    "disk":"<功能硬盘容量限制，这个项目对容器是无效的>"
 }
 """
@@ -29,15 +31,32 @@ def setFunction(para):
     hostpwd = db_services.select_table(db,cursor,'t_host','pwd',para['host_id'])
     
     if para["func_type"] == "container":
-        db_services.insert_function(db,cursor,para["func_id"],para["image_id"],para["host_id"],0,\
-                              para["func_ip"],para["func_pwd"],para["cpu"],para["mem"],\
-                              TYPE_DOCKER,0,0)        
-        imagename = db_services.select_table(db,cursor,'t_image','func',para['image_id'])
-        remote_deploy.container_deploy(hostip,hostpwd,para['cpu'],para['mem'],imagename\
-            ,para['func_id'],para['func_ip'])
+        # get image name by image id from db
+        imagename = db_services.select_table(db, cursor,
+                't_image', 'func', para['image_id'])
+        # create container in specified host
+        ret = remote_deploy.container_deploy(hostip, hostpwd, 
+                para['cpu'], para['ram'], imagename,
+                para['func_id'],para['func_ip'])
+        if ret == None:
+            return [1, "Error?"]
+        # add a record to db
+        db_services.insert_function(db, cursor, 
+                para["func_id"], para["image_id"], para["host_id"],0,
+                para["func_ip"], para["func_pwd"], para["cpu"], para["ram"],
+                TYPE_DOCKER, 0, 0)        
     elif para["func_type"] == "vm":
-        #TODO:此处创建虚拟机
-        pass
+        # get vm_id by host id, for specified host location
+        same_host = openstack_services.getSameHostInstanceId(para['host_id'])
+        # create vm in specified host
+        para = composeServerInstanceDictPara(para['cpu'], para['ram'], para['disk'], para['image_id'], same_host)
+        ret = openstack_services.addSFC([para])
+        # add a record to db
+        # TODO: id
+        db_services.insert_function(db, cursor, 
+                para["func_id"], para["image_id"], para["host_id"], ret['id'],
+                para["func_ip"], para["func_pwd"], para["cpu"], para["ram"],
+                TYPE_OPENSTACK, para['disk'], 0)
     db_services.close_db(db,cursor)
     return [0,"Function Created Succesfully! IP:"+para['func_ip']]
 

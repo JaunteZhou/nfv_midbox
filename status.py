@@ -3,11 +3,11 @@
 #showall.py
 
 import json
-from db import db_services
 import re
-from southbound.docker import remote_ssh
-from southbound.openstack.openstack_rest_api.hypervisors import getHostsListDetails
-from southbound.openstack.openstack_rest_api.servers import getServersListDetails
+from nfv_midbox.db import db_services
+from nfv_midbox.southbound.docker import remote_ssh
+from nfv_midbox.southbound.openstack.openstack_rest_api.hypervisors import getHostsListDetails
+from nfv_midbox.southbound.openstack.openstack_rest_api.servers import getServersListDetails
 
 #return a jsonified file including all NFs status;0 refers to successful execution.
 
@@ -38,7 +38,7 @@ res:
     '<host_id>':{...)
 }
 """
-def showAll():
+def showAllStatus():
     # res = {'containers':{},'VMs':{}}
     res = {}
     # db, cursor = db_services.connect_db()
@@ -121,6 +121,6 @@ def showVmStatus(host_name):
 
 
 if __name__=='__main__':
-    showAll()
+    showAllStatus()
     
 

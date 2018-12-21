@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #chain.py
-from southbound.docker import remote_flow_deploy, remote_flow_undeploy
-from db import db_services
-from config import TYPE_DOCKER, TYPE_OPENSTACK
+from nfv_midbox import flows
+from nfv_midbox.db import db_services
+from nfv_midbox.config import TYPE_DOCKER, TYPE_OPENSTACK
 
 """
 para:
@@ -70,7 +70,7 @@ def setChain(para):
             port_names_temp[id_list[n]][0],port_names_temp[id_list[n]][1],\
             port_names_temp[aft][0],port_names_temp[aft][1]]
                 
-        remote_flow_deploy.flow_deploy(ip,password,port_names,\
+        flows.flowDeploy(ip,password,port_names,\
             str(priority),matchfield)
         n=n+1
     db_services.insert_flow(db,cursor,id,ids,matchfield)
@@ -132,7 +132,7 @@ def delChain(chain_id):
         port_names=[port_names_temp[bef][0],port_names_temp[bef][1],\
             port_names_temp[id_list[n]][0],port_names_temp[id_list[n]][1]]
         
-        remote_flow_undeploy.flow_undeploy(ip,password,port_names,str(shutdownflag),matchfield)
+        flows.flowUndeploy(ip,password,port_names,str(shutdownflag),matchfield)
         n=n+1
     db_services.delete_table(db,cursor,"t_flow", chain_id)
     db_services.close_db(db,cursor)
