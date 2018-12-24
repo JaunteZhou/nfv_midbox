@@ -143,7 +143,7 @@ def __getTraffic(cid:str):
     exitstatus,rdata = remote_ssh.remote_ssh(ip,pwd,'echo 1')
     rdata = str(rdata,encoding = 'utf-8')
     global port_traff
-    port_traff[str(cid)] = int(rdata)
+    port_traff[str(cid)] = rdata
     return rdata;
 if __name__=='__main__':
     showAllStatus()
