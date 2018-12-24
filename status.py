@@ -78,7 +78,7 @@ def showContainerStatus(host_id:'int'):
     for id_iter in funcs_list:
         #判断是否容器
         if db_services.select_table(db,cursor,'t_function','type',id_iter)==1:
-            t=threading.Thread(target=__getTraffic,args=(str(id_iter),))
+            t=threading.Thread(target=__getTraffic,args=(ip,pwd,str(id_iter),))
             thread_list[id_iter]=t;
 
     #由于remote_ssh的传参为字符串，shell执行时也识别字符串，故必须保证remote传过去的参数就含有反斜杠，保证shell解释时不会去掉引号
@@ -138,12 +138,12 @@ def showVmStatus(host_name):
             res[vm_info['id']] = needs_vm_info
     return res
 
-def __getTraffic(cid:str):
+def __getTraffic(ip,pwd,cid:str):
     #TODO:具体执行命令待补完，不影响运行
-    exitstatus,rdata = remote_ssh.remote_ssh(ip,pwd,'echo 1')
+    exitstatus,rdata = remote_ssh.remote_ssh(ip,pwd,'bash /gettraffic.sh br-c'+cid+'-in')
     rdata = str(rdata,encoding = 'utf-8')
     global port_traff
-    port_traff[str(cid)] = int(rdata)
+    port_traff[str(cid)] = rdata
     return rdata;
 if __name__=='__main__':
     showAllStatus()
