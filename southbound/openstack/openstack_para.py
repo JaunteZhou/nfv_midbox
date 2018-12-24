@@ -21,18 +21,18 @@ def makeFlavorId(vcpus, ram, disk):
 def makeServerName():
     return SERVERS_ID_PREFIX + "-" + getTimestamp()
 
-def makePortNameInOVS(name):
-    return "tap" + name[0:11]
+def makePortNameInOvsById(port_id):
+    return "tap" + port_id[0:11]
 
 def makePortsNameListInOVS(port_id_list):
     port_name_list_in_ovs = []
     for p_id in port_id_list:
-        port_name_list_in_ovs.append(makePortNameInOVS(p_id))
+        port_name_list_in_ovs.append(makePortNameInOvsById(p_id))
     return port_name_list_in_ovs
 
 ########## Para ##########
 ### Server ###
-def composeServerPara(
+def composeServerParaWithSameHost(
         name, image_ref, flavor_ref, nets, same_host):
         #port_1, port_2, port_3):
     """Compose JSON Param of Server Creatation."""
@@ -49,7 +49,7 @@ def composeServerPara(
     }
     return json.dumps(para)
 
-def composeServerPara_old(
+def composeServerPara(
         name, image_ref, flavor_ref, nets):
     """Compose JSON Param of Server Creatation."""
     para = {
@@ -127,13 +127,12 @@ def composeFloatingIpPara(port_id,floating_network_id):
     return json.dumps(para)
 
 ### Instance ###
-def composeServerInstanceDictPara(vcpus, ram, disk, image_id, same_host):
+def composeServerInstanceDictPara(vcpus, ram, disk, image_id, host_id):
     para = {
         "vcpus": vcpus,
         "ram": ram,
         "disk": disk,
-        "image_id": image_id
+        "image_id": image_id,
+        "host_id": host_id
     }
-    if same_host == "":
-        para["same_host"] = same_host
     return para

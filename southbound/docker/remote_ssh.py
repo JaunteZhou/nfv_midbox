@@ -21,6 +21,3 @@ def remote_ssh(ip,password,cmd,username='root'):
     r=ssh.read()
     ssh.close()
     return exitcode, r
-
-
-

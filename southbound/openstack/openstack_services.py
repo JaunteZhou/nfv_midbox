@@ -8,19 +8,28 @@ import openstack_para
 import time
 
 ########## Instance(Nova) ##########
-def addServerInstance(vcpus, ram, disk, image_id, same_host):
+def addServerInstance(vcpus, ram, disk, image_id, host_id):
     # get Flavor ID
     f_id = addFlavor(vcpus, ram, disk)
     if f_id == -1:
         print ("Error:[addServerInstance] Add or Get Flavor.")
         return -1
 
+    same_host = getSameHostInstanceId(host_id)
     # server
-    para_json = openstack_para.composeServerPara_old(
-            openstack_para.makeServerName(),
-            image_id,
-            f_id,
-            [{"uuid":private_net_id}])
+    if same_host == None:
+        para_json = openstack_para.composeServerPara(
+                openstack_para.makeServerName(),
+                image_id,
+                f_id,
+                [{"uuid":private_net_id}])
+    else:
+        para_json = openstack_para.composeServerParaWithSameHost(
+                openstack_para.makeServerName(),
+                image_id,
+                f_id,
+                [{"uuid":private_net_id}],
+                same_host)
     s_ret = servers.createServer(para_json)
     if s_ret == -1:
         # TODO: log
@@ -85,7 +94,6 @@ def delServerInstance(s_id, vol_clear=True):
             if ret != True:
                 err_list.append({vol_list[i]["volumeId"]:ret})
 
-    # TODO: test
     # delete ports list
     print ("delete ports list")
     for port in ports_list:
@@ -218,8 +226,27 @@ def getSameHostInstanceId(host_id):
             return s['id']
     return None
 
+
+def getVmInterfacesNameInDataPlane(server_id):
+    ports_id_list = getServerInterfacesIdByNet(server_id, private_net_name)
+    port_name_list_in_ovs = []
+    for port_id in ports_id_list:
+        port_name_list_in_ovs.append(
+                openstack_para.makePortNameInOvsById(port_id))
+    return port_name_list_in_ovs
+
 ########## SFC ##########
-def addSFC(para_list=[]):
+def addVm(para):
+    ret = addVmsList([para])
+    # TODO: 错误处理
+    return ret[0]
+
+def delVm(server_id):
+    ret = delServerInstance(server_id)
+    # TODO: 错误处理
+    return ret
+
+def addVmsList(para_list=[]):
     """
     para_list = [
         {
@@ -238,11 +265,13 @@ def addSFC(para_list=[]):
                 para["ram"],
                 para["disk"],
                 para["image_id"],
-                para["same_host"])
+                para["host_id"])
         # print (sv)
         if sv == -1:
             print("Error:[addSFC] Add Server Instance.")
             continue
+        para["server_id"] = sv["serverId"]
+        para["volume_id"] = sv["volumeId"]
         sv_list.append(sv)
 
     tmp = attachingServerVolumeList(sv_list)
@@ -255,18 +284,19 @@ def addSFC(para_list=[]):
             time.sleep(SLEEP_SECONDS_IN_ATTACHING)
 
     # set floating ip to port in private_net
-    for sv_pair in sv_list:
-        s_id = sv_pair["serverId"]
-        ports_list = getServerInterfacesIdByNet(s_id, private_net_name)
-        if len(ports_list) != 1:
+    for para in para_list:
+        s_id = para["server_id"]
+        port_list = getServerInterfacesIdByNet(s_id, private_net_name)
+        if len(port_list) != 1:
             print ("Error:[addSFC] Find Server Port.")
             continue
-        p_id = ports_list[0]
-        para = openstack_para.composeFloatingIpPara(p_id, public_net_id)
-        p_ret = floating_ips.createFloatingIp(para)
-        if p_ret == -1:
+        p_id = port_list[0]
+        floatingip_para = openstack_para.composeFloatingIpPara(p_id, public_net_id)
+        floatingip_ret = floating_ips.createFloatingIp(floatingip_para)
+        if floatingip_ret == -1:
             print ("Error:[addSFC] Set Floating IP.")
             continue
+        para["ip_address"] = floatingip_ret["floating_ip_address"]
 
     # create 2N ports and attach them to server
     ports_list = createNPorts(len(para_list)*2, getNetworkIdByName(data_flow_net_name))
@@ -276,28 +306,27 @@ def addSFC(para_list=[]):
     print (ports_list)
     attachingServerPortList(sv_list, ports_2_list)
 
-    # TODO:
-    return {}
+    return para_list
 
 
 
 if __name__ == '__main__':
     # # centos_image_id = "843e7950-e0d7-402f-80b5-6a1c3805708d"
     # cirros_image_id = "7a6da8f1-c3e9-42dd-88d2-ffe9084d3b24"
-    # same_host = ""
-    # para1 = openstack_para.composeServerInstanceDictPara(1, 256, 1, cirros_image_id, same_host)
-    # # para2 = openstack_para.composeServerInstanceDictPara(1, 1024, 10, centos_image_id, same_host)
+    # host_id = 1
+    # para1 = openstack_para.composeServerInstanceDictPara(1, 256, 1, cirros_image_id, host_id)
+    # # para2 = openstack_para.composeServerInstanceDictPara(1, 1024, 10, centos_image_id, host_id)
     # p_list = []
     # p_list.append(para1)
     # # p_list.append(para2)
-    # addSFC(para_list=p_list)
+    # print(addVmsList(para_list=p_list))
 
 
     # ret = ports.getPortsList()
     # print(ret)
 
 
-    # delServerInstance("05c3f204-cab3-41ca-9ddd-657be77f1d20")
+    delServerInstance("e728988d-2ff1-46e5-83dc-ea11dad2f86f")
     # ret = ports.deletePort('5ddbf8e0-105b-4169-8ac5-2be6d362a083')
     # print("return of delete port: ", ret)
 
@@ -312,6 +341,6 @@ if __name__ == '__main__':
 
     # print (hypervisors.getHostsListDetails())
 
-    print (servers.getServersListDetails())
+    # print (servers.getServersListDetails())
 
     pass

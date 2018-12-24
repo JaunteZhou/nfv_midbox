@@ -1,7 +1,7 @@
 #!/usr/bin/python3  
 import pymysql  
 import types
-from db.mysql_config import *
+from db.mysql_config import MYSQL_IP_ADDR, MYSQL_USER, MYSQL_PASSWD, MAIN_DB_NAME
 
 def connect_db(): 
 	db=pymysql.connect(MYSQL_IP_ADDR, MYSQL_USER, MYSQL_PASSWD, MAIN_DB_NAME)
@@ -32,7 +32,7 @@ def executeSql(db, cursor, sql):
 		return 0
 
 #添加数据
-def insert_function(db, cursor,fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, size, ref_count):
+def insert_function(db, cursor, fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, size, ref_count):
 	fe_id=int(fe_id)
 	image_id=int(image_id)
 	host_id=int(host_id)

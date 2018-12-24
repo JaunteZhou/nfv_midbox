@@ -4,7 +4,7 @@
 from nfv_midbox import flows
 from nfv_midbox.db import db_services
 from nfv_midbox.config import TYPE_DOCKER, TYPE_OPENSTACK
-
+from nfv_midbox.southbound.openstack.openstack_services import getVmInterfacesNameInDataPlane
 """
 para:
 {
@@ -34,18 +34,18 @@ def setChain(para):
     
     for i in id_list:
         func_type = db_services.select_table(db, cursor, "t_function", "type", i)
+        # 获得虚拟机端口名的方法
         if func_type == TYPE_DOCKER:
             port_names_temp[i]=("br-c"+i+"-in","br-c"+i+"-out")
         elif func_type == TYPE_OPENSTACK:
-            # TODO: 此处应有获得虚拟机端口名的方法
-            pass
+            func_local_id = db_services.select_table(db, cursor, "t_function", "func_local_id", i)
+            port_names_temp[i] = getVmInterfacesNameInDataPlane(func_local_id)
         else:
             return [1,"Error:Function don't have correct type"]
     
     n = 0
     flag = 0
     while 1:
-        # TODO: 这个循环结束条件是什么？好像是死循环
         __addRefCount(db,cursor,id_list[n])
         bef = 0
         aft = 0
@@ -102,7 +102,8 @@ def delChain(chain_id):
         if func_type == TYPE_DOCKER:
             port_names_temp[i]=("br-c"+i+"-in","br-c"+i+"-out")
         elif func_type == TYPE_OPENSTACK:
-            # TODO: 此处应有获得虚拟机端口名的方法
+            func_local_id = db_services.select_table(db, cursor, "t_function", "func_local_id", i)
+            port_names_temp[i] = getVmInterfacesNameInDataPlane(func_local_id)
             pass
         else:
             return [1,"Error:Function don't have correct type"]

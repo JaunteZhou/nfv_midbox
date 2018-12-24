@@ -50,11 +50,12 @@ def setFunction(para):
         same_host = openstack_services.getSameHostInstanceId(para['host_id'])
         # create vm in specified host
         para = composeServerInstanceDictPara(para['cpu'], para['ram'], para['disk'], para['image_id'], same_host)
-        ret = openstack_services.addSFC([para])
+        ret = openstack_services.addVm(para)
+        # TODO: 先确认是否新建，再修改数据库
+
         # add a record to db
-        # TODO: id
         db_services.insert_function(db, cursor, 
-                para["func_id"], para["image_id"], para["host_id"], ret['id'],
+                para["func_id"], para["image_id"], para["host_id"], ret['server_id'],
                 para["func_ip"], para["func_pwd"], para["cpu"], para["ram"],
                 TYPE_OPENSTACK, para['disk'], 0)
     db_services.close_db(db,cursor)
@@ -79,10 +80,13 @@ def delFunction(para):
     hostpwd = db_services.select_table(db,cursor,'t_host','pwd',para['host_id'])
     
     if func_type == TYPE_DOCKER:
-        db_services.delete_table(db,cursor,'t_function',para["func_id"])
         remote_clear.container_clear(hostip,hostpwd,para['func_id'])
+        # TODO: 先确认是否删除，再修改数据库
+        db_services.delete_table(db,cursor,'t_function',para["func_id"])
     elif func_type == TYPE_OPENSTACK:
-        #TODO:此处删除虚拟机
+        openstack_services.delVm(para['func_id'])
+        # TODO: 先确认是否删除，再修改数据库
+        db_services.delete_table(db,cursor,'t_function',para["func_id"])
         pass
     db_services.close_db(db,cursor)
     return [0,"Function Deleted Succesfully! "]
