@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #function.py
 
-from nfv_midbox.southbound.docker import remote_deploy, remote_clear
-from nfv_midbox.southbound.openstack import openstack_services
-from nfv_midbox.southbound.openstack.openstack_para import composeServerInstanceDictPara
-from nfv_midbox.db import db_services
-from nfv_midbox.config import TYPE_DOCKER, TYPE_OPENSTACK
+from southbound.docker import remote_deploy, remote_clear
+from southbound.openstack import openstack_services
+from southbound.openstack.openstack_para import composeServerInstanceDictPara
+from db import db_services
+from config import TYPE_DOCKER, TYPE_OPENSTACK
 
 """
 para:

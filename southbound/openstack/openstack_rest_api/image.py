@@ -3,8 +3,8 @@
 #image.py
 import json
 
-from openstack_rest_api import rest_requests, CODE
-from openstack_rest_api.openstack_config import images_url
+import rest_requests, CODE
+from openstack_config import images_url
 
 
 def getImagesList():
