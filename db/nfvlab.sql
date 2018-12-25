@@ -47,7 +47,7 @@ DROP TABLE IF EXISTS `t_function`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `t_function` (
-  `fe_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `fe_id` int(10) unsigned NOT NULL,
   `image_id` int(10) unsigned NOT NULL,
   `host_id` int(10) unsigned NOT NULL,
   `func_local_id` char(40) NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE `t_function` (
   `cpu` tinyint(3) unsigned NOT NULL,
   `ram` smallint(5) unsigned NOT NULL,
   `type` tinyint(3) unsigned NOT NULL,
-  `size` smallint(5) unsigned NOT NULL,
+  `disk` smallint(5) unsigned NOT NULL,
   `ref_count` smallint(5) unsigned NOT NULL,
   PRIMARY KEY (`fe_id`),
   KEY `image_id` (`image_id`),
@@ -85,6 +85,7 @@ DROP TABLE IF EXISTS `t_host`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `t_host` (
   `host_id` int(10) unsigned NOT NULL,
+  `host_name` varchar(255) NOT NULL,
   `ip` char(16) NOT NULL,
   `pwd` varchar(100) NOT NULL,
   `cpu` tinyint(3) unsigned NOT NULL,
@@ -112,8 +113,9 @@ DROP TABLE IF EXISTS `t_image`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `t_image` (
   `image_id` int(10) unsigned NOT NULL,
+  `image_local_id` varchar(40) NOT NULL,
   `func` varchar(255) DEFAULT NULL,
-  `type` tinyint(4) NOT NULL,
+  `type` tinyint(4) unsigned NOT NULL,
   PRIMARY KEY (`image_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -136,4 +138,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-12-17 20:42:31
+-- Dump completed on 2018-12-25 21:58:30
