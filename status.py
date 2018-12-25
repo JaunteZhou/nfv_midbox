@@ -65,7 +65,7 @@ def showAllStatus():
     return [0,res_json]
 
 
-def showContainerStatus(host_id:int):
+def showContainerStatus(host_id):
     db,cursor = db_services.connect_db()
     funcs_list = db_services.select_condition(db,cursor,'t_function','fe_id','host_id',host_id)
     ip = db_services.select_table(db,cursor,"t_host","ip",host_id)
@@ -138,7 +138,7 @@ def showVmStatus(host_name):
             res[vm_info['id']] = needs_vm_info
     return res
 
-def __getTraffic(ip,pwd,cid:str):
+def __getTraffic(ip,pwd,cid):
     #TODO:具体执行命令待补完，不影响运行
     exitstatus,rdata = remote_ssh.remote_ssh(ip,pwd,'bash /gettraffic.sh br-c'+cid+'-in')
     rdata = str(rdata,encoding = 'utf-8')
