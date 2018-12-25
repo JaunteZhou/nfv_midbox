@@ -34,7 +34,7 @@ def executeSql(db, cursor, sql):
 		return 0
 
 #添加数据
-def insert_function(db, cursor, fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, size, ref_count):
+def insert_function(db, cursor, fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, disk, ref_count):
 	fe_id=int(fe_id)
 	image_id=int(image_id)
 	host_id=int(host_id)
@@ -44,40 +44,42 @@ def insert_function(db, cursor, fe_id, image_id, host_id, func_local_id, ip, pwd
 	cpu=int(cpu)
 	ram=int(ram)
 	type=int(type)
-	size=int(size)
+	disk=int(disk)
 	ref_count=int(ref_count)
 	#插入数据  
-	sql="INSERT INTO t_function (fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, size, ref_count) VALUES \
+	sql="INSERT INTO t_function (fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, disk, ref_count) VALUES \
 	('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d')" % \
-	(fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, size, ref_count)
+	(fe_id, image_id, host_id, func_local_id, ip, pwd, cpu, ram, type, disk, ref_count)
 
 	return executeSql(db, cursor, sql)
 	
 		
-def insert_image(db, cursor, image_id, func, type):
+def insert_image(db, cursor, image_id, image_local_id, func, type):
 	
 	image_id=int(image_id)
+	image_local_id=str(image_local_id)
 	type=int(type)
 	func=str(func)
 	#插入数据  
-	sql="INSERT INTO t_image (image_id, func, type) VALUES \
-	('%d', '%s', '%d')" % \
-	(image_id, func, type)	
+	sql="INSERT INTO t_image (image_id, image_local_id, func, type) VALUES \
+	('%d', '%s', '%s', '%d')" % \
+	(image_id, image_local_id, func, type)	
 
 	return executeSql(db, cursor, sql)
 
 		
-def insert_host(db, cursor, host_id, ip, pwd, cpu, ram, disk):
+def insert_host(db, cursor, host_id, host_name, ip, pwd, cpu, ram, disk):
 	host_id=int(host_id)
+	host_name=str(host_name)
 	ip=str(ip)
 	pwd=str(pwd)
 	cpu=int(cpu)
 	ram=int(ram)
 	disk=int(disk)
 	#插入数据  
-	sql="INSERT INTO t_host (host_id, ip, pwd, cpu, ram, disk) VALUES \
-	('%d', '%s', '%s', '%d', '%d', '%d')" % \
-	(host_id, ip, pwd, cpu, ram, disk)	
+	sql="INSERT INTO t_host (host_id, host_name, ip, pwd, cpu, ram, disk) VALUES \
+	('%d', '%s', '%s', '%s', '%d', '%d', '%d')" % \
+	(host_id, host_name, ip, pwd, cpu, ram, disk)	
 
 	return executeSql(db, cursor, sql)
 		
@@ -114,9 +116,9 @@ def delete_table(db, cursor, table, id):
 	return executeSql(db, cursor, sql)
 
 m_table_items = {
-	"t_function": ["fe_id","image_id","host_id","func_local_id","ip","pwd","cpu","ram","type","size","ref_count"],
-	"t_image": ["image_id","func","type"],
-	"t_host": ["host_id","ip","pwd","cpu","ram","disk"],
+	"t_function": ["fe_id","image_id","host_id","func_local_id","ip","pwd","cpu","ram","type","disk","ref_count"],
+	"t_image": ["image_id","image_local_id","func","type"],
+	"t_host": ["host_id","host_name","ip","pwd","cpu","ram","disk"],
 	"t_flow": ["flow_id","chain","match_field"],
 }
 
