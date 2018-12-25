@@ -49,8 +49,8 @@ def setFunction(para):
         # get vm_id by host id, for specified host location
         same_host = openstack_services.getSameHostInstanceId(para['host_id'])
         # create vm in specified host
-        para = composeServerInstanceDictPara(para['cpu'], para['ram'], para['disk'], para['image_id'], same_host)
-        ret = openstack_services.addVm(para)
+        vm_para = composeServerInstanceDictPara(para['cpu'], para['ram'], para['disk'], para['image_id'], same_host)
+        ret = openstack_services.addVm(vm_para)
         # TODO: 先确认是否新建，再修改数据库
 
         # add a record to db
