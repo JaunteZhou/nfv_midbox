@@ -15,7 +15,7 @@ from remote_ssh import *
 #cip:the ip address of the NF,assigned by the upper layer,should be with mask code;
 def container_deploy(ip,password,cpu,mem,image_name,containerid,cip='192.168.1.1/24'):
     cpu=str(int(int(cpu)/100*1000000))
-    print(containerid)
+    print("cpu:",cpu,"mem:",mem,"image_name:",image_name,"cip:",cip,"hostip:",ip)
     mem=str(mem)
 
     args='docker run -d -m '+mem+'M -v /home/dockertest/:/data --cap-add=NET_ADMIN --cpu-period=1000000 --cpu-quota='+cpu+' --net=none --name c'+containerid+' '+image_name+' '
@@ -40,7 +40,7 @@ def container_deploy(ip,password,cpu,mem,image_name,containerid,cip='192.168.1.1
 if __name__=='__main__':
     cpu=20#input('Input cpu limitation(%)(single core, if container uses mutiple cores, this value can larger than 100):');
     mem=128#input('Input memory limitation(MB):');
-    image_name='testimage'
+    image_name='bimage'
     containerid=sys.argv[1]
     ip='127.0.0.1'
     password='123456'
