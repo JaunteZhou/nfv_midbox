@@ -3,8 +3,8 @@
 #volume.py
 import json
 
-from openstack_rest_api import rest_requests, CODE
-from openstack_rest_api.openstack_config import volumes_url
+import rest_requests, CODE
+from openstack_config import volumes_url
 
 def getVolumesList():
     """Get volumes list."""

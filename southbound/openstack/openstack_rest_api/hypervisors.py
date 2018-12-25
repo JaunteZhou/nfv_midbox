@@ -4,8 +4,8 @@
 """This module provides a series of openstack compute APIs"""
 import json
 
-from openstack_rest_api import rest_requests, CODE
-from openstack_rest_api.openstack_config import hypervisors_url
+import rest_requests, CODE
+from openstack_config import hypervisors_url
 
 
 def getHostsList():
