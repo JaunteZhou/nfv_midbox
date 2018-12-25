@@ -12,9 +12,9 @@ app = Flask(__name__)
 @app.route("/nfvcmd", methods=['POST'])
 def manage():
     if request.method != 'POST':
-        abort(400)
+        return 400
     if not request.json or not 'title' in request.json:
-        abort(400)
+        return 400
     # req_content = json.loads(request.form)
     print(request.json)
 
