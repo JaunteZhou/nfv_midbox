@@ -65,7 +65,7 @@ def showAllStatus():
     return [0,res_json]
 
 
-def showContainerStatus(host_id:'int'):
+def showContainerStatus(host_id:int):
     db,cursor = db_services.connect_db()
     funcs_list = db_services.select_condition(db,cursor,'t_function','fe_id','host_id',host_id)
     ip = db_services.select_table(db,cursor,"t_host","ip",host_id)
