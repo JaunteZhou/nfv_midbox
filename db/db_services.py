@@ -1,4 +1,6 @@
-#!/usr/bin/python3  
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-  
+#db_services.py
 import pymysql  
 import types
 from db.mysql_config import MYSQL_IP_ADDR, MYSQL_USER, MYSQL_PASSWD, MAIN_DB_NAME
