@@ -30,6 +30,8 @@ def proc(para):
         para：字典类型，输入参数
     """
     method = para['method']
-    platform = para['platform']
+    # platform = para['platform']
     item = para['item']
-    return F_MAP[platform][item][method](para)
+    json_para = para['json']
+    # TODO:
+    return F_MAP[item][method](json_para)
