@@ -5,8 +5,8 @@
 import sys
 import json
 
-import rest_requests, CODE
-from openstack_config import ports_url
+from openstack_rest_api import rest_requests, CODE
+from openstack_rest_api.openstack_config import ports_url
 
 def getPortsDetails(port_id):
     """Get list of Ports."""

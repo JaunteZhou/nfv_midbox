@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #central_unit.py
 
-import chain, function, status
+from nfv_midbox import chain, function, status
 
 F_MAP = {
     "STATUS":{

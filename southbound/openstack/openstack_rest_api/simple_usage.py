@@ -4,8 +4,8 @@
 """This module provides a series of openstack compute APIs"""
 import json
 
-import rest_requests, CODE
-from openstack_config import simple_usage_url
+from openstack_rest_api import rest_requests, CODE
+from openstack_rest_api.openstack_config import simple_usage_url
 
 def getAllSimpleTenantUsage(detailed=0):
     """List Tenant Usage Statistics For All Tenants"""

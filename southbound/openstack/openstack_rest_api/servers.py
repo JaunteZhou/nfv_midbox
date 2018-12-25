@@ -3,8 +3,8 @@
 #servers.py
 """This module provides a series of openstack compute APIs"""
 import json
-import rest_requests, CODE
-from openstack_config import servers_url
+from openstack_rest_api import rest_requests, CODE
+from openstack_rest_api.openstack_config import servers_url
 
 """
 The possible server status values are:
