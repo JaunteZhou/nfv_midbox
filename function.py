@@ -46,6 +46,8 @@ def setFunction(para):
                 para["func_ip"], para["func_pwd"], para["cpu"], para["ram"],
                 TYPE_DOCKER, 0, 0)        
     elif para["func_type"] == "vm":
+        #TODO: get image_local_id
+
         # get vm_id by host id, for specified host location
         same_host = openstack_services.getSameHostInstanceId(para['host_id'])
         # create vm in specified host
@@ -54,6 +56,7 @@ def setFunction(para):
         # TODO: 先确认是否新建，再修改数据库
 
         # add a record to db
+        #TODO: image_id / image_local_id
         db_services.insert_function(db, cursor, 
                 para["func_id"], para["image_id"], para["host_id"], ret['server_id'],
                 para["func_ip"], para["func_pwd"], para["cpu"], para["ram"],
@@ -84,6 +87,7 @@ def delFunction(para):
         # TODO: 先确认是否删除，再修改数据库
         db_services.delete_table(db,cursor,'t_function',para["func_id"])
     elif func_type == TYPE_OPENSTACK:
+        # TODO: 删除错误，或许func_local_id
         openstack_services.delVm(para['func_id'])
         # TODO: 先确认是否删除，再修改数据库
         db_services.delete_table(db,cursor,'t_function',para["func_id"])
