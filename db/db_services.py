@@ -132,7 +132,7 @@ def show_table(db, cursor, table):
 	for item in m_table_items[table]:
 		line += item + "\t"
 	print (line)
-	if not results:
+	if results!=():
 		for each in results:
 			line = ""
 			for each_item in each:
@@ -153,9 +153,9 @@ def select_table(db, cursor, table, attribute, id):
 	results=cursor.fetchall()  
 	
 	if not results:
-		return results[0][0]
-	else:
 		return results
+	else:
+		return results[0][0]
 	
 	
 def select_function(db, cursor, host_id):
@@ -166,12 +166,12 @@ def select_function(db, cursor, host_id):
 	
 	list=[]
 	if not results:
+		return results
+	else:
+		
 		for each in results:
 			list.append(each[0])
 		return list
-	else:
-		return results
-		
 		
 def select_condition(db, cursor, table, attribute, condition, value):
 	if isinstance(value, (int)):
@@ -185,12 +185,12 @@ def select_condition(db, cursor, table, attribute, condition, value):
 	
 	list=[]
 	if not results:
+		return results
+	else:
+		
 		for each in results:
 			list.append(each[0])
 		return list
-	else:
-		return results
-		
 		
 def select_id(db, cursor, table):
 	sql="select " + m_table_key[table] + " from " + table
@@ -200,11 +200,11 @@ def select_id(db, cursor, table):
 	
 	list=[]
 	if not results:
+		return results
+	else:
 		for each in results:
 			list.append(each[0])
 		return list
-	else:
-		return results
 	
 if __name__ == "__main__":
 	db, cursor = connect_db()
