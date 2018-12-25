@@ -13,7 +13,7 @@ app = Flask(__name__)
 @app.route("/nfvcmd", methods=['POST'])
 def manage():
     if request.method == 'POST':
-        req_content = json.dumps(request.form)
+        req_content = json.loads(request.form)
         print(request.form)
 
         ret = central_unit.proc(req_content)
