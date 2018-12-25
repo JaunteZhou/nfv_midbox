@@ -33,5 +33,7 @@ def proc(para):
     # platform = para['platform']
     item = para['item']
     json_para = para['json']
+    print(type(json_para))
+    print(json_para)
     # TODO:
     return F_MAP[item][method](json_para)
