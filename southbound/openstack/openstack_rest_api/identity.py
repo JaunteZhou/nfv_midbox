@@ -3,7 +3,7 @@
 #identity.py
 import json
 import requests
-from . import openstack_config, CODE
+from openstack_rest_api import openstack_config, CODE
 
 def composeAuthPara(user_id, password, proj_id):
     para = {

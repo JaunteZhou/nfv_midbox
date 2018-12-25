@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #chain.py
-from nfv_midbox import flows
-from nfv_midbox.db import db_services
-from nfv_midbox.config import TYPE_DOCKER, TYPE_OPENSTACK
-from nfv_midbox.southbound.openstack.openstack_services import getVmInterfacesNameInDataPlane
+import flows
+from db import db_services
+from config import TYPE_DOCKER, TYPE_OPENSTACK
+from southbound.openstack.openstack_services import getVmInterfacesNameInDataPlane
 """
 para:
 {

@@ -326,7 +326,7 @@ if __name__ == '__main__':
     # print(ret)
 
 
-    delServerInstance("e728988d-2ff1-46e5-83dc-ea11dad2f86f")
+    # delServerInstance("e728988d-2ff1-46e5-83dc-ea11dad2f86f")
     # ret = ports.deletePort('5ddbf8e0-105b-4169-8ac5-2be6d362a083')
     # print("return of delete port: ", ret)
 
@@ -339,7 +339,7 @@ if __name__ == '__main__':
     # print(floating_ips.deleteFloatingIp("0f8cd16b-364c-44ca-ba80-c10e243b96f7"))
     # print(floating_ips.getFloatingIpsList())
 
-    # print (hypervisors.getHostsListDetails())
+    print (hypervisors.getHostsListDetails())
 
     # print (servers.getServersListDetails())
 
