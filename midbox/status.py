@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #showall.py
+import logging
+logger = logging.getLogger(__name__)
 
 import json
 import re
-import threading
+# import threading
 from midbox.db import db_services
 from midbox.southbound.docker import remote_ssh
 from midbox.southbound.openstack.openstack_rest_api.hypervisors import getHostsListDetails
@@ -43,6 +45,8 @@ res:
 port_traff={}
 
 def showAllStatus():
+    logger.debug('Start.')
+
     # res = {'containers':{},'VMs':{}}
     res = {}
     # db, cursor = db_services.connect_db()
@@ -66,6 +70,8 @@ def showAllStatus():
 
 
 def showContainerStatus(host_id):
+    logger.debug('Start.')
+
     db,cursor = db_services.connect_db()
     funcs_list = db_services.select_condition(db,cursor,'t_function','fe_id','host_id',host_id)
     ip = db_services.select_table(db,cursor,"t_host","ip",host_id)
@@ -120,6 +126,8 @@ def showContainerStatus(host_id):
 
 
 def showVmStatus(host_name):
+    logger.debug('Start.')
+
     # get vms info
     all_vms_info = getServersListDetails()
     res = {}
@@ -145,6 +153,8 @@ def __getTraffic(ip,pwd,cid):
     global port_traff
     port_traff[str(cid)] = rdata
     return rdata;
+
+
 if __name__=='__main__':
     showAllStatus()
     

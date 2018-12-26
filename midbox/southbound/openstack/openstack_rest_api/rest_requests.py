@@ -26,4 +26,4 @@ def put(url, body):
 
 def delete(url):
     r = requests.delete(url, headers=headers)
-    return r.status_code
+    return r.status_code, "End"

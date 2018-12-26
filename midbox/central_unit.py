@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #central_unit.py
+import logging
+logger = logging.getLogger(__name__)
 
 from midbox import chain, function, status
 
@@ -29,11 +31,12 @@ def proc(para):
         item：字符串，请求处理的元素，镜像、容器、虚拟机等等
         para：字典类型，输入参数
     """
+    logger.debug('Start.')
+
     method = para['method']
-    # platform = para['platform']
     item = para['item']
     json_para = para['json']
-    print(type(json_para))
-    print(json_para)
-    # TODO:
+
+    logger.debug((item, method, json_para))
+    
     return F_MAP[item][method](json_para)

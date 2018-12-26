@@ -3,7 +3,10 @@
 #identity.py
 import json
 import requests
-from midbox.southbound.openstack.openstack_rest_api import openstack_config, CODE
+import logging
+logger = logging.getLogger(__name__)
+
+from midbox.southbound.openstack.openstack_rest_api import openstack_config
 
 def composeAuthPara(user_id, password, proj_id):
     para = {
@@ -29,6 +32,7 @@ def composeAuthPara(user_id, password, proj_id):
     return json.dumps(para)
 
 def getToken():
+    logger.debug('Start.')
     para_json = composeAuthPara(
             openstack_config.user_id, 
             openstack_config.password,
@@ -41,8 +45,8 @@ def getToken():
             openstack_config.auth_token_url, 
             para_json, 
             headers=headers)
-    if r.status_code != CODE.CREATED_201:
-        # TODO: log
+    if r.status_code != requests.codes.created:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return ""
     return r.headers.get('X-Subject-Token')
 

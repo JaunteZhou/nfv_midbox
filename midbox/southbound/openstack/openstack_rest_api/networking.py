@@ -3,48 +3,56 @@
 #networking.py
 """This module provides a series of openstack networkding APIs"""
 import json
+import requests
+import logging
+logger = logging.getLogger(__name__)
 
-from midbox.southbound.openstack.openstack_rest_api import rest_requests, CODE
+from midbox.southbound.openstack.openstack_rest_api import rest_requests
 from midbox.southbound.openstack.openstack_rest_api.openstack_config import networks_url
 
 def getNetworksDetails(network_id):
     """Get details of Networks."""
+    logger.debug('Start.')
     code, res = rest_requests.get(networks_url + "/" + network_id)
-    if code != CODE.OK_200:
-        # TODO: log
+    if code != requests.codes.ok:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return None
     return res["network"]
 
 def getNetworksList():
     """Get list of Networks."""
+    logger.debug('Start.')
     code, res = rest_requests.get(networks_url)
-    if code != CODE.OK_200:
-        # TODO: log
+    if code != requests.codes.ok:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return None
     return res["networks"]
 
 def createNetwork(para_json):
     """Create a Network."""
+    logger.debug('Start.')
     code, res = rest_requests.post(networks_url, para_json)
-    if code != CODE.CREATED_201:
-        # TODO: log
+    if code != requests.codes.created:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         print (res)
         return None
     return res["network"]
 
 def updateNetwork(network_id, para_json):
     """Update a Network."""
+    logger.debug('Start.')
     code, res = rest_requests.put(networks_url + "/" + network_id, para_json)
-    if code != CODE.OK_200:
-        # TODO: log
+    if code != requests.codes.ok:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return None
     return res["network"]
 
 def deleteNetwork(id):
     """Delete a Network."""
+    logger.debug('Start.')
     code, res = rest_requests.delete(networks_url + "/" + id)
-    if code != CODE.NO_CONTENT_204:
-        # TODO: log
+    if code != requests.codes.no_content:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return False
     return True
 

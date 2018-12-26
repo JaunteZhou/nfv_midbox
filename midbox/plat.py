@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #plat.py
+import logging
+logger = logging.getLogger(__name__)
 
 from flask import Flask, request, jsonify
 import json
@@ -11,6 +13,8 @@ app = Flask(__name__)
 
 @app.route("/nfvcmd", methods=['POST'])
 def manage():
+    logger.debug('Start.')
+
     if request.method != 'POST':
         return jsonify({"res": "0"}), 400
     if not request.json:

@@ -3,9 +3,14 @@
 #main.py
 
 from log import log_init
-from midbox import plat
+log_init.log_init()
 
-from midbox.southbound import southbound_log
-southbound_log.test_log()
+# just for test
+# 只是测试使用，后续删除
+from midbox import _test_log
+_test_log.test_log()
 
-plat.app.run()
+# run main flask app
+# 运行主程序flask的app
+# from midbox import plat
+# plat.app.run()

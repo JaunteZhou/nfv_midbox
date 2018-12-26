@@ -6,7 +6,7 @@ from midbox.southbound.docker import remote_deploy, remote_clear
 from midbox.southbound.openstack import openstack_services
 from midbox.southbound.openstack.openstack_para import composeServerInstanceDictPara
 from midbox.db import db_services
-from midbox.config import TYPE_DOCKER, TYPE_OPENSTACK
+from midbox.midbox_config import TYPE_DOCKER, TYPE_OPENSTACK
 
 """
 para:
@@ -23,6 +23,8 @@ para:
 }
 """
 def setFunction(para):
+    logger.debug('Start.')
+
     db,cursor = db_services.connect_db()
     hostip = db_services.select_table(db,cursor,'t_host','ip',para['host_id'])
     if hostip == ():
@@ -70,6 +72,8 @@ para:
 }
 """
 def delFunction(para):
+    logger.debug('Start.')
+    
     db,cursor = db_services.connect_db()
     func_type = db_services.select_table(db, cursor, 't_function', 'type', para['func_id'])     # 增加了‘type’这一参数，请检查是否正确
     hostid=db_services.select_table(db,cursor,'t_function','host_id',para['func_id'])

@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #chain.py
+import logging
+logger = logging.getLogger(__name__)
+
 from midbox import flows
 from midbox.db import db_services
 from midbox.config import TYPE_DOCKER, TYPE_OPENSTACK
@@ -16,6 +19,7 @@ para:
 """
 # 返回值：返回值为tuple，包含一个指示执行结果的值（0成功，1失败）和字符串。
 def setChain(para):
+    logger.debug('Start.')
     # function ids
     ids = para["func_ids"]
     # match field
@@ -86,6 +90,7 @@ para:
 }
 """
 def delChain(chain_id):
+    logger.debug('Start.')
     db,cursor=db_services.connect_db()
     id_list=db_services.select_table(db,cursor,"t_flow","flow", chain_id)
     id_list=id_list.split('-')

@@ -3,25 +3,30 @@
 #simple_usage.py
 """This module provides a series of openstack compute APIs"""
 import json
+import requests
+import logging
+logger = logging.getLogger(__name__)
 
-import rest_requests, CODE
-from openstack_config import simple_usage_url
+from midbox.southbound.openstack.openstack_rest_api import rest_requests
+from midbox.southbound.openstack.openstack_rest_api.openstack_config import simple_usage_url
 
 def getAllSimpleTenantUsage(detailed=0):
-    """List Tenant Usage Statistics For All Tenants"""
+    """List Tenant Usage Statistics For All Tenants."""
+    logger.debug('Start.')
     # code, res = rest_requests.get(simple_usage_url + "?detailed=" + str(detailed))
     payload = {"detailed": detailed}
     code, res = rest_requests.get(simple_usage_url, payload)
-    if code != CODE.OK_200:
-        # TODO: log
+    if code != requests.codes.ok:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return None
     return res["tenant_usage"]
 
 def getSimpleTenantUsage(tenant_id):
-    """Get usage statistics of a tenant"""
+    """Get usage statistics of a tenant."""
+    logger.debug('Start.')
     code, res = rest_requests.get(simple_usage_url + "/" + tenant_id)
-    if code != CODE.OK_200:
-        # TODO: log
+    if code != requests.codes.ok:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return None
     return res["tenant_usage"]
 

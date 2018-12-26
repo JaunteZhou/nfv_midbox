@@ -12,7 +12,7 @@
 import time
 import re
 import sys
-from remote_ssh import *
+from midbox.southbound.docker.remote_ssh import *
 
 def container_clear(ip,password,containerid):
     exitstatus,rdata=remote_ssh(ip,password,'pid=$(docker inspect -f \'{{.State.Pid}}\' c'+containerid+') && echo $pid')

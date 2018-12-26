@@ -2,15 +2,19 @@
 # -*- coding: utf-8 -*-
 #volume.py
 import json
+import requests
+import logging
+logger = logging.getLogger(__name__)
 
-from midbox.southbound.openstack.openstack_rest_api import rest_requests, CODE
+from midbox.southbound.openstack.openstack_rest_api import rest_requests
 from midbox.southbound.openstack.openstack_rest_api.openstack_config import volumes_url
 
 def getVolumesList():
     """Get volumes list."""
+    logger.debug('Start.')
     code, res = rest_requests.get(volumes_url)
-    if code != CODE.OK_200:
-        # TODO: log
+    if code != requests.codes.ok:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return None
     vl = res["volumes"]
     for i in range(len(vl)):
@@ -19,9 +23,10 @@ def getVolumesList():
 
 def getVolumesDetail(volume_id):
     """Get volumes list with details."""
+    logger.debug('Start.')
     code, res = rest_requests.get(volumes_url + "detail/" + volume_id)
-    if code != CODE.OK_200:
-        # TODO: log
+    if code != requests.codes.ok:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return None
     vl = res["volume"]
     vl.pop("links")
@@ -29,9 +34,10 @@ def getVolumesDetail(volume_id):
 
 def getVolumesListDetails():
     """Get volumes list with details."""
+    logger.debug('Start.')
     code, res = rest_requests.get(volumes_url + "detail")
-    if code != CODE.OK_200:
-        # TODO: log
+    if code != requests.codes.ok:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return None
     vl = res["volumes"]
     for i in range(len(vl)):
@@ -40,6 +46,7 @@ def getVolumesListDetails():
 
 def createVolume(vol_size):
     """Create Volume by requested size of disk."""
+    logger.debug('Start.')
     para_dic = {
         "volume":{
             "size": vol_size
@@ -47,8 +54,8 @@ def createVolume(vol_size):
     }
     para_json = json.dumps(para_dic)
     code, res = rest_requests.post(volumes_url, para_json)
-    if code != CODE.ACCEPTED_202:
-        # TODO: log
+    if code != requests.codes.accepted:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return None
     vl = res["volume"]
     vl.pop("links")
@@ -56,9 +63,10 @@ def createVolume(vol_size):
 
 def deleteVolume(v_id):
     """Delete volume by id."""
-    code = rest_requests.delete(volumes_url + "/" + v_id)
-    if code != CODE.ACCEPTED_202:
-        # TODO: log
+    logger.debug('Start.')
+    code, res = rest_requests.delete(volumes_url + "/" + v_id)
+    if code != requests.codes.accepted:
+        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return False
     return True
 
