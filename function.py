@@ -46,17 +46,15 @@ def setFunction(para):
                 para["func_ip"], para["func_pwd"], para["cpu"], para["ram"],
                 TYPE_DOCKER, 0, 0)        
     elif para["func_type"] == "vm":
-        #TODO: get image_local_id
-
+        image_local_id = db_services.select_table(db, cursor, 't_image', 'image_local_id', para['image_id'])
         # get vm_id by host id, for specified host location
         same_host = openstack_services.getSameHostInstanceId(para['host_id'])
         # create vm in specified host
-        vm_para = composeServerInstanceDictPara(para['cpu'], para['ram'], para['disk'], para['image_id'], same_host)
+        vm_para = composeServerInstanceDictPara(para['cpu'], para['ram'], para['disk'], image_local_id, same_host)
         ret = openstack_services.addVm(vm_para)
         # TODO: 先确认是否新建，再修改数据库
 
         # add a record to db
-        #TODO: image_id / image_local_id
         db_services.insert_function(db, cursor, 
                 para["func_id"], para["image_id"], para["host_id"], ret['server_id'],
                 para["func_ip"], para["func_pwd"], para["cpu"], para["ram"],
