@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from midbox.southbound.openstack.openstack_rest_api import rest_requests
-from midbox.southbound.openstack.openstack_rest_api.openstack_config import images_url
+from midbox._config import images_url
 
 
 def getImagesList():

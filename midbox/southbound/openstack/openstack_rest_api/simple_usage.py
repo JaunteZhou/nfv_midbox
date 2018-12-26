@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from midbox.southbound.openstack.openstack_rest_api import rest_requests
-from midbox.southbound.openstack.openstack_rest_api.openstack_config import simple_usage_url
+from midbox._config import simple_usage_url
 
 def getAllSimpleTenantUsage(detailed=0):
     """List Tenant Usage Statistics For All Tenants."""

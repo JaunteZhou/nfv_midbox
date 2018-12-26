@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from midbox.southbound.openstack.openstack_rest_api import rest_requests
-from midbox.southbound.openstack.openstack_rest_api.openstack_config import servers_url
+from midbox._config import servers_url
 
 """
 The possible server status values are:

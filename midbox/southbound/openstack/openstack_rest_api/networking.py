@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from midbox.southbound.openstack.openstack_rest_api import rest_requests
-from midbox.southbound.openstack.openstack_rest_api.openstack_config import networks_url
+from midbox._config import networks_url
 
 def getNetworksDetails(network_id):
     """Get details of Networks."""

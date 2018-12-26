@@ -5,7 +5,7 @@
 import pymysql  
 import types
 
-from midbox.db.mysql_config import MYSQL_IP_ADDR, MYSQL_USER, MYSQL_PASSWD, MAIN_DB_NAME
+from midbox._config import MYSQL_IP_ADDR, MYSQL_USER, MYSQL_PASSWD, MAIN_DB_NAME
 
 def connect_db(): 
 	db=pymysql.connect(MYSQL_IP_ADDR, MYSQL_USER, MYSQL_PASSWD, MAIN_DB_NAME)

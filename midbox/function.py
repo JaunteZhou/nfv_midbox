@@ -6,7 +6,7 @@ from midbox.southbound.docker import remote_deploy, remote_clear
 from midbox.southbound.openstack import openstack_services
 from midbox.southbound.openstack.openstack_para import composeServerInstanceDictPara
 from midbox.db import db_services
-from midbox.midbox_config import TYPE_DOCKER, TYPE_OPENSTACK
+from midbox._config import TYPE_DOCKER, TYPE_OPENSTACK
 
 """
 para:

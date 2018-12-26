@@ -6,7 +6,7 @@ import logging
 import logging.handlers
 import datetime
 
-from log.log_config import debug_rotating_log_dir, error_log_dir
+from midbox._config import debug_rotating_log_dir, error_log_dir
 
 def log_init():
     logger = logging.getLogger('midbox')

@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 from midbox import flows
 from midbox.db import db_services
-from midbox.config import TYPE_DOCKER, TYPE_OPENSTACK
+from midbox._config import TYPE_DOCKER, TYPE_OPENSTACK
 from midbox.southbound.openstack.openstack_services import getVmInterfacesNameInDataPlane
 """
 para:

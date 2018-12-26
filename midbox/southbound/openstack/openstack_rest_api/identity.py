@@ -6,7 +6,7 @@ import requests
 import logging
 logger = logging.getLogger(__name__)
 
-from midbox.southbound.openstack.openstack_rest_api import openstack_config
+from midbox._config import user_id, password, tenant_id, auth_token_url
 
 def composeAuthPara(user_id, password, proj_id):
     para = {
@@ -33,18 +33,12 @@ def composeAuthPara(user_id, password, proj_id):
 
 def getToken():
     logger.debug('Start.')
-    para_json = composeAuthPara(
-            openstack_config.user_id, 
-            openstack_config.password,
-            openstack_config.tenant_id)
+    para_json = composeAuthPara(user_id, password, tenant_id)
     headers = {
         "Content-type": "application/json",
         "Accept": "application/json"
     }
-    r = requests.post(
-            openstack_config.auth_token_url, 
-            para_json, 
-            headers=headers)
+    r = requests.post(auth_token_url, para_json, headers=headers)
     if r.status_code != requests.codes.created:
         logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
         return ""

@@ -22,3 +22,8 @@ def test_log():
     local_logger.critical("This is a critical log.")
 
     # print(__name__)
+
+from midbox import _config_test
+print(_config_test.config1)
+print(_config_test.config2)
+print(_config_test.config3)

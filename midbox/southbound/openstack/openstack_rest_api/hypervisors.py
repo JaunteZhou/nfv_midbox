@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from midbox.southbound.openstack.openstack_rest_api import rest_requests
-from midbox.southbound.openstack.openstack_rest_api.openstack_config import hypervisors_url
+from midbox._config import hypervisors_url
 
 def getHostsList():
     """Get the list of hypervisors."""
