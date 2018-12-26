@@ -2,17 +2,12 @@
 # -*- coding: utf-8 -*-
 #_config.py
 
-# test config
-config1 = 1
-config2 = "2"
-config3 = [3,3,3]
-# ignore
 
 
 ##### log config #####
 debug_rotating_log_filename = 'all.log'
 error_log_filename          = 'error.log'
-base_dir                    = 'log'
+base_dir                    = 'logs'
 debug_rotating_log_dir      = base_dir + '/' + debug_rotating_log_filename
 error_log_dir               = base_dir + '/' + error_log_filename
 ##### log config end #####
