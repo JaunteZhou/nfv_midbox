@@ -4,7 +4,7 @@
 
 from midbox.southbound.openstack.openstack_rest_api import servers, flavor, image, networking, ports, volume, floating_ips, hypervisors
 from midbox.southbound.openstack.openstack_rest_api.openstack_config import public_net_id, private_net_id, data_flow_net_id, private_net_name, data_flow_net_name, SLEEP_SECONDS_IN_ATTACHING
-import openstack_para
+from midbox.southbound.openstack import openstack_para
 import time
 
 ########## Instance(Nova) ##########

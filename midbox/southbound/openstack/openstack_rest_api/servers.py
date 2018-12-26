@@ -4,7 +4,7 @@
 """This module provides a series of openstack compute APIs"""
 import json
 from midbox.southbound.openstack.openstack_rest_api import rest_requests, CODE
-from openstack_config import servers_url
+from midbox.southbound.openstack.openstack_rest_api.openstack_config import servers_url
 
 """
 The possible server status values are:

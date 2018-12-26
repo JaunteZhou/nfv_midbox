@@ -4,7 +4,7 @@
 import json
 import requests
 
-from identity import auth_token
+from midbox.southbound.openstack.openstack_rest_api.identity import auth_token
 
 headers = {
     "Content-type": "application/json",

@@ -3,8 +3,8 @@
 #volume.py
 import json
 
-import rest_requests, CODE
-from openstack_config import volumes_url
+from midbox.southbound.openstack.openstack_rest_api import rest_requests, CODE
+from midbox.southbound.openstack.openstack_rest_api.openstack_config import volumes_url
 
 def getVolumesList():
     """Get volumes list."""
