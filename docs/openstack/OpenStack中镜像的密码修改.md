@@ -1,0 +1,41 @@
+# OpenStack中镜像的密码修改
+
+### 2.2 ubuntu镜像
+
+ubuntu系统镜像的官方下载地址为：[http://cloud-images.ubuntu.com](http://cloud-images.ubuntu.com/)
+
+trusty为ubuntu 14，xenial为ubuntu 16，根据自己的喜好下载镜像。
+
+### 2.2.1 修改镜像
+
+使用guestfish工具直接修改镜像[1]，安装guestfish工具
+
+```
+sudo apt-get install libguestfs-tools -y
+```
+
+打开镜像：
+
+```
+sudo guestfish --rw -a xenial-server-cloudimg-amd64-disk1.img
+```
+
+挂载文件系统等操作如下图所示：
+
+![guestfish change passwd](https://i.imgur.com/TVe8pr4.jpg)
+
+打开`/etc/cloud/cloud.cfg`后修改一下内容：
+
+1）增加ssh密码登录
+
+将`disable_root`的值设为`false`即可允许root登录，增加`ssh_pwauth: true`即可允许ssh密码登录。
+
+![openstack-passwd2](https://i.imgur.com/Rzj5T7u.jpg)
+
+2）增加默认用户ubuntu的密码
+
+将`lock_passwd`设为`false`允许VNC终端密码登录，同时添加`plain_text_passwd: "ubuntu"`将默认用户的密码设为`ubuntu`。
+
+![openstack-passwd3](https://i.imgur.com/RLL7eEI.jpg)
+
+最后，建议在`/etc/issue`中加入配置的密码，方便后续的人查看默认用户密码。根据参看链接[2]还可以修改`/etc/passwd`的第一行`root:x:...`为`root::...`达到使用root用户的VNC免密登录，但是如果是ssh登录的话，需要在`/etc/ssh/sshd_config`中将`PermitEmptyPasswords no`设置为`PermitEmptyPasswords yes`。
