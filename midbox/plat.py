@@ -1,11 +1,11 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #plat.py
 
 from flask import Flask, request, jsonify
 import json
 
-import central_unit
+from midbox import central_unit
 
 app = Flask(__name__)
 

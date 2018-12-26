@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #log_init.py
 
@@ -13,7 +13,7 @@ logger.setLevel(logging.DEBUG)
 
 # set handler to file for all(debug) logs, and rotated at midnight
 # 设置针对所有(DEBUG级)日志信息的写入日志文件的handler，并且在每天午夜进行分割
-drf_handler = logging.handlers.TimedRotatingFileHandler(debug_rotating_log_dir, when='midnight', interval=1, backupCount=7, atTime=datetime.time(0, 0, 0, 0))
+drf_handler = logging.handlers.TimedRotatingFileHandler(debug_rotating_log_dir, when='midnight', interval=1, backupCount=7) #, atTime=datetime.time(0, 0, 0, 0))
 drf_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - [%(name)s] - %(message)s"))
 
 # set handler to file for error logs

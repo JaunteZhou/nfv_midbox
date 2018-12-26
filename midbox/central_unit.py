@@ -1,8 +1,8 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #central_unit.py
 
-import chain, function, status
+from midbox import chain, function, status
 
 F_MAP = {
     "STATUS":{

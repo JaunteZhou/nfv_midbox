@@ -1,22 +1,21 @@
 import logging
-import logging.handlers
-# my_logger = logging.getLogger('nfv_midbox.northbound')
-my_logger = logging.getLogger('nfv_midbox.'+__name__)
-# my_logger.setLevel(logging.INFO)
+
+local_logger = logging.getLogger(__name__)
+# local_logger.setLevel(logging.INFO)
 # f_handler = logging.FileHandler('log/error.log')
-# # my_logger.setLevel('INFO')
+# # local_logger.setLevel('INFO')
 # def _set_logger_level(str_level):
-#     my_logger.setLevel(str_level)
+#     local_logger.setLevel(str_level)
 
 # def logger_add_handler(handler_list):
 #     for handler in handler_list:
-#         my_logger.addHandler(handler)
+#         local_logger.addHandler(handler)
 
 def test_log():
-    my_logger.debug("This is a debug log.")
-    my_logger.info("This is a info log.")
-    my_logger.warning("This is a warning log.")
-    my_logger.error("This is a error log.")
-    my_logger.critical("This is a critical log.")
+    local_logger.debug("This is a debug log.")
+    local_logger.info("This is a info log.")
+    local_logger.warning("This is a warning log.")
+    local_logger.error("This is a error log.")
+    local_logger.critical("This is a critical log.")
 
     # print(__name__)

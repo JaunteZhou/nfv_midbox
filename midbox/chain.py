@@ -1,10 +1,10 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #chain.py
-import flows
-from db import db_services
-from config import TYPE_DOCKER, TYPE_OPENSTACK
-from southbound.openstack.openstack_services import getVmInterfacesNameInDataPlane
+from midbox import flows
+from midbox.db import db_services
+from midbox.config import TYPE_DOCKER, TYPE_OPENSTACK
+from midbox.southbound.openstack.openstack_services import getVmInterfacesNameInDataPlane
 """
 para:
 {

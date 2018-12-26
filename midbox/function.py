@@ -1,12 +1,12 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #function.py
 
-from southbound.docker import remote_deploy, remote_clear
-from southbound.openstack import openstack_services
-from southbound.openstack.openstack_para import composeServerInstanceDictPara
-from db import db_services
-from config import TYPE_DOCKER, TYPE_OPENSTACK
+from midbox.southbound.docker import remote_deploy, remote_clear
+from midbox.southbound.openstack import openstack_services
+from midbox.southbound.openstack.openstack_para import composeServerInstanceDictPara
+from midbox.db import db_services
+from midbox.config import TYPE_DOCKER, TYPE_OPENSTACK
 
 """
 para:

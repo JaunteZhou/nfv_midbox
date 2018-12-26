@@ -3,7 +3,7 @@
 #servers.py
 """This module provides a series of openstack compute APIs"""
 import json
-import rest_requests, CODE
+from midbox.southbound.openstack.openstack_rest_api import rest_requests, CODE
 from openstack_config import servers_url
 
 """

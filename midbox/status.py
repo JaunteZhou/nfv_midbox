@@ -1,14 +1,14 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #showall.py
 
 import json
 import re
 import threading
-from db import db_services
-from southbound.docker import remote_ssh
-from southbound.openstack.openstack_rest_api.hypervisors import getHostsListDetails
-from southbound.openstack.openstack_rest_api.servers import getServersListDetails
+from midbox.db import db_services
+from midbox.southbound.docker import remote_ssh
+from midbox.southbound.openstack.openstack_rest_api.hypervisors import getHostsListDetails
+from midbox.southbound.openstack.openstack_rest_api.servers import getServersListDetails
 
 #return a jsonified file including all NFs status;0 refers to successful execution.
 
