@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #Initialize.py
 
+# TODO: 分化处理？
 import pexpect
 mysql=pexpect.spawn('mysql -u root -p')
 mysql.sendline('123456')
