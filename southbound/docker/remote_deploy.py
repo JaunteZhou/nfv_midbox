@@ -8,6 +8,7 @@
 import time
 import re
 import sys
+import logging
 from remote_ssh import *
 
 #ip:host ip;password:host password; cpu:cpu percents the container used(can be over 100); mem:memory used by the container; 
@@ -16,6 +17,10 @@ from remote_ssh import *
 def container_deploy(ip,password,cpu,mem,image_name,containerid,cip='192.168.1.1/24'):
     cpu=str(int(int(cpu)*1000000/100))
     mem=str(mem)
+
+    logger=logging.getLogger(__name__)
+    #TODO:设置日志文件路径
+    handler=logging.FileHandler()
 
     args='docker run -d -m '+mem+'M -v /home/dockertest/:/data --cap-add=NET_ADMIN --cpu-period=1000000 --cpu-quota='+cpu+' --net=none --name c'+containerid+' '+image_name+' '
     exitstatus,rdata=remote_ssh(ip,password,args)
