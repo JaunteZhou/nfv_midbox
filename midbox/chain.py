@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 from midbox import flows
 from midbox.db import db_services
-from midbox._config import TYPE_DOCKER, TYPE_OPENSTACK
+from midbox._config import TYPE_DOCKER, TYPE_OPENSTACK,IN_PORT,OUT_PORT
 from midbox.southbound.openstack.openstack_services import getVmInterfacesNameInDataPlane
 """
 para:
@@ -20,6 +20,9 @@ para:
 #TODO:添加上层参数出错处理。（如match_field不合法：检查ovs返回信息，若为空则说明合法）
 # 返回值：返回值为tuple，包含一个指示执行结果的值（0成功，1失败）和字符串。
 def setChain(para):
+    #必须初始化这两个端口名为有效的名称
+    if IN_PORT=='default' or OUT_PORT=='default':
+        return [1,"Error: Physical port name has not been initialized"]
     logger.debug('Start.')
     # function ids
     ids = para["func_ids"]
@@ -50,13 +53,15 @@ def setChain(para):
     
     n = 0
     flag = 0
+    #list结尾附一个0，使得循环达到最后一个功能时n+1不会溢出
+    id_list.append('0')
     while 1:
-        __addRefCount(db,cursor,id_list[n])
-        bef = 0
-        aft = 0
         if n==len(id_list):
             aft = 0
             break
+        __addRefCount(db,cursor,id_list[n])
+        bef = 0
+        aft = 0        
         if flag == 0:
             bef = 0
             flag = 1
@@ -91,6 +96,9 @@ para:
 }
 """
 def delChain(chain_id):
+    #必须初始化这两个端口名为有效的名称
+    if IN_PORT=='default' or OUT_PORT=='default':
+        return [1,"Error: Physical port name has not been initialized"]
     logger.debug('Start.')
     db,cursor=db_services.connect_db()
     id_list=db_services.select_table(db,cursor,"t_flow","flow", chain_id)
@@ -114,7 +122,12 @@ def delChain(chain_id):
         else:
             return [1,"Error:Function don't have correct type"]
     
+    #同上
+    id_list.append('0')
     while 1:
+        if n==len(id_list):
+            aft=0
+            break
         err=__decRefCount(db,cursor,id_list[n])
         if err<0:
             return [1,"Error:over deleted"]
@@ -123,9 +136,7 @@ def delChain(chain_id):
         else:
             shutdownflag=0
         bef=0
-        if n==len(id_list):
-            aft=0
-            break
+        
         if flag==0:
             bef=0
             flag=1
