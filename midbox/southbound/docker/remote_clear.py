@@ -19,14 +19,14 @@ def container_clear(ip,password,containerid):
     logger=logging.getLogger(__name__)
 
     exitstatus,rdata=remote_ssh(ip,password,'pid=$(docker inspect -f \'{{.State.Pid}}\' c'+containerid+') && echo $pid')
-    logger.info(str(rdata,encoding='utf-8'));
+    logger.info(rdata);
     pid=str(rdata)
     pid=re.findall('\d+',pid)[0]
     print('PID:'+pid)
     exitstatus,rdata=remote_ssh(ip,password,'docker stop c'+containerid+' && docker rm c'+containerid+' && rm -rf /var/run/netns/$'+pid)
-    logger.info(str(rdata,encoding='utf-8'));
+    logger.info(rdata);
     exitstatus,rdata=remote_ssh(ip,password,'ovs-vsctl del-port sw1 br-c'+containerid+'-in && ovs-vsctl del-port sw1 br-c'+containerid+'-out')
-    logger.info(str(rdata,encoding='utf-8'));
+    logger.info(rdata);
     
     return 0
 

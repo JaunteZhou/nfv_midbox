@@ -18,6 +18,6 @@ def remote_ssh(ip,password,cmd,username='root'):
     except pexpect.TIMEOUT:
         print("TIMEOUT")
     exitcode=ssh.exitstatus
-    r=ssh.read()
+    r=ssh.read().decode()
     ssh.close()
     return exitcode, r

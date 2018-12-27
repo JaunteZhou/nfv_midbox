@@ -22,6 +22,7 @@ para:
    "disk":"<功能硬盘容量限制，这个项目对容器是无效的>"
 }
 """
+#TODO:添加上层参数的出错处理：如重复的func_id
 def setFunction(para):
     logger.debug('Start.')
 

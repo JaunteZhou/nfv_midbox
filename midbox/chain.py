@@ -17,6 +17,7 @@ para:
     "chain_id": "xxxxxxxx"
 }
 """
+#TODO:添加上层参数出错处理。（如match_field不合法：检查ovs返回信息，若为空则说明合法）
 # 返回值：返回值为tuple，包含一个指示执行结果的值（0成功，1失败）和字符串。
 def setChain(para):
     logger.debug('Start.')
