@@ -4,6 +4,12 @@
 
 
 
+##### physical port name config #####
+# physical port name should be the same on every host
+IN_PORT   ='default'
+OUT_PORT  ='default'
+##### physical port name config end #####
+
 ##### log config #####
 debug_rotating_log_filename = 'all.log'
 error_log_filename          = 'error.log'
