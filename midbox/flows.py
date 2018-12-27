@@ -18,18 +18,18 @@ def flowDeploy(ip,password,port_names,priority='1',match_field="",phy_in="ens7",
         match_field=','+match_field
     if port_names[0]!="phy":
         exit,rdata=remote_ssh(ip,password,"ovs-ofctl add-flow sw1 "+"priority="+priority+",in_port="+port_names[1]+match_field+",actions=output:"+port_names[2])  
-        logger.info(str(rdata,encoding='utf-8'));
+        logger.info(rdata);
     else:
         exit,rdata=remote_ssh(ip,password,"ovs-ofctl add-flow sw1 priority="+priority+",in_port="+phy_in+match_field+",actions=output:"+port_names[2])
-        logger.info(str(rdata,encoding='utf-8'));
+        logger.info(rdata);
     if port_names[4]=="phy":
         exit,rdata=remote_ssh(ip,password,"ovs-ofctl add-flow sw1 priority="+priority+",in_port="+port_names[3]+match_field+",actions=output:"+phy_out)
-        logger.info(str(rdata,encoding='utf-8'));
+        logger.info(rdata);
     else:
         exit,rdata=remote_ssh(ip,password,'ovs-ofctl add-flow sw1 priority='+priority+',in_port='+port_names[3]+match_field+',actions=output:'+port_names[4])
-        logger.info(str(rdata,encoding='utf-8'));
+        logger.info(rdata);
     exit,rdata=remote_ssh(ip,password,'ovs-ofctl add-flow sw1 in_port='+port_names[2]+',actions=drop && ifconfig '+port_names[2]+' up')
-    logger.info(str(rdata,encoding='utf-8'));
+    logger.info(rdata);
     return 0
 
 
@@ -43,15 +43,15 @@ def flowUndeploy(ip,password,port_names,shutdown_flag,match_field="",phy_in="ens
         match_field=','+match_field
     if shutdown_flag=="1":
         exit,rdata=remote_ssh(ip,password,'ifconfig '+port_names[2]+' down')
-        logger.info(str(rdata,encoding='utf-8'));
+        logger.info(rdata);
     if port_names[0]!="phy":
         exit,rdata=remote_ssh(ip,password,"ovs-ofctl del-flows sw1 "+"in_port="+port_names[1]+match_field)
-        logger.info(str(rdata,encoding='utf-8'));
+        logger.info(rdata);
     else:
         exit,rdata=remote_ssh(ip,password,"ovs-ofctl del-flows sw1 in_port="+phy_in+match_field)
-        logger.info(str(rdata,encoding='utf-8'));
+        logger.info(rdata);
     exit,rdata=remote_ssh(ip,password,"ovs-ofctl del-flows sw1 "+"in_port="+port_names[3]+match_field)
-    logger.info(str(rdata,encoding='utf-8'));
+    logger.info(rdata);
     
     return 0
 
