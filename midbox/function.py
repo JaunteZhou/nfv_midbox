@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #function.py
+import logging
+logger = logging.getLogger(__name__)
 
 from midbox.southbound.docker import remote_deploy, remote_clear
 from midbox.southbound.openstack import openstack_services
