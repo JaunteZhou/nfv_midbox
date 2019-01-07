@@ -92,7 +92,7 @@ def showContainerStatus(host_id):
     #回传的数据为字节流，需要解码为通常字符串数据进行正则匹配
     rdata = str(rdata,encoding = 'utf-8')
 
-    #由于容器名均以c开头，故pattern使用了c开头去掉第一行表头
+    #由于容器名均以c开头，故pattern使用了c开头去掉第一行表头，以及可能会有的仓库容器
     pat = '^c.*$'
     #获取全部行
     reg_result = re.findall(pat,rdata,re.M)

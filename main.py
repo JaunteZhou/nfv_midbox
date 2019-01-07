@@ -5,6 +5,7 @@
 # init log settings
 # 初始化log全局设置
 import log_init
+from midbox.southbound.docker import registry
 log_init.log_init()
 
 # just for test
@@ -15,4 +16,5 @@ log_init.log_init()
 # run main flask app
 # 运行主程序flask的app
 from midbox import plat
+registry.registry_start()
 plat.app.run()
