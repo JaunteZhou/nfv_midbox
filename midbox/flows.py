@@ -28,7 +28,9 @@ def flowDeploy(ip,password,port_names,priority='1',match_field="",phy_in="ens7",
     else:
         exit,rdata=remote_ssh(ip,password,'ovs-ofctl add-flow sw1 priority='+priority+',in_port='+port_names[3]+match_field+',actions=output:'+port_names[4])
         logger.info(rdata);
-    exit,rdata=remote_ssh(ip,password,'ovs-ofctl add-flow sw1 in_port='+port_names[2]+',actions=drop && ifconfig '+port_names[2]+' up')
+    #不再需要drop，只需保证OVS无NORMAL流表项即可，注释此行，确定无误后删除
+    #exit,rdata=remote_ssh(ip,password,'ovs-ofctl add-flow sw1 in_port='+port_names[2]+',actions=drop && ifconfig '+port_names[2]+' up')
+    exit,rdata=remote_ssh(ip,password,'ifconfig '+port_names[2]+' up')
     logger.info(rdata);
     return 0
 

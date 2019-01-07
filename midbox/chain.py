@@ -95,13 +95,16 @@ para:
     "chain_id": "xxxxxxx"
 }
 """
-def delChain(chain_id):
+def delChain(para):
     #必须初始化这两个端口名为有效的名称
     if IN_PORT=='default' or OUT_PORT=='default':
         return [1,"Error: Physical port name has not been initialized"]
     logger.debug('Start.')
+    #chain's id
+    chain_id=para['chain_id']
+
     db,cursor=db_services.connect_db()
-    id_list=db_services.select_table(db,cursor,"t_flow","flow", chain_id)
+    id_list=db_services.select_table(db,cursor,"t_flow","chain", chain_id)
     id_list=id_list.split('-')
     port_names_temp={0:("phy","phy")}
     

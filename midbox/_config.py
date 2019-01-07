@@ -3,6 +3,11 @@
 #_config.py
 
 
+##### docker registry config #####
+DOCKER_REGISTRY_IP = '10.1.1.7'
+DOCKER_REGISTRY_PORT = '5000'
+DOCKER_REGISTRY_WORK_DIRECTORY = '/home/nfv30/registry'
+##### docker registry config end #####
 
 ##### physical port name config #####
 # physical port name should be the same on every host
