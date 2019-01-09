@@ -44,11 +44,11 @@ TYPE_OPENSTACK  = 2
 ##### openstack config #####
 # user info
 user_name           = "admin"
-user_id             = "fddd028756464ddd853d66bb93eb5e60"
+user_id             = "7d32bb7313eb48c3b3a68c3f282f60f6"
 password            = "openstack"
 # project info, tenant is the same as project
 tenant_name         = "admin"  
-tenant_id           = "e922a17e84cc4b8e83a9ea441a650c0e"
+tenant_id           = "c7ceb2bff1584445aacbe9a401a87369"
 
 # openstack server ip
 service_ip          = "10.1.1.18"

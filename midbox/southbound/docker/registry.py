@@ -9,7 +9,7 @@ import midbox.db.db_services
 import logging
 
 def registry_start():
-    logger=getLogger(__name__)
+    logger=logging.getLogger(__name__)
     child=pexpect.spawn('docker run -d -p '+DOCKER_REGISTRY_PORT+':5000 --restart always -v '+DOCKER_REGISTRY_WORK_DIRECTORY+':/var/lib/registry --name myrepo registry ')
     exit=child.exitstatus
     rdata=child.read().decode()
