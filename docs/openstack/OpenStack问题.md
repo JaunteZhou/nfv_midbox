@@ -59,9 +59,7 @@ The directory '/opt/stack/.cache/pip' or its parent directory is not owned by th
 为'/opt/stack/.cache/pip'目录添加权限，最好再修改所属用户
 
 ```shell
-$ cd /opt/stack/
-$ sudo chown -R stack .cache
-$ sudo chmod 770 -R .cache
+$ sudo chown -R stack:stack /opt/stack/
 ```
 
 ### 问题3 [ env: ‘/opt/stack/requirements/.venv/bin/pip’: No such file or directory ]
@@ -81,7 +79,7 @@ env: ‘/opt/stack/requirements/.venv/bin/pip’: No such file or directory
 之后在stack用户下：
 
 ```shell
-$ virtualenv ../requirements/.venv/
+/opt/stack/devstack $ virtualenv ../requirements/.venv/
 ```
 
 #### 三、参考资料
