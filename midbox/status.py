@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 import json
 import re
-# import threading
+import threading
 from midbox.db import db_services
 from midbox.southbound.docker import remote_ssh
 from midbox.southbound.openstack.openstack_rest_api.hypervisors import getHostsListDetails
@@ -42,6 +42,7 @@ res:
 }
 """    
 #容器端口-流量映射字典 用于在线程执行函数与showContainerStatus之间传递端口流量值
+#port_traff:dict
 port_traff={}
 
 def showAllStatus():
@@ -78,7 +79,7 @@ def showContainerStatus(host_id):
     pwd = db_services.select_table(db,cursor,"t_host","pwd",host_id)
     
     #启动多线程获得每个容器的对应端口流量
-    #线程list
+    #thread_list:dict
     thread_list={}
 
     for id_iter in funcs_list:
@@ -147,9 +148,7 @@ def showVmStatus(host_name):
     return res
 
 def __getTraffic(ip,pwd,cid):
-    #TODO:具体执行命令待补完，不影响运行
     exitstatus,rdata = remote_ssh.remote_ssh(ip,pwd,'bash /gettraffic.sh br-c'+cid+'-in')
-    rdata = str(rdata,encoding = 'utf-8')
     global port_traff
     port_traff[str(cid)] = rdata
     return rdata;
