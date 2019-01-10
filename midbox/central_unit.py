@@ -33,8 +33,8 @@ def proc(para):
     """
     logger.debug('Start.')
 
-    method = para['method']
     item = para['item']
+    method = para['method']
     json_para = para['json']
 
     logger.debug((item, method, json_para))

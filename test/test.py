@@ -1,33 +1,113 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#showall.py
+#test.py
+import json
+import requests
 
-import pexpect
-
-jsonContent={'DeployFunction':
-             ['{"method":"POST","item":"FUNCTION","json":{"func_type":"container","func_id":"1","host_id":"1","image_id":"1","func_ip":"10.2.7.230/24","func_pwd":"123456","cpu":"20","mem":"128","disk":"0"}}',
-              '{"method":"POST","item":"FUNCTION","json":{"func_type":"container","func_id":"2","host_id":"1","image_id":"2","func_ip":"10.2.7.231/24","func_pwd":"123456","cpu":"20","mem":"128","disk":"0"}}',
-              '{"method":"POST","item":"FUNCTION","json":{"func_type":"container","func_id":"3","host_id":"2","image_id":"3","func_ip":"10.2.7.232/24","func_pwd":"123456","cpu":"20","mem":"128","disk":"0"}}',
-
-             ],
-             'DeleteFunction':
-             ['{"method":"DELETE","item":"FUNCTION","json":{"func_id":"2"}}',
-
-             ],
-             'DeployChain':
-             ['{"method":}'
-             ]
+jsonContent=[
+    # DeployFunction
+    [
+        {
+            "item":"FUNCTION",
+            "method":"POST",
+            "json":{
+                "func_type":"container","func_id":"1",
+                "host_id":"1","image_id":"1",
+                "func_ip":"10.2.7.230/24","func_pwd":"123456",
+                "cpu":"20","ram":"128","disk":"0"
             }
+        },
+        {
+            "item":"FUNCTION",
+            "method":"POST",
+            "json":{
+                "func_type":"container","func_id":"2",
+                "host_id":"1","image_id":"2",
+                "func_ip":"10.2.7.231/24","func_pwd":"123456",
+                "cpu":"20","ram":"128","disk":"0"
+            }
+        },
+        {
+            "item":"FUNCTION",
+            "method":"POST",
+            "json":{
+                "func_type":"container","func_id":"3",
+                "host_id":"2","image_id":"3",
+                "func_ip":"10.2.7.232/24","func_pwd":"123456",
+                "cpu":"20","ram":"128","disk":"0"
+            }
+        }
+    ],
+    # DeleteFunction
+    [
+        {
+            "item":"FUNCTION",
+            "method":"DELETE",
+            "json":{"func_id":"2"}
+        }
+    ],
+    # DeployChain
+    # TODO
+    [
+        {
+            "item":"CHAIN",
+            "method":"POST",
+            "json":{
+                "func_ids": "xxxxxxxx-yyyyyyyy-zzzzzzzzz",
+                "match_field": "",
+                "priority": 10,
+                "chain_id": "xxxxxxxx"
+            }
+        }
+    ],
+    # DeleteChain
+    [
+        {
+            "item":"CHAIN",
+            "method":"DELETE",
+            "json":{"chain_id": "1"}
+        }
+    ],
+    # ShowStatus
+    [
+        {
+            "item":"STATUS",
+            "method":"GET",
+            "json":{"":""}
+        }
+    ]
+]
+
+headers = {
+    "Content-type": "application/json",
+    "Accept": "application/json"
+}
+
+url = 'http://127.0.0.1:5000/nfvcmd'
 
 while True:
-    testItem=input("Input the test item(DeployFunction/DeleteFunction/DeployChain/DeleteChain/ShowStatus/0 for exit):")
-    if testItem=='0':
+    print("List of Test Items :")
+    print("0: EXIT")
+    print("1: DeployFunction")
+    print("2: DeleteFunction")
+    print("3: DeployChain")
+    print("4: DeleteChain")
+    print("5: ShowStatus")
+    test_num=input("Input number of test item :")
+    test_num=int(test_num)
+
+    if test_num == 0:
         break
-    commonPrefix='curl http://127.0.0.1:5000/nfvcmd  -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '
-    for item in jsonContent[testItem]:
-        cmd='\''+item+'\''
-        child=pexpect.spawn(commonPrefix+cmd)
-        print(child.read())
-        child.close()
+    elif test_num > 5:
+        print("Error Input !")
+        continue
+    test_num -= 1
+
+    for dic_item in jsonContent[test_num]:
+        body = json.dumps(dic_item)
+        print(body)
+        r = requests.post(url, body, headers=headers)
+        print("Code: ", r.status_code)
+        print("Res : ", r.json())
 
         

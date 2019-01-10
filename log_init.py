@@ -15,14 +15,17 @@ def log_init():
     # set handler to file for all(debug) logs, and rotated at midnight
     # 设置针对所有(DEBUG级)日志信息的写入日志文件的handler，并且在每天午夜进行分割
     # 建议调试时使用，正式上线后取消，或设置级别INFO
-    drf_handler = logging.handlers.TimedRotatingFileHandler(debug_rotating_log_dir, when='midnight', interval=1, backupCount=7) #, atTime=datetime.time(0, 0, 0, 0))
-    drf_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - [%(name)s:%(funcName)s] - %(message)s"))
+    drf_handler = logging.handlers.TimedRotatingFileHandler(
+            debug_rotating_log_dir, when='midnight', interval=1, backupCount=7) #, atTime=datetime.time(0, 0, 0, 0))
+    drf_handler.setFormatter(logging.Formatter(
+            "%(asctime)s - %(levelname)s - [%(name)s:%(funcName)s] - %(message)s"))
 
     # set handler to file for error logs
     # 设置针对ERROR级别及以上的日志信息的写入日志文件的handler
     ef_handler = logging.FileHandler(error_log_dir)
     ef_handler.setLevel(logging.ERROR)
-    ef_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - [%(name)s:%(funcName)s:%(lineno)d] - %(message)s"))
+    ef_handler.setFormatter(logging.Formatter(
+            "%(asctime)s - %(levelname)s - [%(name)s:%(funcName)s:%(lineno)d] - %(message)s"))
 
     # add handlers to logger
     logger.addHandler(drf_handler)
