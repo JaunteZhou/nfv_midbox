@@ -45,7 +45,8 @@ res:
 #port_traff:dict
 port_traff={}
 
-def showAllStatus():
+#para:不会使用的参数，仅作为统一传参格式
+def showAllStatus(para):
     logger.debug('Start.')
 
     # res = {'containers':{},'VMs':{}}

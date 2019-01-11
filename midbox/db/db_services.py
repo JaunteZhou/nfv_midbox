@@ -156,8 +156,8 @@ def select_table(db, cursor, table, attribute, id):
 	cursor.execute(sql)  
 	results=cursor.fetchall()  
 	
-	if not results:
-		return results
+	if len(results)==0:
+		return None
 	else:
 		return results[0][0]
 	

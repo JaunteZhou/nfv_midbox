@@ -56,7 +56,7 @@ def setChain(para):
     #list结尾附一个0，使得循环达到最后一个功能时n+1不会溢出
     id_list.append('0')
     while 1:
-        if n==len(id_list):
+        if n==len(id_list)-1:
             aft = 0
             break
         __addRefCount(db,cursor,id_list[n])
@@ -81,7 +81,7 @@ def setChain(para):
             port_names_temp[aft][0],port_names_temp[aft][1]]
                 
         flows.flowDeploy(ip,password,port_names,\
-            str(priority),matchfield)
+            str(priority),matchfield,IN_PORT,OUT_PORT)
         n=n+1
     db_services.insert_flow(db,cursor,id,ids,matchfield)
     db_services.close_db(db,cursor)
@@ -128,7 +128,7 @@ def delChain(para):
     #同上
     id_list.append('0')
     while 1:
-        if n==len(id_list):
+        if n==len(id_list)-1:
             aft=0
             break
         err=__decRefCount(db,cursor,id_list[n])
@@ -153,7 +153,7 @@ def delChain(para):
         port_names=[port_names_temp[bef][0],port_names_temp[bef][1],\
             port_names_temp[id_list[n]][0],port_names_temp[id_list[n]][1]]
         
-        flows.flowUndeploy(ip,password,port_names,str(shutdownflag),matchfield)
+        flows.flowUndeploy(ip,password,port_names,str(shutdownflag),matchfield,IN_PORT)
         n=n+1
     db_services.delete_table(db,cursor,"t_flow", chain_id)
     db_services.close_db(db,cursor)

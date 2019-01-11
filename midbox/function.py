@@ -87,7 +87,7 @@ def delFunction(para):
     if func_type == TYPE_DOCKER:
         hostid=db_services.select_table(db,cursor,'t_function','host_id',para['func_id'])
         hostip = db_services.select_table(db, cursor, 't_host', 'ip', hostid)
-        if hostip == ():
+        if len(hostip) == 0:
             return [1,"Error: Host doesn't exist."]
         hostpwd = db_services.select_table(db,cursor,'t_host','pwd',hostid)
 
