@@ -28,7 +28,7 @@ error_log_dir               = base_dir + '/' + error_log_filename
 ##### db config ######
 MYSQL_IP_ADDR   = 'localhost'
 MYSQL_USER      = 'root'
-MYSQL_PASSWD    = '123456'
+MYSQL_PASSWD    = 'openstack'
 MAIN_DB_NAME    = 'db_nfv'
 DB_SOURCE_SQL   = '/home/nfv30/nfv_midbox/midbox/db/nfvlab.sql'
 ##### db config end #####
