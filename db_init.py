@@ -61,8 +61,8 @@ if create==0:
 
 		for i in map_images.keys():
 			cmd = 'INSERT INTO t_image (image_id, image_local_id, func, type) VALUES ('\
-					+ map_images[i]['id'] + ',' + map_images[i]['local_id'] + ','\
-					+ map_images[i]['func_name'] + ',' + map_images[i]['type'] + ');'
+					+ str(map_images[i]['id']) + ',' + map_images[i]['local_id'] + ','\
+					+ map_images[i]['func_name'] + ',' + str(map_images[i]['type']) + ');'
 			mysql.sendline(cmd)
 			inserted = mysql.expect(['OK','ERROR',])
 			if inserted==1:
