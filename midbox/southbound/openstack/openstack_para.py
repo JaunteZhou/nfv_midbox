@@ -32,9 +32,8 @@ def makePortsNameListInOVS(port_id_list):
 
 ########## Para ##########
 ### Server ###
-def composeServerParaWithSameHost(
+def composeServerPara(
         name, image_ref, flavor_ref, nets, same_host):
-        #port_1, port_2, port_3):
     """Compose JSON Param of Server Creatation."""
     para = {
         "server":{
@@ -42,25 +41,26 @@ def composeServerParaWithSameHost(
             "imageRef": image_ref,
             "flavorRef": flavor_ref,
             "networks": nets
-        },
-        "OS-SCH-HNT:scheduler_hints": {
+        }
+    }
+    if same_host != None:
+        para["OS-SCH-HNT:scheduler_hints"] = {
             "same_host": same_host
         }
-    }
     return json.dumps(para)
 
-def composeServerPara(
-        name, image_ref, flavor_ref, nets):
-    """Compose JSON Param of Server Creatation."""
-    para = {
-        "server":{
-            "name": name,
-            "imageRef": image_ref,
-            "flavorRef": flavor_ref,
-            "networks": nets
-        }
-    }
-    return json.dumps(para)
+# def composeServerPara(
+#         name, image_ref, flavor_ref, nets):
+#     """Compose JSON Param of Server Creatation."""
+#     para = {
+#         "server":{
+#             "name": name,
+#             "imageRef": image_ref,
+#             "flavorRef": flavor_ref,
+#             "networks": nets
+#         }
+#     }
+#     return json.dumps(para)
 
 def composeFlavorPara(id, name, vcpus, ram, disk):
     """Compose Param for Flavor Creatation."""

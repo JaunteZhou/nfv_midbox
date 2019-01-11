@@ -157,5 +157,3 @@ def __getTraffic(ip,pwd,cid):
 
 if __name__=='__main__':
     showAllStatus()
-    
-

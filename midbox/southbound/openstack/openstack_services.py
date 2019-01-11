@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from midbox.southbound.openstack.openstack_rest_api import servers, flavor, image, networking, ports, volume, floating_ips, hypervisors
-from midbox._config import public_net_id, private_net_id, data_flow_net_id, private_net_name, data_flow_net_name, SLEEP_SECONDS_IN_ATTACHING
+from midbox._config import private_net_id, private_net_name, data_in_net_id, data_in_net_name, data_out_net_id, data_out_net_name, SLEEP_SECONDS_IN_ATTACHING
 from midbox.southbound.openstack import openstack_para
 import time
 
@@ -16,34 +16,43 @@ def addServerInstance(vcpus, ram, disk, image_id, host_id):
     f_id = addFlavor(vcpus, ram, disk)
     if f_id == -1:
         logger.error("Add or Get Flavor.")
-        return -1
+        return None
 
-    same_host = getSameHostInstanceId(host_id)
+    same_host = getAnyInstanceIdInSameHost(host_id)
     # server
-    if same_host == None:
-        para_json = openstack_para.composeServerPara(
-                openstack_para.makeServerName(),
-                image_id,
-                f_id,
-                [{"uuid":private_net_id}])
-    else:
-        para_json = openstack_para.composeServerParaWithSameHost(
-                openstack_para.makeServerName(),
-                image_id,
-                f_id,
-                [{"uuid":private_net_id}],
-                same_host)
+    # if same_host == None:
+    #     para_json = openstack_para.composeServerPara(
+    #             openstack_para.makeServerName(),
+    #             image_id,
+    #             f_id,
+    #             [
+    #                 {"uuid":private_net_id},
+    #                 {"uuid":data_in_net_id},
+    #                 {"uuid":data_out_net_id}
+    #             ])
+    # else:
+    para_json = openstack_para.composeServerParaWithSameHost(
+            openstack_para.makeServerName(),
+            image_id,
+            f_id,
+            [
+                {"uuid":private_net_id},
+                {"uuid":data_in_net_id},
+                {"uuid":data_out_net_id}
+            ],
+            same_host)
+
     s_ret = servers.createServer(para_json)
     if s_ret == -1:
         logger.error("Create New Server.")
-        return -1
+        return None
     s_id = s_ret["id"]
 
     # create Volume and get Volume ID
     v_ret = volume.createVolume(disk)
     if v_ret == None:
         logger.error("Create Volume.")
-        return -1
+        return None
     v_id = v_ret["id"]
 
     return {"serverId": s_id, "volumeId": v_id}
@@ -59,25 +68,25 @@ def delServerInstance(s_id, vol_clear=True):
         logger.debug(("server id: ", vol_list[i]["serverId"]))
         logger.debug(("volume id: ", vol_list[i]["volumeId"]))
         ret = servers.detachVolume(vol_list[i]["serverId"], vol_list[i]["volumeId"])
-        logger.debug(("Return of Detach Volume: ", ret))
         if ret != True:
+            logger.error(("Detach Volume: ", ret))
             err_list.append({vol_list[i]["volumeId"]: ret})
-
+        logger.debug(("Detach Volume: ", ret))
     # delete floating ip
-    logger.debug("delete floating ip")
-    floating_id = ""
-    ports_id_list = getServerInterfacesIdByNet(s_id, private_net_name)
-    logger.debug(("ports_id_list: ", ports_id_list))
-    floating_ips_list = floating_ips.getFloatingIpsList()
-    logger.debug(("floating_ips_list: ", floating_ips_list))
-    for f_ip in floating_ips_list:
-        if f_ip["port_id"] in ports_id_list:
-            floating_id = f_ip["id"]
-            break
-    if floating_id != "":
-        floating_ips.deleteFloatingIp(floating_id)
+    # logger.debug("delete floating ip")
+    # floating_id = ""
+    # ports_id_list = getServerInterfacesIdByNetName(s_id, private_net_name)
+    # logger.debug(("ports_id_list: ", ports_id_list))
+    # floating_ips_list = floating_ips.getFloatingIpsList()
+    # logger.debug(("floating_ips_list: ", floating_ips_list))
+    # for f_ip in floating_ips_list:
+    #     if f_ip["port_id"] in ports_id_list:
+    #         floating_id = f_ip["id"]
+    #         break
+    # if floating_id != "":
+    #     floating_ips.deleteFloatingIp(floating_id)
 
-    # save ports list
+    # get ports list
     logger.debug("get server interfaces list")
     ports_list = getAllServerInterfaces(s_id)
     logger.debug(("ports_list: ", ports_list))
@@ -85,8 +94,10 @@ def delServerInstance(s_id, vol_clear=True):
     # delete server
     logger.debug("delete server")
     ret = servers.deleteServer(s_id)
-    logger.debug(("return of delete Server: ", ret))
-    RuntimeWarning# delete all volumes
+    logger.debug(("Delete Server: ", ret))
+    #RuntimeWarning
+    
+    # delete all volumes
     if vol_clear == True:
         logger.debug("Start Clear Volume !")
 
@@ -102,6 +113,9 @@ def delServerInstance(s_id, vol_clear=True):
     for port in ports_list:
         ret = ports.deletePort(port)
         logger.debug(("return of delete port: ", ret))
+
+    if len(err_list) != 0:
+        return False
 
     return True
 
@@ -156,19 +170,20 @@ def addFlavor(vcpus, ram, disk):
     if code == 200:
         return f_id
     else:
-        # TODO: log
+        logger.error("Create Flavor.")
         return -1
 
 
 ########## Networking(Neutron) ##########
-def getNetworkIdByName(name):
+def getNetIdByNetName(net_name):
     logger.debug('Start.')
     nets = networking.getNetworksList()
     for n in nets:
-        if n["name"] == name:
+        if n["name"] == net_name:
             return n["id"]
+    return None
 
-def getServerInterfacesIdByNet(s_id, net_name):
+def getServerInterfacesIdByNetName(s_id, net_name):
     logger.debug('Start.')
     server_detail = servers.getServerDetail(s_id)
     # get mac address list from server details
@@ -201,27 +216,27 @@ def getAllServerInterfaces(s_id):
             ports_id_list.append(port["id"])
     return list(set(ports_id_list))
 
-def createDoublePorts(net_name=data_flow_net_name, net_id=""):
-    logger.debug('Start.')
-    net_id = getNetworkIdByName(net_name)
-    return createNPorts(2, net_id)
+# def createDoublePorts(net_name=data_flow_net_name, net_id=""):
+#     logger.debug('Start.')
+#     net_id = getNetIdByNetName(net_name)
+#     return createNPorts(2, net_id)
 
-def createNPorts(n, net_id):
-    logger.debug('Start.')
-    ports_list = []
-    for i in range(n):
-        para_json = openstack_para.composePortPara(network_id=net_id)
-        port = ports.createPort(para_json)
-        if port == None:
-            logger.error("Creating " + str(i+1) + "th Port in " + str(n) + " Ports.")
-            for pi in ports_list:
-                ports.deletePort(pi)
-            return None
-        ports_list.append(port["id"])
-    return ports_list
+# def createNPorts(n, net_id):
+#     logger.debug('Start.')
+#     ports_list = []
+#     for i in range(n):
+#         para_json = openstack_para.composePortPara(network_id=net_id)
+#         port = ports.createPort(para_json)
+#         if port == None:
+#             logger.error("Creating " + str(i+1) + "th Port in " + str(n) + " Ports.")
+#             for pi in ports_list:
+#                 ports.deletePort(pi)
+#             return None
+#         ports_list.append(port["id"])
+#     return ports_list
 
 
-def getSameHostInstanceId(host_id):
+def getAnyInstanceIdInSameHost(host_id):
     logger.debug('Start.')
     host_list = hypervisors.getHostsList()
     host_name = ''
@@ -238,19 +253,25 @@ def getSameHostInstanceId(host_id):
     return None
 
 
-def getVmInterfacesNameInDataPlane(server_id):
+def getVmDataInAndOutPortsName(s_id):
     logger.debug('Start.')
-    ports_id_list = getServerInterfacesIdByNet(server_id, private_net_name)
-    port_name_list_in_ovs = []
-    for port_id in ports_id_list:
-        port_name_list_in_ovs.append(
-                openstack_para.makePortNameInOvsById(port_id))
-    return port_name_list_in_ovs
+    ports_name_list = []
+    # TODO:重要！！！进出端口排列问题！！！
+    # port getting data into vm 
+    in_port_id = getServerInterfacesIdByNetName(s_id, data_in_net_name)
+    ports_name_list.append(
+                openstack_para.makePortNameInOvsById(in_port_id))
+    # port throwing data out of vm
+    out_port_id = getServerInterfacesIdByNetName(s_id, data_out_net_name)
+    ports_name_list.append(
+                openstack_para.makePortNameInOvsById(out_port_id))
+        
+    return ports_name_list
 
 ########## SFC ##########
-def addVm(para):
+def addVm(vcpus, ram, disk, image_id, host_id):
     logger.debug('Start.')
-    ret = addVmsList([para])
+    ret = addServerInstance(vcpus, ram, disk, image_id, host_id)
     # TODO: 错误处理
     return ret[0]
 
@@ -281,7 +302,6 @@ def addVmsList(para_list=[]):
                 para["disk"],
                 para["image_id"],
                 para["host_id"])
-        # logger.debug(sv)
         if sv == -1:
             logger.error("Add Server Instance.")
             continue
@@ -289,6 +309,7 @@ def addVmsList(para_list=[]):
         para["volume_id"] = sv["volumeId"]
         sv_list.append(sv)
 
+    # attaching servers to volumes by list
     tmp = attachingServerVolumeList(sv_list)
     while len(tmp):
         for sv_pair in tmp:
@@ -298,28 +319,28 @@ def addVmsList(para_list=[]):
         if len(tmp) != 0:
             time.sleep(SLEEP_SECONDS_IN_ATTACHING)
 
-    # set floating ip to port in private_net
-    for para in para_list:
-        s_id = para["server_id"]
-        port_list = getServerInterfacesIdByNet(s_id, private_net_name)
-        if len(port_list) != 1:
-            logger.error("Find Server Port.")
-            continue
-        p_id = port_list[0]
-        floatingip_para = openstack_para.composeFloatingIpPara(p_id, public_net_id)
-        floatingip_ret = floating_ips.createFloatingIp(floatingip_para)
-        if floatingip_ret == -1:
-            logger.error("Set Floating IP.")
-            continue
-        para["ip_address"] = floatingip_ret["floating_ip_address"]
+    # # set floating ip to port in private_net
+    # for para in para_list:
+    #     s_id = para["server_id"]
+    #     port_list = getServerInterfacesIdByNetName(s_id, private_net_name)
+    #     if len(port_list) != 1:
+    #         logger.error("Find Server Port.")
+    #         continue
+    #     p_id = port_list[0]
+    #     floatingip_para = openstack_para.composeFloatingIpPara(p_id, )
+    #     floatingip_ret = floating_ips.createFloatingIp(floatingip_para)
+    #     if floatingip_ret == -1:
+    #         logger.error("Set Floating IP.")
+    #         continue
+    #     para["ip_address"] = floatingip_ret["floating_ip_address"]
 
-    # create 2N ports and attach them to server
-    ports_list = createNPorts(len(para_list)*2, getNetworkIdByName(data_flow_net_name))
+    # # create 2N ports and attach them to server
+    # ports_list = createNPorts(len(para_list)*2, getNetIdByNetName(data_flow_net_name))
     
-    logger.debug(ports_list)
-    ports_2_list = attachingServerPortList(sv_list, ports_list)
-    logger.debug(ports_list)
-    attachingServerPortList(sv_list, ports_2_list)
+    # logger.debug(ports_list)
+    # ports_2_list = attachingServerPortList(sv_list, ports_list)
+    # logger.debug(ports_list)
+    # attachingServerPortList(sv_list, ports_2_list)
 
     return para_list
 

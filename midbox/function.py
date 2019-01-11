@@ -27,15 +27,14 @@ para:
 #TODO:添加上层参数的出错处理：如重复的func_id
 def setFunction(para):
     logger.debug('Start.')
-
     db,cursor = db_services.connect_db()
-    hostip = db_services.select_table(db,cursor,'t_host','ip',para['host_id'])
-    if hostip == ():
-        #空tuple表示未查询到对应条目
-        return [1,"Error: Host doesn't exist."]
-    hostpwd = db_services.select_table(db,cursor,'t_host','pwd',para['host_id'])
-    
+
     if para["func_type"] == "container":
+        hostip = db_services.select_table(db,cursor,'t_host','ip',para['host_id'])
+        if hostip == ():
+            #空tuple表示未查询到对应条目
+            return [1,"Error: Host doesn't exist."]
+        hostpwd = db_services.select_table(db,cursor,'t_host','pwd',para['host_id'])
         # get image name by image id from db
         imagename = db_services.select_table(db, cursor,
                 't_image', 'func', para['image_id'])
@@ -49,21 +48,22 @@ def setFunction(para):
         db_services.insert_function(db, cursor, 
                 para["func_id"], para["image_id"], para["host_id"],0,
                 para["func_ip"], para["func_pwd"], para["cpu"], para["ram"],
-                TYPE_DOCKER, 0, 0)        
+                TYPE_DOCKER, 0, 0)
     elif para["func_type"] == "vm":
         image_local_id = db_services.select_table(db, cursor, 't_image', 'image_local_id', para['image_id'])
-        # get vm_id by host id, for specified host location
-        same_host = openstack_services.getSameHostInstanceId(para['host_id'])
         # create vm in specified host
-        vm_para = composeServerInstanceDictPara(para['cpu'], para['ram'], para['disk'], image_local_id, same_host)
-        ret = openstack_services.addVm(vm_para)
-        # TODO: 先确认是否新建，再修改数据库
+        ret = openstack_services.addVm(para['cpu'], para['ram'], para['disk'], image_local_id, para['host_id'])
+        if ret == None:
+            logger.error("Set VM Function")
+            return [1,"Error: Set Function Failed."]
+        # TODO: 端口连接问题
 
         # add a record to db
         db_services.insert_function(db, cursor, 
                 para["func_id"], para["image_id"], para["host_id"], ret['server_id'],
                 para["func_ip"], para["func_pwd"], para["cpu"], para["ram"],
                 TYPE_OPENSTACK, para['disk'], 0)
+
     db_services.close_db(db,cursor)
     return [0,"Function Created Succesfully! IP:"+para['func_ip']]
 
@@ -76,16 +76,16 @@ para:
 """
 def delFunction(para):
     logger.debug('Start.')
-    
     db,cursor = db_services.connect_db()
-    func_type = db_services.select_table(db, cursor, 't_function', 'type', para['func_id'])     # 增加了‘type’这一参数，请检查是否正确
-    hostid=db_services.select_table(db,cursor,'t_function','host_id',para['func_id'])
+
+    # TODO: 增加了‘type’这一参数，请检查是否正确
+    func_type = db_services.select_table(db, cursor, 't_function', 'type', para['func_id'])
     if func_type == ():
-            #空tuple：表示未查询到对应条目
-            return[1,"Error:Function doesn't exist."]
+        #空tuple：表示未查询到对应条目
+        return [1,"Error: Function doesn't exist."]
 
     if func_type == TYPE_DOCKER:
-        
+        hostid=db_services.select_table(db,cursor,'t_function','host_id',para['func_id'])
         hostip = db_services.select_table(db, cursor, 't_host', 'ip', hostid)
         if hostip == ():
             return [1,"Error: Host doesn't exist."]
@@ -95,10 +95,14 @@ def delFunction(para):
         # TODO: 先确认是否删除，再修改数据库
         db_services.delete_table(db,cursor,'t_function',para["func_id"])
     elif func_type == TYPE_OPENSTACK:
-        # TODO: 删除错误，或许func_local_id
-        openstack_services.delVm(para['func_id'])
-        # TODO: 先确认是否删除，再修改数据库
+        # get func_local_id from t_func table
+        func_local_id = db_services.select_table(db, cursor, 't_func', 'func_local_id', para['func_id'])
+        # delete vm by vm_id = func_local_id
+        ret = openstack_services.delVm(func_local_id)
+        if ret == False:
+            logger.error("Delete Function")
+            return [1,"Error: Function Deleted Faild."]
         db_services.delete_table(db,cursor,'t_function',para["func_id"])
-        pass
+
     db_services.close_db(db,cursor)
-    return [0,"Function Deleted Succesfully! "]
+    return [0,"Function Deleted Succesfully!"]
