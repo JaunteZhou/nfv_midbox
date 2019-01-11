@@ -36,7 +36,14 @@ map_images = {
 		'type':TYPE_OPENSTACK
 	}
 }
-PRE_CMD_IMAGE = 'INSERT INTO t_image (image_id, image_local_id, func, type) VALUES (1, "1","baseim", 1);'
+
+# for i in map_images.keys():
+# 	cmd = 'INSERT INTO t_image (image_id, image_local_id, func, type) VALUES ('\
+# 			+ str(map_images[i]['id']) + ',' + map_images[i]['local_id'] + ','\
+# 			+ map_images[i]['func_name'] + ',' + str(map_images[i]['type']) + ');'
+# 	print(cmd)
+
+
 # TODO: 分化处理？
 import pexpect
 mysql=pexpect.spawn('mysql -u '+MYSQL_USER+' -p')
@@ -63,6 +70,7 @@ if create==0:
 			cmd = 'INSERT INTO t_image (image_id, image_local_id, func, type) VALUES ('\
 					+ str(map_images[i]['id']) + ',' + map_images[i]['local_id'] + ','\
 					+ map_images[i]['func_name'] + ',' + str(map_images[i]['type']) + ');'
+			print(cmd)
 			mysql.sendline(cmd)
 			inserted = mysql.expect(['OK','ERROR',])
 			if inserted==1:
