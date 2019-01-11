@@ -40,8 +40,11 @@ map_images = {
 
 # TODO: 分化处理？
 import pexpect
+input("This db_init.py will DELETE db_nfv & REcreate it, press ENTER to continue !")
+
 mysql=pexpect.spawn('mysql -u '+MYSQL_USER+' -p')
 mysql.sendline(MYSQL_PASSWD)
+mysql.sendline('drop database db_nfv;')
 mysql.sendline('create database '+MAIN_DB_NAME+';')
 create = mysql.expect(['OK','ERROR',])
 if create==0:
