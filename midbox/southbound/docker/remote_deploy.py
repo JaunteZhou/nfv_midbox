@@ -31,6 +31,7 @@ def container_deploy(ip,password,cpu,mem,image_name,containerid,cip='192.168.1.1
     pid=re.findall('\d+',pid)[0]
     print('PID:'+pid)
 
+    exitstatus,rdata=remote_ssh(ip,password,'ovs-vsctl add-br sw1 && ovs-vsctl add-br sw-man')
     exitstatus,rdata=remote_ssh(ip,password,'ip link add in type veth peer name br-c'+containerid+'-in && ip link add out type veth peer name br-c'+containerid+'-out')
     logger.info(rdata);
     exitstatus,rdata=remote_ssh(ip,password,'ip link set in netns '+pid+' && ip link set out netns '+pid+' && ip link set br-c'+containerid+'-in up && ip link set br-c'+containerid+'-out up')

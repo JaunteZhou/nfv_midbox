@@ -56,7 +56,7 @@ def setChain(para):
     #list结尾附一个0，使得循环达到最后一个功能时n+1不会溢出
     id_list.append('0')
     while 1:
-        if n==len(id_list):
+        if n==len(id_list)-1:
             aft = 0
             break
         __addRefCount(db,cursor,id_list[n])
@@ -128,7 +128,7 @@ def delChain(para):
     #同上
     id_list.append('0')
     while 1:
-        if n==len(id_list):
+        if n==len(id_list)-1:
             aft=0
             break
         err=__decRefCount(db,cursor,id_list[n])

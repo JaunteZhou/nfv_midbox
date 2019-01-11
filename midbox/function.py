@@ -80,14 +80,14 @@ def delFunction(para):
     db,cursor = db_services.connect_db()
     func_type = db_services.select_table(db, cursor, 't_function', 'type', para['func_id'])     # 增加了‘type’这一参数，请检查是否正确
     hostid=db_services.select_table(db,cursor,'t_function','host_id',para['func_id'])
-    if func_type == ():
+    if len(func_type) == 0:
             #空tuple：表示未查询到对应条目
             return[1,"Error:Function doesn't exist."]
 
     if func_type == TYPE_DOCKER:
         
         hostip = db_services.select_table(db, cursor, 't_host', 'ip', hostid)
-        if hostip == ():
+        if len(hostip) == 0:
             return [1,"Error: Host doesn't exist."]
         hostpwd = db_services.select_table(db,cursor,'t_host','pwd',hostid)
 
