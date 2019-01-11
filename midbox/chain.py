@@ -81,7 +81,7 @@ def setChain(para):
             port_names_temp[aft][0],port_names_temp[aft][1]]
                 
         flows.flowDeploy(ip,password,port_names,\
-            str(priority),matchfield)
+            str(priority),matchfield,IN_PORT,OUT_PORT)
         n=n+1
     db_services.insert_flow(db,cursor,id,ids,matchfield)
     db_services.close_db(db,cursor)
@@ -153,7 +153,7 @@ def delChain(para):
         port_names=[port_names_temp[bef][0],port_names_temp[bef][1],\
             port_names_temp[id_list[n]][0],port_names_temp[id_list[n]][1]]
         
-        flows.flowUndeploy(ip,password,port_names,str(shutdownflag),matchfield)
+        flows.flowUndeploy(ip,password,port_names,str(shutdownflag),matchfield,IN_PORT)
         n=n+1
     db_services.delete_table(db,cursor,"t_flow", chain_id)
     db_services.close_db(db,cursor)

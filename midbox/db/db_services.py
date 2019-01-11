@@ -188,7 +188,7 @@ def select_condition(db, cursor, table, attribute, condition, value):
 	results=cursor.fetchall()  
 	
 	list=[]
-	if not results:
+	if len(results)==0:
 		return results
 	else:
 		
