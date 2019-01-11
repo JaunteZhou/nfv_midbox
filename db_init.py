@@ -40,7 +40,7 @@ map_images = {
 
 # TODO: 分化处理？
 import pexpect
-input("This db_init.py will DELETE db_nfv & REcreate it, press ENTER to continue !")
+raw_input("This db_init.py will DELETE db_nfv & REcreate it, press ENTER to continue !")
 
 mysql=pexpect.spawn('mysql -u '+MYSQL_USER+' -p')
 mysql.sendline(MYSQL_PASSWD)
