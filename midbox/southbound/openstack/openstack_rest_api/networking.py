@@ -15,7 +15,7 @@ def getNetworksDetails(network_id):
     logger.debug('Start.')
     code, res = rest_requests.get(networks_url + "/" + network_id)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     return res["network"]
 
@@ -24,7 +24,7 @@ def getNetworksList():
     logger.debug('Start.')
     code, res = rest_requests.get(networks_url)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     return res["networks"]
 
@@ -33,7 +33,7 @@ def createNetwork(para_json):
     logger.debug('Start.')
     code, res = rest_requests.post(networks_url, para_json)
     if code != requests.codes.created:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         print (res)
         return None
     return res["network"]
@@ -43,7 +43,7 @@ def updateNetwork(network_id, para_json):
     logger.debug('Start.')
     code, res = rest_requests.put(networks_url + "/" + network_id, para_json)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     return res["network"]
 
@@ -52,7 +52,7 @@ def deleteNetwork(id):
     logger.debug('Start.')
     code, res = rest_requests.delete(networks_url + "/" + id)
     if code != requests.codes.no_content:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return False
     return True
 

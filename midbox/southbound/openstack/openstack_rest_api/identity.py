@@ -40,7 +40,7 @@ def getToken():
     }
     r = requests.post(auth_token_url, para_json, headers=headers)
     if r.status_code != requests.codes.created:
-        logger.error('HttpCode: ' + str(r.status_code) + ' - Res: ', r.json())
+        logger.error((r.status_code, r.json()))
         return ""
     return r.headers.get('X-Subject-Token')
 

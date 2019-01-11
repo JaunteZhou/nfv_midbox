@@ -17,7 +17,7 @@ def getAllSimpleTenantUsage(detailed=0):
     payload = {"detailed": detailed}
     code, res = rest_requests.get(simple_usage_url, payload)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     return res["tenant_usage"]
 
@@ -26,7 +26,7 @@ def getSimpleTenantUsage(tenant_id):
     logger.debug('Start.')
     code, res = rest_requests.get(simple_usage_url + "/" + tenant_id)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     return res["tenant_usage"]
 

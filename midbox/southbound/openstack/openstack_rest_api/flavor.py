@@ -15,7 +15,7 @@ def getFlavorsList():
     logger.debug('Start.')
     code, res = rest_requests.get(flavor_url)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return code
     fl = res["flavors"]
     for i in range(len(fl)):
@@ -27,7 +27,7 @@ def getFlavorsListDetails():
     logger.debug('Start.')
     code, res = rest_requests.get(flavor_url + "/detail")
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return code
     fl = res["flavors"]
     for i in range(len(fl)):
@@ -39,7 +39,7 @@ def getFlavorDetail(flavor_id):
     logger.debug('Start.')
     code, res = rest_requests.get(flavor_url + "/" + flavor_id)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return code
     return code, res
 
@@ -49,7 +49,7 @@ def createFlavor(para_json):
     # send post request
     code, res = rest_requests.post(flavor_url, para_json)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return code
     return res["flavor"]
 
@@ -58,6 +58,6 @@ def deleteFlavor(flavor_id):
     logger.debug('Start.')
     code, res = rest_requests.delete(flavor_url + "/" + flavor_id)
     if code != requests.codes.accepted:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return False
     return True

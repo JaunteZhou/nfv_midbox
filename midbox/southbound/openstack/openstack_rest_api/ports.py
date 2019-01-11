@@ -16,7 +16,7 @@ def getPortsDetails(port_id):
     logger.debug('Start.')
     code, res = rest_requests.get(ports_url + "/" + port_id)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     return res["port"]
 
@@ -25,7 +25,7 @@ def getPortsList():
     logger.debug('Start.')
     code, res = rest_requests.get(ports_url)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     return res["ports"]
 
@@ -34,7 +34,7 @@ def createPort(para_json):
     logger.debug('Start.')
     code, res = rest_requests.post(ports_url, para_json)
     if code != requests.codes.created:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     return res["port"]
 
@@ -43,7 +43,7 @@ def updatePort(port_id, para_json):
     logger.debug('Start.')
     code, res = rest_requests.put(ports_url + "/" + port_id, para_json)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     return res["port"]
 
@@ -52,6 +52,6 @@ def deletePort(port_id):
     logger.debug('Start.')
     code, res = rest_requests.delete(ports_url + "/" + port_id)
     if code != requests.codes.no_content:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return False
     return True

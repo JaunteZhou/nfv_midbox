@@ -14,7 +14,7 @@ def getVolumesList():
     logger.debug('Start.')
     code, res = rest_requests.get(volumes_url)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     vl = res["volumes"]
     for i in range(len(vl)):
@@ -26,7 +26,7 @@ def getVolumesDetail(volume_id):
     logger.debug('Start.')
     code, res = rest_requests.get(volumes_url + "detail/" + volume_id)
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     vl = res["volume"]
     vl.pop("links")
@@ -37,7 +37,7 @@ def getVolumesListDetails():
     logger.debug('Start.')
     code, res = rest_requests.get(volumes_url + "detail")
     if code != requests.codes.ok:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     vl = res["volumes"]
     for i in range(len(vl)):
@@ -55,7 +55,7 @@ def createVolume(vol_size):
     para_json = json.dumps(para_dic)
     code, res = rest_requests.post(volumes_url, para_json)
     if code != requests.codes.accepted:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return None
     vl = res["volume"]
     vl.pop("links")
@@ -66,7 +66,7 @@ def deleteVolume(v_id):
     logger.debug('Start.')
     code, res = rest_requests.delete(volumes_url + "/" + v_id)
     if code != requests.codes.accepted:
-        logger.error('HttpCode: ' + str(code) + ' - Res: ' + res + '.')
+        logger.error((r.status_code, r.json()))
         return False
     return True
 
