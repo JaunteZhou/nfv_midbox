@@ -37,12 +37,6 @@ map_images = {
 	}
 }
 
-# for i in map_images.keys():
-# 	cmd = 'INSERT INTO t_image (image_id, image_local_id, func, type) VALUES ('\
-# 			+ str(map_images[i]['id']) + ',' + map_images[i]['local_id'] + ','\
-# 			+ map_images[i]['func_name'] + ',' + str(map_images[i]['type']) + ');'
-# 	print(cmd)
-
 
 # TODO: 分化处理？
 import pexpect
@@ -68,8 +62,8 @@ if create==0:
 
 		for i in map_images.keys():
 			cmd = 'INSERT INTO t_image (image_id, image_local_id, func, type) VALUES ('\
-					+ str(map_images[i]['id']) + ',' + map_images[i]['local_id'] + ','\
-					+ map_images[i]['func_name'] + ',' + str(map_images[i]['type']) + ');'
+					+ str(map_images[i]['id']) + ', "' + map_images[i]['local_id'] + '", "'\
+					+ map_images[i]['func_name'] + '", ' + str(map_images[i]['type']) + ');'
 			print(cmd)
 			mysql.sendline(cmd)
 			inserted = mysql.expect(['OK','ERROR',])
