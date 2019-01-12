@@ -15,7 +15,7 @@ def getFloatingIpDetails(floatingip_id):
     logger.debug('Start.')
     code, res = rest_requests.get(floating_url + "/" + floatingip_id)
     if code != requests.codes.ok:
-        logger.error((str(code), res)
+        logger.error((r.status_code, r.json()))
         return None
     return res["floatingip"]
 
@@ -24,7 +24,7 @@ def getFloatingIpsList():
     logger.debug('Start.')
     code, res = rest_requests.get(floating_url)
     if code != requests.codes.ok:
-        logger.error((str(code), res)
+        logger.error((r.status_code, r.json()))
         return None
     return res["floatingips"]
 
@@ -33,7 +33,7 @@ def createFloatingIp(para_json):
     logger.debug('Start.')
     code, res = rest_requests.post(floating_url, para_json)
     if code != requests.codes.created:
-        logger.error((str(code), res)
+        logger.error((r.status_code, r.json()))
         return None
     return res["floatingip"]
 
@@ -42,7 +42,7 @@ def updateFloatingIp(id, para_json):
     logger.debug('Start.')
     code, res = rest_requests.put(floating_url + "/" + id, para_json)
     if code != requests.codes.ok:
-        logger.error((str(code), res)
+        logger.error((r.status_code, r.json()))
         return None
     return res["floatingip"]
 
@@ -51,7 +51,7 @@ def deleteFloatingIp(id):
     logger.debug('Start.')
     code, res = rest_requests.delete(floating_url + "/" + id)
     if code != requests.codes.no_content:
-        logger.error((str(code), res)
+        logger.error((r.status_code, r.json()))
         return False
     return True
 

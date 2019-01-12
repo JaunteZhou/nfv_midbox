@@ -15,7 +15,7 @@ def getHostsList():
     logger.debug('Start.')
     code, res = rest_requests.get(hypervisors_url)
     if code != requests.codes.ok:
-        logger.error((str(code), res)
+        logger.error((str(r.status_code), r.json()))
         return None
     return res["hypervisors"]
     # return res
@@ -25,7 +25,7 @@ def getHostsListDetails():
     logger.debug('Start.')
     code, res = rest_requests.get(hypervisors_url + "/detail")
     if code != requests.codes.ok:
-        logger.error((str(code), res)
+        logger.error((str(r.status_code), r.json()))
         return None
     return res["hypervisors"]
     # return res
@@ -36,6 +36,6 @@ def getHostsStatistics():
     url = hypervisors_url + "/statistics"
     code, res = rest_requests.get(url)
     if code != requests.codes.ok:
-        logger.error((str(code), res)
+        logger.error((str(r.status_code), r.json()))
         return None
     return res["hypervisor_statistics"]

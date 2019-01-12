@@ -15,7 +15,7 @@ def getImagesList():
     logger.debug('Start.')
     code, res = rest_requests.get(images_url)
     if code != requests.codes.ok:
-        logger.error((str(code), res)
+        logger.error((r.status_code, r.json()))
         return None
     return res["images"]
 
@@ -24,7 +24,7 @@ def getImage(image_id):
     logger.debug('Start.')
     code, res = rest_requests.get(images_url + "/" + image_id)
     if code != requests.codes.ok:
-        logger.error((str(code), res)
+        logger.error((r.status_code, r.json()))
         return None
     return res
 
@@ -33,6 +33,6 @@ def deleteImage(image_id):
     logger.debug('Start.')
     code, res = rest_requests.delete(images_url + "/" + image_id)
     if code != requests.codes.no_content:
-        logger.error((str(code), res)
+        logger.error((r.status_code, r.json()))
         return False
     return True
