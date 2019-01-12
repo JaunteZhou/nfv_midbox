@@ -45,11 +45,11 @@ TYPE_OPENSTACK  = 2
 ##### openstack config #####
 # user info
 user_name           = "admin"
-user_id             = "e3ffc13192334c1a972f84b9c10c9f9f"
+user_id             = "6fd9cc9afd85472e9be25bd99cb13f81"
 password            = "openstack"
 # project info, tenant is the same as project
 tenant_name         = "admin"  
-tenant_id           = "cae79dafaceb4022a89aca3488264a0d"
+tenant_id           = "0d380920a29e4cfc99d59022d99c8352"
 
 # openstack server ip
 service_ip          = "10.1.1.18"
@@ -81,11 +81,11 @@ ports_url           = networking_url + "/ports"
 # networks name and id
 #public_net_id       = "d27d54f3-f89c-41e5-a973-4e449a34a2a6"
 #public_net_name     = "public-net"
-data_in_net_id      = "c176ef9a-a024-49ba-a469-b9acbdbd4432"
+data_in_net_id      = "9747cb22-b7c7-4edb-98ac-f7b31ca6a32f"
 data_in_net_name    = "data-in-net"
-data_out_net_id     = "3c78f91b-1d29-419e-bb91-31ad0dc4463d"
+data_out_net_id     = "e979cc35-fde0-4be0-9e42-efc09eb3c24b"
 data_out_net_name   = "data-out-net"
-private_net_id      = "cebab88f-8c7d-43c9-a0df-67e0803641e8"
+private_net_id      = "a08c70a9-9e16-4964-9d3d-338f2ac003ef"
 private_net_name    = "private-net"
 
 # sleep time in attaching
