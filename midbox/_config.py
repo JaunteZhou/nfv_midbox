@@ -11,8 +11,8 @@ DOCKER_REGISTRY_WORK_DIRECTORY = '/home/nfv30/registry'
 
 ##### physical port name config #####
 # physical port name should be the same on every host
-IN_PORT   ='default'
-OUT_PORT  ='default'
+IN_PORT   ='eno3'
+OUT_PORT  ='eno3'
 ##### physical port name config end #####
 
 ##### log config #####
