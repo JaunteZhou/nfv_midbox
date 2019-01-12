@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 from midbox import flows
 from midbox.db import db_services
 from midbox._config import TYPE_DOCKER, TYPE_OPENSTACK,IN_PORT,OUT_PORT
-from midbox.southbound.openstack.openstack_services import getVmInterfacesNameInDataPlane
+from midbox.southbound.openstack.openstack_services import getVmDataInAndOutPortsName
 """
 para:
 {
