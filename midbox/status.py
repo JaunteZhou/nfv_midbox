@@ -88,6 +88,7 @@ def showContainerStatus(host_id):
         if db_services.select_table(db,cursor,'t_function','type',id_iter)==1:
             t=threading.Thread(target=__getTraffic,args=(ip,pwd,str(id_iter),))
             thread_list[id_iter]=t;
+            t.start()
 
     #由于remote_ssh的传参为字符串，shell执行时也识别字符串，故必须保证remote传过去的参数就含有反斜杠，保证shell解释时不会去掉引号
     exitstatus,rdata = remote_ssh.remote_ssh(
