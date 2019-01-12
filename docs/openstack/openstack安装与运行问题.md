@@ -130,6 +130,25 @@ ReadTimeoutError: HTTPSConnectionPool(host='files.pythonhosted.org', port=443): 
 
 [上官瑾文-云栖社区](https://yq.aliyun.com/articles/619208)
 
+### 问题6 [ g-api did not start ]
+
+[devstack glance error at installation - stackoverflow](https://stackoverflow.com/questions/46088665/devstack-glance-error-at-installation)
+
+这个问题比较无解，直接卸载清空重装即可
+
+```shell
+$ ./unstack.sh
+$ ./clean.sh
+```
+
+重新安装
+
+```shell
+$ ./stack.sh
+```
+
+
+
 ## 运行问题
 
 ### 问题1 [ Host 'HOST-NAME' is not mapped to any cell ]
@@ -616,22 +635,7 @@ wget https://github.com/coreos/etcd/releases/download/v3.1.7/etcd-v3.1.7-linux-a
 
 
 
-1. "g-api did not start"
-
-这个问题比较严重，试了好几种方法都无效，最终使用了完全重新安装的方法
-
-```shell
-./unstack.sh
-./clean.sh
-```
-
-移除devstack文件夹
-
-```shell
-rm -rf devstack
-```
-
-重启系统后，重新按教程从头开始安装
+1. 
 
 参考：http://www.cnblogs.com/pinganzi/p/6218244.html
 
