@@ -24,4 +24,4 @@ def registry_start():
                 return [1,'Registry start error'];
         else:
             return [1,'Registry start error'];
-    chile.close(force=True)
+    child.close(force=True)
