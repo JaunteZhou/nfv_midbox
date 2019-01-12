@@ -32,7 +32,7 @@ jsonContent=[
             "method":"POST",
             "json":{
                 "func_type":"container","func_id":"3",
-                "host_id":"2","image_id":"3",
+                "host_id":"2","image_id":"2",
                 "func_ip":"10.2.7.232/24","func_pwd":"123456",
                 "cpu":"20","ram":"128","disk":"0"
             }

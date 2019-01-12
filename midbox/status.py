@@ -49,7 +49,6 @@ port_traff={}
 def showAllStatus(para):
     logger.debug('Start.')
 
-    # res = {'containers':{},'VMs':{}}
     res = {}
     # db, cursor = db_services.connect_db()
     # host_id_list = db_services.select_id(db, cursor, 't_host')
@@ -61,6 +60,7 @@ def showAllStatus(para):
         hid = hinfo['id']
         hname = hinfo['hypervisor_hostname']
         # get host info
+        res[str(hid)]={}
         res[str(hid)]['host'] = hinfo
         # get vms info
         res[str(hid)]['openstack'] = showVmStatus(hname)
