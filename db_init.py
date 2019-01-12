@@ -20,19 +20,19 @@ map_images = {
 	3:{
 		'id':3,
 		'func_name':'vm-iptables',
-		'local_id':'05a0d8a2-0489-404d-be1f-e12a92ad3eb3',
+		'local_id':'8f44bc3a-7a64-4ed5-8168-d33f65eee6b4',
 		'type':TYPE_OPENSTACK
 	},
 	4:{
 		'id':4,
 		'func_name':'vm-tcpdump',
-		'local_id':'f9229244-f413-487f-b36e-e734cea6df4f',
+		'local_id':'cab13650-7a52-42f1-8d40-709437dbde22',
 		'type':TYPE_OPENSTACK
 	},
 	5:{
 		'id':5,
 		'func_name':'vm-snort',
-		'local_id':'31c091f5-f090-462c-880c-9ead52df88ee',
+		'local_id':'a7144871-349b-4f34-8825-9b4969609c96',
 		'type':TYPE_OPENSTACK
 	}
 }
