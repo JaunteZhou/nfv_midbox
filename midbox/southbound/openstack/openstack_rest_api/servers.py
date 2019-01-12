@@ -48,7 +48,7 @@ def getServersList():
     """
     code, res = rest_requests.get(servers_url)
     if code != requests.codes.ok:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return code
 
     sl = res["servers"]
@@ -64,7 +64,7 @@ def getServersListDetails():
     """
     code, res = rest_requests.get(servers_url + "/detail")
     if code != requests.codes.ok:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return code
     sl = res["servers"]
     for i in range(len(sl)):
@@ -75,7 +75,7 @@ def getServerDetail(s_id):
     """Get server by id with details."""
     code, res = rest_requests.get(servers_url + "/" + s_id)
     if code != requests.codes.ok:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return code
     sl = res["server"]
     sl.pop("links")
@@ -85,7 +85,7 @@ def createServer(para_json):
     """Create a new server with json-formed para."""
     code, res = rest_requests.post(servers_url, para_json)
     if code != requests.codes.accepted:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return -1
     return res["server"]
 
@@ -97,7 +97,7 @@ def deleteServer(s_id):
     """
     code, res = rest_requests.delete(servers_url + "/" + s_id)
     if code != requests.codes.no_content:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return False
     return True
     # Normal response codes: 204
@@ -109,7 +109,7 @@ def getVolumeAttachments(s_id):
     """Get Volume Attachment to Server by id."""
     code, res = rest_requests.get(servers_url + "/" + s_id + "/os-volume_attachments")
     if code != requests.codes.ok:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return None
     return res["volumeAttachments"]
 
@@ -135,7 +135,7 @@ def attachVolume(s_id, vol_id):
             servers_url + "/" + s_id + "/os-volume_attachments",
             para_json)
     if code != requests.codes.ok:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return False, res
     return True, res["volumeAttachment"]
 
@@ -144,7 +144,7 @@ def detachVolume(s_id, vol_id):
     code, res = rest_requests.delete(
             servers_url + "/" + s_id + "/os-volume_attachments/" + vol_id)
     if code != requests.codes.accepted:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return code
     return True
 
@@ -154,7 +154,7 @@ def getPortInterfaces(s_id):
     code, res = rest_requests.get(
             servers_url + "/" + s_id + "/os-interface")
     if code != requests.codes.ok:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return res
     return res["interfaceAttachments"]
 
@@ -163,7 +163,7 @@ def attachPortInterfaces(s_id, para_json):
             servers_url + "/" + s_id + "/os-interface",
             para_json)
     if code != requests.codes.ok:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return -1
     # print (res)
     return res["interfaceAttachment"]
@@ -172,7 +172,7 @@ def getPortInterfacesDetails(s_id, p_id):
     code, res = rest_requests.get(
             servers_url + "/" + s_id + "/os-interface/" + p_id)
     if code != requests.codes.ok:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return res
     return res["interfaceAttachments"]
 
@@ -180,7 +180,7 @@ def detachPortInterfaces(s_id, p_id):
     code, res = rest_requests.delete(
             servers_url + "/" + s_id + "/os-interface/" + p_id)
     if code != requests.codes.accepted:
-        logger.error((r.status_code, r.json()))
+        logger.error((str(code), res)
         return res
     return True
 
