@@ -53,10 +53,10 @@ jsonContent=[
             "item":"CHAIN",
             "method":"POST",
             "json":{
-                "func_ids": "xxxxxxxx-yyyyyyyy-zzzzzzzzz",
+                "func_ids": "1-3",
                 "match_field": "",
                 "priority": 10,
-                "chain_id": "xxxxxxxx"
+                "chain_id": "1"
             }
         }
     ],
