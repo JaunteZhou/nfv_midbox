@@ -36,6 +36,33 @@ jsonContent=[
                 "func_ip":"10.2.7.232/24","func_pwd":"123456",
                 "cpu":"20","ram":"128","disk":"0"
             }
+        },
+        {
+            "item":"FUNCTION",
+            "method":"POST",
+            "json":{
+                "func_type":"vm","func_id":"4",
+                "host_id":"1","image_id":"3",
+                "cpu":"1","ram":"1024","disk":"20"
+            }
+        },
+        {
+            "item":"FUNCTION",
+            "method":"POST",
+            "json":{
+                "func_type":"vm","func_id":"5",
+                "host_id":"2","image_id":"4",
+                "cpu":"1","ram":"1024","disk":"20"
+            }
+        },
+        {
+            "item":"FUNCTION",
+            "method":"POST",
+            "json":{
+                "func_type":"vm","func_id":"6",
+                "host_id":"2","image_id":"5",
+                "cpu":"1","ram":"1024","disk":"20"
+            }
         }
     ],
     # DeleteFunction

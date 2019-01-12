@@ -139,7 +139,9 @@ def showVmStatus(host_name):
 
             flavor = vm_info['flavor']['id']
             # eq: flavor.id = F-1-256-1 means vcpus=1, ram=256MB, disk=1GB
-            resources_info = flavor.splite('-')
+            resources_info = flavor.split('-')
+            if len(resources_info) < 4:
+                continue
             needs_vm_info = {
                 'cpu': resources_info[1],
                 'ram': resources_info[2],
