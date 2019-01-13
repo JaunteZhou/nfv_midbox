@@ -88,12 +88,11 @@ def showContainerStatus(host_id):
         if db_services.select_table(db,cursor,'t_function','type',id_iter)==1:
             t=threading.Thread(target=__getTraffic,args=(ip,pwd,str(id_iter),))
             thread_list[id_iter]=t;
+            t.start()
 
     #由于remote_ssh的传参为字符串，shell执行时也识别字符串，故必须保证remote传过去的参数就含有反斜杠，保证shell解释时不会去掉引号
     exitstatus,rdata = remote_ssh.remote_ssh(
             ip,pwd,'docker stats --format \\"table {{.Name}} {{.CPUPerc}} {{.MemUsage}}\\" --no-stream')
-    #回传的数据为字节流，需要解码为通常字符串数据进行正则匹配
-    rdata = str(rdata,encoding = 'utf-8')
 
     #由于容器名均以c开头，故pattern使用了c开头去掉第一行表头，以及可能会有的仓库容器
     pat = '^c.*$'
