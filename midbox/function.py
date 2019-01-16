@@ -58,12 +58,15 @@ def setFunction(para):
             logger.error("Set VM Function")
             return [1,"Error: Set Function Failed."]
         # 端口转移
-        remote_ssh.remote_ssh(hostip, hostpwd, 'ovs-vsctl del-port br-int ' + ret['manPortName'])
-        remote_ssh.remote_ssh(hostip, hostpwd, 'ovs-vsctl add-port sw-man ' + ret['manPortName'])
-        remote_ssh.remote_ssh(hostip, hostpwd, 'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][0])
-        remote_ssh.remote_ssh(hostip, hostpwd, 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][0])
-        remote_ssh.remote_ssh(hostip, hostpwd, 'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][1])
-        remote_ssh.remote_ssh(hostip, hostpwd, 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][1])
+        remote_ssh.remote_ssh(hostip, hostpwd, 
+                'ovs-vsctl del-port br-int ' + ret['manPortName'] + ' && ' \
+                + 'ovs-vsctl add-port sw-man ' + ret['manPortName'])
+        remote_ssh.remote_ssh(hostip, hostpwd, 
+                'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][0] + ' && ' \
+                + 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][0])
+        remote_ssh.remote_ssh(hostip, hostpwd, 
+                'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][1] + ' && ' \
+                + 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][1])
         # add a record to db
         db_services.insert_function(db, cursor, 
                 para["func_id"], para["image_id"], para["host_id"], ret['serverId'],
