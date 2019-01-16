@@ -43,6 +43,7 @@ jsonContent=[
             "json":{
                 "func_type":"vm","func_id":"4",
                 "host_id":"1","image_id":"3",
+                "func_ip":"","func_pwd":"",
                 "cpu":"1","ram":"1024","disk":"20"
             }
         },
@@ -52,6 +53,7 @@ jsonContent=[
             "json":{
                 "func_type":"vm","func_id":"5",
                 "host_id":"2","image_id":"4",
+                "func_ip":"","func_pwd":"",
                 "cpu":"1","ram":"1024","disk":"20"
             }
         },
@@ -61,6 +63,7 @@ jsonContent=[
             "json":{
                 "func_type":"vm","func_id":"6",
                 "host_id":"2","image_id":"5",
+                "func_ip":"","func_pwd":"",
                 "cpu":"1","ram":"1024","disk":"20"
             }
         }
