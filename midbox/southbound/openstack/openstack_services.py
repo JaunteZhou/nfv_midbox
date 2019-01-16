@@ -64,7 +64,7 @@ def delServerInstance(s_id, vol_clear=True):
     # delete floating ip
     # logger.debug("delete floating ip")
     # floating_id = ""
-    # ports_id_list = getServerInterfacesIdByNetName(s_id, private_net_name)
+    # ports_id_list = getServerInterfacesIdListByNetName(s_id, private_net_name)
     # logger.debug(("ports_id_list: ", ports_id_list))
     # floating_ips_list = floating_ips.getFloatingIpsList()
     # logger.debug(("floating_ips_list: ", floating_ips_list))
@@ -172,7 +172,7 @@ def getNetIdByNetName(net_name):
             return n["id"]
     return None
 
-def getServerInterfacesIdByNetName(s_id, net_name):
+def getServerInterfacesIdListByNetName(s_id, net_name):
     logger.debug('Start.')
     server_detail = servers.getServerDetail(s_id)
     # get mac address list from server details
@@ -226,8 +226,10 @@ def getAnyInstanceIdInSameHost(host_id):
 def getVmManPortsName(s_id):
     logger.debug('Start.')
     # port used managing vm 
-    man_port_id = getServerInterfacesIdByNetName(s_id, private_net_name)
-    man_port_name = openstack_para.makePortNameInOvsById(man_port_id)
+    man_port_id_list = getServerInterfacesIdListByNetName(s_id, private_net_name)
+    if len(man_port_id_list) == 0:
+        return None
+    man_port_name = openstack_para.makePortNameInOvsById(man_port_id_list[0])
         
     return man_port_name
 
@@ -237,13 +239,17 @@ def getVmDataInAndOutPortsName(s_id):
     ports_name_list = []
     # TODO:重要！！！进出端口排列问题！！！
     # port getting data into vm 
-    in_port_id = getServerInterfacesIdByNetName(s_id, data_in_net_name)
+    in_port_id_list = getServerInterfacesIdListByNetName(s_id, data_in_net_name)
+    if len(in_port_id_list) == 0:
+        return None
     ports_name_list.append(
-                openstack_para.makePortNameInOvsById(in_port_id))
+                openstack_para.makePortNameInOvsById(in_port_id_list[0]))
     # port throwing data out of vm
-    out_port_id = getServerInterfacesIdByNetName(s_id, data_out_net_name)
+    out_port_id_list = getServerInterfacesIdListByNetName(s_id, data_out_net_name)
+    if len(out_port_id_list) == 0:
+        return None
     ports_name_list.append(
-                openstack_para.makePortNameInOvsById(out_port_id))
+                openstack_para.makePortNameInOvsById(out_port_id_list[0]))
         
     return ports_name_list
 
