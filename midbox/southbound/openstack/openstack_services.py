@@ -51,7 +51,7 @@ def delServerInstance(s_id, vol_clear=True):
     err_list = []
     # get server's attachments
     vol_list = servers.getVolumeAttachments(s_id)
-    logger.debug(("Volumes List: " + vol_list))
+    logger.debug(("Volumes List: ", vol_list))
     # detach all volumes in server's attachments
     for i in range(len(vol_list)):
         logger.debug(("server id: ", vol_list[i]["serverId"]))
@@ -61,19 +61,6 @@ def delServerInstance(s_id, vol_clear=True):
             logger.error(("Detach Volume: ", ret))
             err_list.append({vol_list[i]["volumeId"]: ret})
         logger.debug(("Detach Volume: ", ret))
-    # delete floating ip
-    # logger.debug("delete floating ip")
-    # floating_id = ""
-    # ports_id_list = getServerInterfacesIdListByNetName(s_id, private_net_name)
-    # logger.debug(("ports_id_list: ", ports_id_list))
-    # floating_ips_list = floating_ips.getFloatingIpsList()
-    # logger.debug(("floating_ips_list: ", floating_ips_list))
-    # for f_ip in floating_ips_list:
-    #     if f_ip["port_id"] in ports_id_list:
-    #         floating_id = f_ip["id"]
-    #         break
-    # if floating_id != "":
-    #     floating_ips.deleteFloatingIp(floating_id)
 
     # get ports list
     logger.debug("get server interfaces list")
