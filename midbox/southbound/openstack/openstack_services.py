@@ -19,18 +19,7 @@ def addServerInstance(vcpus, ram, disk, image_id, host_id):
         return None
 
     same_host = getAnyInstanceIdInSameHost(host_id)
-    # server
-    # if same_host == None:
-    #     para_json = openstack_para.composeServerPara(
-    #             openstack_para.makeServerName(),
-    #             image_id,
-    #             f_id,
-    #             [
-    #                 {"uuid":private_net_id},
-    #                 {"uuid":data_in_net_id},
-    #                 {"uuid":data_out_net_id}
-    #             ])
-    # else:
+
     para_json = openstack_para.composeServerPara(
             openstack_para.makeServerName(),
             image_id,
@@ -216,25 +205,6 @@ def getAllServerInterfaces(s_id):
             ports_id_list.append(port["id"])
     return list(set(ports_id_list))
 
-# def createDoublePorts(net_name=data_flow_net_name, net_id=""):
-#     logger.debug('Start.')
-#     net_id = getNetIdByNetName(net_name)
-#     return createNPorts(2, net_id)
-
-# def createNPorts(n, net_id):
-#     logger.debug('Start.')
-#     ports_list = []
-#     for i in range(n):
-#         para_json = openstack_para.composePortPara(network_id=net_id)
-#         port = ports.createPort(para_json)
-#         if port == None:
-#             logger.error("Creating " + str(i+1) + "th Port in " + str(n) + " Ports.")
-#             for pi in ports_list:
-#                 ports.deletePort(pi)
-#             return None
-#         ports_list.append(port["id"])
-#     return ports_list
-
 
 def getAnyInstanceIdInSameHost(host_id):
     logger.debug('Start.')
@@ -251,6 +221,15 @@ def getAnyInstanceIdInSameHost(host_id):
         if s['OS-EXT-SRV-ATTR:hostname'] == host_name:
             return s['id']
     return None
+
+
+def getVmManPortsName(s_id):
+    logger.debug('Start.')
+    # port used managing vm 
+    man_port_id = getServerInterfacesIdByNetName(s_id, private_net_name)
+    man_port_name = openstack_para.makePortNameInOvsById(man_port_id))
+        
+    return man_port_name
 
 
 def getVmDataInAndOutPortsName(s_id):
@@ -271,9 +250,24 @@ def getVmDataInAndOutPortsName(s_id):
 ########## SFC ##########
 def addVm(vcpus, ram, disk, image_id, host_id):
     logger.debug('Start.')
-    ret = addServerInstance(vcpus, ram, disk, image_id, host_id)
-    # TODO: 错误处理
-    return ret[0]
+    sv = addServerInstance(vcpus, ram, disk, image_id, host_id)
+    if sv == None:
+        return None
+    
+    # attaching servers to volumes by list
+    tmp = attachingServerVolumeList([sv])
+    while len(tmp):
+        for sv_pair in tmp:
+            logger.debug(("serverId: ", sv_pair["serverId"]))
+            logger.debug(("volumeId: ", sv_pair["volumeId"]))
+        tmp = attachingServerVolumeList(tmp)
+        if len(tmp) != 0:
+            time.sleep(SLEEP_SECONDS_IN_ATTACHING)
+    man_port = getVmManPortsName(sv['serverId'])
+    sv['manPortName'] = man_port
+    ports_list = getVmDataInAndOutPortsName(sv['serverId'])
+    sv['dataPortsNameList'] = ports_list
+    return sv
 
 def delVm(server_id):
     logger.debug('Start.')
@@ -318,29 +312,6 @@ def addVmsList(para_list=[]):
         tmp = attachingServerVolumeList(tmp)
         if len(tmp) != 0:
             time.sleep(SLEEP_SECONDS_IN_ATTACHING)
-
-    # # set floating ip to port in private_net
-    # for para in para_list:
-    #     s_id = para["server_id"]
-    #     port_list = getServerInterfacesIdByNetName(s_id, private_net_name)
-    #     if len(port_list) != 1:
-    #         logger.error("Find Server Port.")
-    #         continue
-    #     p_id = port_list[0]
-    #     floatingip_para = openstack_para.composeFloatingIpPara(p_id, )
-    #     floatingip_ret = floating_ips.createFloatingIp(floatingip_para)
-    #     if floatingip_ret == -1:
-    #         logger.error("Set Floating IP.")
-    #         continue
-    #     para["ip_address"] = floatingip_ret["floating_ip_address"]
-
-    # # create 2N ports and attach them to server
-    # ports_list = createNPorts(len(para_list)*2, getNetIdByNetName(data_flow_net_name))
-    
-    # logger.debug(ports_list)
-    # ports_2_list = attachingServerPortList(sv_list, ports_list)
-    # logger.debug(ports_list)
-    # attachingServerPortList(sv_list, ports_2_list)
 
     return para_list
 

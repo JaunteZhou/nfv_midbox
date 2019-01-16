@@ -4,7 +4,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from midbox.southbound.docker import remote_deploy, remote_clear
+from midbox.southbound.docker import remote_deploy, remote_clear, remote_ssh
 from midbox.southbound.openstack import openstack_services
 from midbox.southbound.openstack.openstack_para import composeServerInstanceDictPara
 from midbox.db import db_services
@@ -29,12 +29,13 @@ def setFunction(para):
     logger.debug('Start.')
     db,cursor = db_services.connect_db()
 
+    hostip = db_services.select_table(db,cursor,'t_host','ip',para['host_id'])
+    if hostip == ():
+        #空tuple表示未查询到对应条目
+        return [1,"Error: Host doesn't exist."]
+    hostpwd = db_services.select_table(db,cursor,'t_host','pwd',para['host_id'])
+
     if para["func_type"] == "container":
-        hostip = db_services.select_table(db,cursor,'t_host','ip',para['host_id'])
-        if hostip == ():
-            #空tuple表示未查询到对应条目
-            return [1,"Error: Host doesn't exist."]
-        hostpwd = db_services.select_table(db,cursor,'t_host','pwd',para['host_id'])
         # get image name by image id from db
         imagename = db_services.select_table(db, cursor,
                 't_image', 'func', para['image_id'])
@@ -56,8 +57,13 @@ def setFunction(para):
         if ret == None:
             logger.error("Set VM Function")
             return [1,"Error: Set Function Failed."]
-        # TODO: 端口连接问题
-
+        # 端口转移
+        remote_ssh(hostip, hostpwd, 'ovs-vsctl del-port br-int ' + ret['manPortName'])
+        remote_ssh(hostip, hostpwd, 'ovs-vsctl add-port sw-man ' + ret['manPortName'])
+        remote_ssh(hostip, hostpwd, 'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][0])
+        remote_ssh(hostip, hostpwd, 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][0])
+        remote_ssh(hostip, hostpwd, 'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][1])
+        remote_ssh(hostip, hostpwd, 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][1])
         # add a record to db
         db_services.insert_function(db, cursor, 
                 para["func_id"], para["image_id"], para["host_id"], ret['server_id'],
