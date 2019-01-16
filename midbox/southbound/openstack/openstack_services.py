@@ -31,7 +31,7 @@ def addServerInstance(vcpus, ram, disk, image_id, host_id):
     #                 {"uuid":data_out_net_id}
     #             ])
     # else:
-    para_json = openstack_para.composeServerParaWithSameHost(
+    para_json = openstack_para.composeServerPara(
             openstack_para.makeServerName(),
             image_id,
             f_id,
