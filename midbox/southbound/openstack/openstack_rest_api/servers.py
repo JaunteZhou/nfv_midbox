@@ -145,7 +145,7 @@ def detachVolume(s_id, vol_id):
             servers_url + "/" + s_id + "/os-volume_attachments/" + vol_id)
     if code != requests.codes.accepted:
         logger.error((code, res))
-        return code
+        return False
     return True
 
 

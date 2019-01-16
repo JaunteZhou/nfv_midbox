@@ -63,32 +63,34 @@ def delServerInstance(s_id, vol_clear=True):
         logger.debug(("Detach Volume: ", ret))
 
     # get ports list
-    logger.debug("get server interfaces list")
+    logger.debug("Start Getting Server Interfaces List")
     ports_list = getAllServerInterfaces(s_id)
-    logger.debug(("ports_list: ", ports_list))
+    logger.debug(("Ports_List: ", ports_list))
 
     # delete server
-    logger.debug("delete server")
+    logger.debug("Delete Server")
     ret = servers.deleteServer(s_id)
     logger.debug(("Delete Server: ", ret))
     #RuntimeWarning
+
+    # delete ports list
+    logger.debug("Delete Ports List")
+    for port in ports_list:
+        ret = ports.deletePort(port)
+        logger.debug(("Return of Delete Port: ", ret))
+        if ret != True:
+            err_list.append({port:ret})
     
     # delete all volumes
     if vol_clear == True:
         logger.debug("Start Clear Volume !")
 
         for i in range(len(vol_list)):
-            logger.debug(("volume id: ", vol_list[i]["volumeId"]))
+            logger.debug(("Volume Id: ", vol_list[i]["volumeId"]))
             ret = volume.deleteVolume(vol_list[i]["volumeId"])
-            logger.debug(("return of delete volume: ", ret))
+            logger.debug(("Return of Delete Volume: ", ret))
             if ret != True:
                 err_list.append({vol_list[i]["volumeId"]:ret})
-
-    # delete ports list
-    logger.debug("delete ports list")
-    for port in ports_list:
-        ret = ports.deletePort(port)
-        logger.debug(("return of delete port: ", ret))
 
     if len(err_list) != 0:
         return False
@@ -184,12 +186,14 @@ def getAllServerInterfaces(s_id):
         for iface in server_detail["addresses"][key]:
             mac_list.append(iface["OS-EXT-IPS-MAC:mac_addr"])
     mac_set = set(mac_list)
+    logger.debug(mac_set)
     # get ports' id list by comparing mac address in mac_list
     ports_list = ports.getPortsList()
     ports_id_list = []
     for port in ports_list:
         if port["mac_address"] in mac_set:
             ports_id_list.append(port["id"])
+    logger.debug(ports_id_list)
     return list(set(ports_id_list))
 
 
