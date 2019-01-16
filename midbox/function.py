@@ -94,7 +94,7 @@ def delFunction(para):
         return [1,"Error: Function doesn't exist."]
 
     if func_type == TYPE_DOCKER:
-        hostid=db_services.select_table(db,cursor,'t_function','host_id',para['func_id'])
+        hostid=db_services.select_table(db,cursor,'t_function','host_id', para['func_id'])
         hostip = db_services.select_table(db, cursor, 't_host', 'ip', hostid)
         if len(hostip) == 0:
             return [1,"Error: Host doesn't exist."]
@@ -105,7 +105,7 @@ def delFunction(para):
         db_services.delete_table(db,cursor,'t_function',para["func_id"])
     elif func_type == TYPE_OPENSTACK:
         # get func_local_id from t_func table
-        func_local_id = db_services.select_table(db, cursor, 't_func', 'func_local_id', para['func_id'])
+        func_local_id = db_services.select_table(db, cursor, 't_function', 'func_local_id', para['func_id'])
         # delete vm by vm_id = func_local_id
         ret = openstack_services.delVm(func_local_id)
         if ret == False:
