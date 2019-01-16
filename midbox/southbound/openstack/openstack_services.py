@@ -166,8 +166,8 @@ def addFlavor(vcpus, ram, disk):
             return f_id
     # if flavor by f_id is not existed, create flavor by f_id
     para_json = openstack_para.composeFlavorPara(f_id, f_id, vcpus, ram, disk)
-    code, res = flavor.createFlavor(para_json)
-    if code == 200:
+    ret = flavor.createFlavor(para_json)
+    if ret == True:
         return f_id
     else:
         logger.error("Create Flavor.")

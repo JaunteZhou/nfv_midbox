@@ -50,8 +50,8 @@ def createFlavor(para_json):
     code, res = rest_requests.post(flavor_url, para_json)
     if code != requests.codes.ok:
         logger.error((code, res))
-        return code
-    return res["flavor"]
+        return False
+    return True
 
 def deleteFlavor(flavor_id):
     """Delete a flavor by flavor_id."""
