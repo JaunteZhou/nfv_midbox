@@ -211,7 +211,7 @@ def getAnyInstanceIdInSameHost(host_id):
     host_list = hypervisors.getHostsList()
     host_name = ''
     for host in host_list:
-        if host['id'] == host_id:
+        if str(host['id']) == str(host_id):
             host_name = host['hypervisor_hostname']
     if host_name == '':
         return None
