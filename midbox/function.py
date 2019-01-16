@@ -66,7 +66,7 @@ def setFunction(para):
         remote_ssh.remote_ssh(hostip, hostpwd, 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][1])
         # add a record to db
         db_services.insert_function(db, cursor, 
-                para["func_id"], para["image_id"], para["host_id"], ret['server_id'],
+                para["func_id"], para["image_id"], para["host_id"], ret['serverId'],
                 para["func_ip"], para["func_pwd"], para["cpu"], para["ram"],
                 TYPE_OPENSTACK, para['disk'], 0)
 
