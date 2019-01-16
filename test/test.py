@@ -79,6 +79,16 @@ jsonContent=[
             "item":"FUNCTION",
             "method":"DELETE",
             "json":{"func_id":"4"}
+        },
+        {
+            "item":"FUNCTION",
+            "method":"DELETE",
+            "json":{"func_id":"5"}
+        },
+        {
+            "item":"FUNCTION",
+            "method":"DELETE",
+            "json":{"func_id":"6"}
         }
     ],
     # DeployChain
