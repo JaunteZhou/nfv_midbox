@@ -218,7 +218,7 @@ def getAnyInstanceIdInSameHost(host_id):
     logger.debug(('Host Name', host_name))
     servers_list = servers.getServersListDetails()
     for s in servers_list:
-        if s['OS-EXT-SRV-ATTR:hostname'] == host_name:
+        if s['OS-EXT-SRV-ATTR:hypervisor_hostname'] == host_name:
             logger.debug(('Any Server Id', s['id']))
             return s['id']
     return None
