@@ -227,7 +227,7 @@ def getVmManPortsName(s_id):
     logger.debug('Start.')
     # port used managing vm 
     man_port_id = getServerInterfacesIdByNetName(s_id, private_net_name)
-    man_port_name = openstack_para.makePortNameInOvsById(man_port_id))
+    man_port_name = openstack_para.makePortNameInOvsById(man_port_id)
         
     return man_port_name
 
