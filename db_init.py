@@ -45,6 +45,9 @@ raw_input("This db_init.py will DELETE db_nfv & REcreate it, press ENTER to cont
 mysql=pexpect.spawn('mysql -u '+MYSQL_USER+' -p')
 mysql.sendline(MYSQL_PASSWD)
 mysql.sendline('drop database db_nfv;')
+delete = mysql.expect(['OK','ERROR',])
+if delete==1:
+	print('db_nfv donnot exist.')
 mysql.sendline('create database '+MAIN_DB_NAME+';')
 create = mysql.expect(['OK','ERROR',])
 if create==0:
