@@ -20,7 +20,7 @@ map_images = {
 	3:{
 		'id':3,
 		'func_name':'vm-iptables',
-		'local_id':'8f44bc3a-7a64-4ed5-8168-d33f65eee6b4',
+		'local_id':'b0d87d39-7820-4f49-8211-c8815e29cbb8',
 		'type':TYPE_OPENSTACK
 	},
 	4:{
