@@ -26,7 +26,7 @@ map_images = {
 	4:{
 		'id':4,
 		'func_name':'vm-tcpdump',
-		'local_id':'cab13650-7a52-42f1-8d40-709437dbde22',
+		'local_id':'3a299ac3-e5b3-464a-adf9-e812855a3d40',
 		'type':TYPE_OPENSTACK
 	},
 	5:{

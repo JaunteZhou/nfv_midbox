@@ -42,7 +42,7 @@ jsonContent=[
             "method":"POST",
             "json":{
                 "func_type":"vm","func_id":"4",
-                "host_id":"1","image_id":"3",
+                "host_id":"1","image_id":"4",
                 "func_ip":"","func_pwd":"",
                 "cpu":"1","ram":"1024","disk":"20"
             }
