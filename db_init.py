@@ -20,19 +20,19 @@ map_images = {
 	3:{
 		'id':3,
 		'func_name':'vm-iptables',
-		'local_id':'b0d87d39-7820-4f49-8211-c8815e29cbb8',
+		'local_id':'3ba86015-8b57-4a2c-ab7d-105a7f4e9fe2',
 		'type':TYPE_OPENSTACK
 	},
 	4:{
 		'id':4,
 		'func_name':'vm-tcpdump',
-		'local_id':'3a299ac3-e5b3-464a-adf9-e812855a3d40',
+		'local_id':'3ba86015-8b57-4a2c-ab7d-105a7f4e9fe2',
 		'type':TYPE_OPENSTACK
 	},
 	5:{
 		'id':5,
 		'func_name':'vm-snort',
-		'local_id':'a7144871-349b-4f34-8825-9b4969609c96',
+		'local_id':'3ba86015-8b57-4a2c-ab7d-105a7f4e9fe2',# TODO: make snort image 
 		'type':TYPE_OPENSTACK
 	}
 }

@@ -42,31 +42,31 @@ jsonContent=[
             "method":"POST",
             "json":{
                 "func_type":"vm","func_id":"4",
+                "host_id":"1","image_id":"3",
+                "func_ip":"","func_pwd":"",
+                "cpu":"1","ram":"1024","disk":"20"
+            }
+        },
+        {
+            "item":"FUNCTION",
+            "method":"POST",
+            "json":{
+                "func_type":"vm","func_id":"5",
                 "host_id":"1","image_id":"4",
                 "func_ip":"","func_pwd":"",
                 "cpu":"1","ram":"1024","disk":"20"
             }
-        }#,
-        # {
-        #     "item":"FUNCTION",
-        #     "method":"POST",
-        #     "json":{
-        #         "func_type":"vm","func_id":"5",
-        #         "host_id":"2","image_id":"4",
-        #         "func_ip":"","func_pwd":"",
-        #         "cpu":"1","ram":"1024","disk":"20"
-        #     }
-        # },
-        # {
-        #     "item":"FUNCTION",
-        #     "method":"POST",
-        #     "json":{
-        #         "func_type":"vm","func_id":"6",
-        #         "host_id":"2","image_id":"5",
-        #         "func_ip":"","func_pwd":"",
-        #         "cpu":"1","ram":"1024","disk":"20"
-        #     }
-        # }
+        },
+        {
+            "item":"FUNCTION",
+            "method":"POST",
+            "json":{
+                "func_type":"vm","func_id":"6",
+                "host_id":"2","image_id":"5",
+                "func_ip":"","func_pwd":"",
+                "cpu":"1","ram":"1024","disk":"20"
+            }
+        }
     ],
     # DeleteFunction
     [
@@ -79,17 +79,17 @@ jsonContent=[
             "item":"FUNCTION",
             "method":"DELETE",
             "json":{"func_id":"4"}
-        }#,
-        # {
-        #     "item":"FUNCTION",
-        #     "method":"DELETE",
-        #     "json":{"func_id":"5"}
-        # },
-        # {
-        #     "item":"FUNCTION",
-        #     "method":"DELETE",
-        #     "json":{"func_id":"6"}
-        # }
+        },
+        {
+            "item":"FUNCTION",
+            "method":"DELETE",
+            "json":{"func_id":"5"}
+        },
+        {
+            "item":"FUNCTION",
+            "method":"DELETE",
+            "json":{"func_id":"6"}
+        }
     ],
     # DeployChain
     # TODO
@@ -108,7 +108,7 @@ jsonContent=[
             "item":"CHAIN",
             "method":"POST",
             "json":{
-                "func_ids": "5-6",
+                "func_ids": "4-5",
                 "match_field": "",
                 "priority": 10,
                 "chain_id": "2"
