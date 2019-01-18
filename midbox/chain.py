@@ -120,7 +120,7 @@ def delChain(para):
             port_names_temp[i]=("br-c"+i+"-in","br-c"+i+"-out")
         elif func_type == TYPE_OPENSTACK:
             func_local_id = db_services.select_table(db, cursor, "t_function", "func_local_id", i)
-            port_names_temp[i] = getVmInterfacesNameInDataPlane(func_local_id)
+            port_names_temp[i] = getVmDataInAndOutPortsName(func_local_id)
             pass
         else:
             return [1,"Error:Function don't have correct type"]
