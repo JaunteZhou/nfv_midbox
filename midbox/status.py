@@ -68,7 +68,7 @@ def showAllStatus(para):
         res[str(hid)]['docker'] = showContainerStatus(hid)
 
     # res_json = json.dumps(res)
-    return [0,res_json]
+    return [0,res]
 
 
 def showContainerStatus(host_id):
