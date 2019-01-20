@@ -111,7 +111,7 @@ def delChain(para):
     port_names_temp={0:("phy","phy")}
     
     if not __checkValid(db,cursor,id_list):
-        return [1,"Error:Container(s) don't  exist."]
+        return [1,"Error:Container(s) don't exist."]
     matchfield=db_services.select_table(db,cursor,"t_flow","match_field", chain_id)
     n=0
     flag=0
@@ -159,7 +159,7 @@ def delChain(para):
         n=n+1
     db_services.delete_table(db,cursor,"t_flow", chain_id)
     db_services.close_db(db,cursor)
-    return [0,"Docker function chain deleted complete."]
+    return [0,"Function chain deleted complete."]
 
 
 def __checkValid(db,cursor,id_list):
