@@ -25,7 +25,7 @@ def container_clear(ip,password,containerid):
     print('PID:'+pid)
     exitstatus,rdata=remote_ssh(ip,password,'docker stop c'+containerid+' && docker rm c'+containerid+' && rm -rf /var/run/netns/$'+pid)
     logger.info(rdata);
-    exitstatus,rdata=remote_ssh(ip,password,'ovs-vsctl del-port sw1 br-c'+containerid+'-in && ovs-vsctl del-port sw1 br-c'+containerid+'-out')
+    exitstatus,rdata=remote_ssh(ip,password,'ovs-vsctl del-port sw1 br-c'+containerid+'-in && ovs-vsctl del-port sw1 br-c'+containerid+'-out && ovs-vsctl del-port sw-man br-c'+containerid)
     logger.info(rdata);
     
     return 0
