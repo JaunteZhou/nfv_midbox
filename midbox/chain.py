@@ -105,6 +105,8 @@ def delChain(para):
 
     db,cursor=db_services.connect_db()
     id_list=db_services.select_table(db,cursor,"t_flow","chain", chain_id)
+    if id_list == None:
+        return [0,"Chain Donnot Exist."]
     id_list=id_list.split('-')
     port_names_temp={0:("phy","phy")}
     
