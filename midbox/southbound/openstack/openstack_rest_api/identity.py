@@ -42,7 +42,7 @@ class AuthToken:
     def getToken(self):
         if (self.expires_time - datetime.datetime.now()).total_seconds() < THRESHOLD_TIME_FOR_UPDATE:
             logger.debug('Start Get Token.')
-            para_json = composeAuthPara(user_id, password, tenant_id)
+            para_json = self.composeAuthPara(user_id, password, tenant_id)
             headers = {
                 "Content-type": "application/json",
                 "Accept": "application/json"
