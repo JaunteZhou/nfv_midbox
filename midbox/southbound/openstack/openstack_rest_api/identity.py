@@ -43,7 +43,7 @@ def getToken():
     if r.status_code != requests.codes.created:
         logger.error((r.status_code, r.json()))
         return ""
-    return r.headers.get('X-Subject-Token'), r.json()["expires_at"]
+    return r.headers.get('X-Subject-Token'), r.json()["token"]["expires_at"]
 
 auth_token, expires_at = getToken()
 logger.debug(expires_at)
