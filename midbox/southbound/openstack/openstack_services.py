@@ -166,7 +166,7 @@ def getServerInterfacesIdListByNetName(s_id, net_name):
     server_detail = servers.getServerDetail(s_id)
     # get mac address list from server details
     mac_list = []
-    for iface in server_detail["addresses"][net_name]:
+    for iface in server_detail["addresses"][net_name]:      #TODO
         mac_list.append(iface["OS-EXT-IPS-MAC:mac_addr"])
     mac_set = set(mac_list)
     # get ports' id list by comparing mac address in mac_list
