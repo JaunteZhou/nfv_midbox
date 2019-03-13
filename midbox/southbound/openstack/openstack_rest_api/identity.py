@@ -4,6 +4,7 @@
 import json
 import requests
 import logging
+import datetime
 logger = logging.getLogger(__name__)
 
 from midbox._config import user_id, password, tenant_id, auth_token_url
@@ -42,10 +43,12 @@ def getToken():
     if r.status_code != requests.codes.created:
         logger.error((r.status_code, r.json()))
         return ""
-    return r.headers.get('X-Subject-Token')
+    return r.headers.get('X-Subject-Token'), r.json()["expires_at"]
 
-auth_token = getToken()
-
+auth_token, expires_at = getToken()
+logger.debug(expires_at)
+logger.debug(auth_token)
+logger.debug(datetime.datetime.now())
 
 if __name__ == '__main__':
     print (auth_token)
