@@ -47,12 +47,13 @@ def getToken():
 
 auth_token, expires_at = getToken()
 
-logger.debug(expires_at)
-dt_expires_at = datetime.datetime.strptime(expires_at, "%Y-%m-%dT%H:%M:%SZ")
+expires_str = expires_at.replace("T", " ")[:-1]
+logger.debug(expires_str)
+expires_dt = datetime.datetime.strptime(expires_str, "%Y-%m-%d %H:%M:%S")
 
 logger.debug(auth_token)
 logger.debug(datetime.datetime.now())
-logger.debug( (datetime.datetime.now()-expires_at).total_seconds() )
+logger.debug( (datetime.datetime.now()-expires_dt).total_seconds() )
 
 if __name__ == '__main__':
     print (auth_token)
