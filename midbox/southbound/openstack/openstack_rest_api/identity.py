@@ -46,8 +46,8 @@ def getToken():
     return r.headers.get('X-Subject-Token'), r.json()["token"]["expires_at"]
 
 auth_token, expires_at = getToken()
-
-expires_str = expires_at.replace("T", " ")[:-1]
+# expires_at = '2019-03-13T14:59:49.000000Z'
+expires_str = expires_at.replace("T", " ").split(".")[0]
 logger.debug(expires_str)
 expires_dt = datetime.datetime.strptime(expires_str, "%Y-%m-%d %H:%M:%S")
 
