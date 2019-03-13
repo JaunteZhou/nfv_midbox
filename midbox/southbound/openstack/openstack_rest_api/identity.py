@@ -46,9 +46,13 @@ def getToken():
     return r.headers.get('X-Subject-Token'), r.json()["token"]["expires_at"]
 
 auth_token, expires_at = getToken()
+
 logger.debug(expires_at)
+dt_expires_at = datetime.datetime.strptime(expires_at, "%Y-%m-%dT%H:%M:%SZ")
+
 logger.debug(auth_token)
 logger.debug(datetime.datetime.now())
+logger.debug( (datetime.datetime.now()-expires_at).total_seconds() )
 
 if __name__ == '__main__':
     print (auth_token)
