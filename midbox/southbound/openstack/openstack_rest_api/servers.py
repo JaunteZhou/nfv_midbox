@@ -110,7 +110,7 @@ def getVolumeAttachments(s_id):
     code, res = rest_requests.get(servers_url + "/" + s_id + "/os-volume_attachments")
     if code != requests.codes.ok:
         logger.error((code, res))
-        return None
+        return []
     return res["volumeAttachments"]
 
 def attachVolume(s_id, vol_id):
