@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-#openstack_services.py
+# openstack_services.py
 import logging
 logger = logging.getLogger(__name__)
 
@@ -9,16 +9,44 @@ from midbox._config import private_net_id, private_net_name, data_in_net_id, dat
 from midbox.southbound.openstack import openstack_para
 import time
 
-########## Instance(Nova) ##########
-def addServerInstance(vcpus, ram, disk, image_id, host_id):
+
+def addVm(vcpus, ram, disk, image_id, host_id):
+    logger.debug('Start.')
+    sv = add_server_instance(vcpus, ram, disk, image_id, host_id)
+    if sv is None:
+        return None
+
+    # 将磁盘挂接实例
+    tmp = __attaching_server_volume_list([sv])
+    while len(tmp):
+        for sv_pair in tmp:
+            logger.debug(("serverId: ", sv_pair["serverId"]))
+            logger.debug(("volumeId: ", sv_pair["volumeId"]))
+        tmp = __attaching_server_volume_list(tmp)
+        if len(tmp) != 0:
+            time.sleep(SLEEP_SECONDS_IN_ATTACHING)
+    mng_port = __get_vm_mng_ports_name(sv['serverId'])
+    sv['manPortName'] = mng_port
+    ports_list = getVmDataInAndOutPortsName(sv['serverId'])
+    sv['dataPortsNameList'] = ports_list
+    return sv
+
+
+def delVm(server_id):
+    logger.debug('Start.')
+    ret = del_server_instance(server_id)
+    return ret
+
+
+def add_server_instance(vcpus, ram, disk, image_id, host_id):
     logger.debug('Start.')
     # get Flavor ID
-    f_id = addFlavor(vcpus, ram, disk)
+    f_id = add_flavor(vcpus, ram, disk)
     if f_id == -1:
         logger.error("Add or Get Flavor.")
         return None
 
-    same_host = getAnyInstanceIdInSameHost(host_id)
+    same_host = __get_any_instance_id_in_same_host(host_id)
 
     para_json = openstack_para.composeServerPara(
             openstack_para.makeServerName(),
@@ -39,14 +67,15 @@ def addServerInstance(vcpus, ram, disk, image_id, host_id):
 
     # create Volume and get Volume ID
     v_ret = volume.createVolume(disk)
-    if v_ret == None:
+    if v_ret is None:
         logger.error("Create Volume.")
         return None
     v_id = v_ret["id"]
 
     return {"serverId": s_id, "volumeId": v_id}
 
-def delServerInstance(s_id, vol_clear=True):
+
+def del_server_instance(s_id, vol_clear=True):
     logger.debug('Start.')
     err_list = []
     # get server's attachments
@@ -57,81 +86,46 @@ def delServerInstance(s_id, vol_clear=True):
         logger.debug(("server id: ", vol_list[i]["serverId"]))
         logger.debug(("volume id: ", vol_list[i]["volumeId"]))
         ret = servers.detachVolume(vol_list[i]["serverId"], vol_list[i]["volumeId"])
-        if ret != True:
+        if ret is not True:
             logger.error(("Detach Volume: ", ret))
             err_list.append({vol_list[i]["volumeId"]: ret})
         logger.debug(("Detach Volume: ", ret))
 
     # get ports list
     logger.debug("Start Getting Server Interfaces List")
-    ports_list = getAllServerInterfaces(s_id)
+    ports_list = __get_all_server_interfaces(s_id)
     logger.debug(("Ports_List: ", ports_list))
 
     # delete server
     logger.debug("Delete Server")
     ret = servers.deleteServer(s_id)
     logger.debug(("Delete Server: ", ret))
-    #RuntimeWarning
 
     # delete ports list
     logger.debug("Delete Ports List")
     for port in ports_list:
         ret = ports.deletePort(port)
         logger.debug(("Return of Delete Port: ", ret))
-        if ret != True:
+        if ret is not True:
             err_list.append({port:ret})
     
     # delete all volumes
-    if vol_clear == True:
+    if vol_clear is True:
         logger.debug("Start Clear Volume !")
 
         for i in range(len(vol_list)):
             logger.debug(("Volume Id: ", vol_list[i]["volumeId"]))
             ret = volume.deleteVolume(vol_list[i]["volumeId"])
             logger.debug(("Return of Delete Volume: ", ret))
-            if ret != True:
+            if ret is not True:
                 err_list.append({vol_list[i]["volumeId"]:ret})
 
     if len(err_list) != 0:
         return False
-
     return True
 
-def attachingServerVolumeList(sv_list):
-    logger.debug('Start.')
-    new_list = []
-    logger.debug("Attaching...")
-    for i in range(len(sv_list)):
-        s = servers.getServerDetail(sv_list[i]["serverId"])
-        if s["status"] == "ACTIVE":
-            ret, res = servers.attachVolume(
-                    sv_list[i]["serverId"], sv_list[i]["volumeId"])
-            if ret == False:
-                logger.error(res)
-                new_list.append(sv_list[i])
-        else:
-            new_list.append(sv_list[i])
-    return new_list
 
-def attachingServerPortList(sv_list, ports_list):
-    logger.debug('Start.')
-    key_list = range(len(sv_list))
-    tmp = []
-    while len(key_list):
-        for i in key_list:
-            p_id = ports_list.pop()
-            para_json = openstack_para.composeInterfacePortsPara(p_id)
-            ret = servers.attachPortInterfaces(
-                    sv_list[i]["serverId"], para_json)
-            if ret == -1:
-                logger.debug("Failed to Attach Ports to Server. Maybe try next time.")
-                tmp.append(i)
-                ports_list.append(p_id)
-        key_list = tmp
-    return ports_list
-
-########## Flavor(Nova) ##########
-def addFlavor(vcpus, ram, disk):
+def add_flavor(vcpus, ram, disk):
     """Get a flavor id."""
     logger.debug('Start.')
     # get f_id of flavor requested
@@ -145,15 +139,74 @@ def addFlavor(vcpus, ram, disk):
     # if flavor by f_id is not existed, create flavor by f_id
     para_json = openstack_para.composeFlavorPara(f_id, f_id, vcpus, ram, disk)
     ret = flavor.createFlavor(para_json)
-    if ret == True:
+    if ret is True:
         return f_id
     else:
         logger.error("Create Flavor.")
         return -1
 
 
-########## Networking(Neutron) ##########
-def getNetIdByNetName(net_name):
+def getVmDataInAndOutPortsName(s_id):
+    logger.debug('Start.')
+    ports_name_list = []
+    # 获取vm的端口信息
+    in_port_id_list = __get_server_interfaces_id_list_by_net_name(s_id, data_in_net_name)
+    if len(in_port_id_list) == 0:
+        return None
+    ports_name_list.append(
+                openstack_para.makePortNameInOvsById(in_port_id_list[0]))
+    # vm在外部端口编号
+    out_port_id_list = __get_server_interfaces_id_list_by_net_name(s_id, data_out_net_name)
+    if len(out_port_id_list) == 0:
+        return None
+    ports_name_list.append(
+                openstack_para.makePortNameInOvsById(out_port_id_list[0]))
+        
+    return ports_name_list
+
+
+# def addVmsList(para_list=[]):
+#     """
+#     para_list = [
+#         {
+#             "vcpus": 1,
+#             "ram": 256,
+#             "disk": 1,
+#             "image_id": "xxxx-xx-xx-xxxx",
+#             "same_host": "xxxx-xx-xx-xxxx"
+#         },{...},{...}
+#     ]
+#     """
+#     logger.debug('Start.')
+#     sv_list = []
+#     for para in para_list:
+#         sv = addServerInstance(
+#                 para["vcpus"],
+#                 para["ram"],
+#                 para["disk"],
+#                 para["image_id"],
+#                 para["host_id"])
+#         if sv == -1:
+#             logger.error("Add Server Instance.")
+#             continue
+#         para["server_id"] = sv["serverId"]
+#         para["volume_id"] = sv["volumeId"]
+#         sv_list.append(sv)
+#
+#     # attaching servers to volumes by list
+#     tmp = __attaching_server_volume_list(sv_list)
+#     while len(tmp):
+#         for sv_pair in tmp:
+#             logger.debug(("serverId: ", sv_pair["serverId"]))
+#             logger.debug(("volumeId: ", sv_pair["volumeId"]))
+#         tmp = __attaching_server_volume_list(tmp)
+#         if len(tmp) != 0:
+#             time.sleep(SLEEP_SECONDS_IN_ATTACHING)
+#
+#     return para_list
+
+
+def __get_net_id_by_net_name(net_name):
     logger.debug('Start.')
     nets = networking.getNetworksList()
     for n in nets:
@@ -161,12 +214,13 @@ def getNetIdByNetName(net_name):
             return n["id"]
     return None
 
-def getServerInterfacesIdListByNetName(s_id, net_name):
+
+def __get_server_interfaces_id_list_by_net_name(s_id, net_name):
     logger.debug('Start.')
     server_detail = servers.getServerDetail(s_id)
     # get mac address list from server details
     mac_list = []
-    for iface in server_detail["addresses"][net_name]:      #TODO
+    for iface in server_detail["addresses"][net_name]:
         mac_list.append(iface["OS-EXT-IPS-MAC:mac_addr"])
     mac_set = set(mac_list)
     # get ports' id list by comparing mac address in mac_list
@@ -177,7 +231,8 @@ def getServerInterfacesIdListByNetName(s_id, net_name):
             ports_id_list.append(port["id"])
     return list(set(ports_id_list))
 
-def getAllServerInterfaces(s_id):
+
+def __get_all_server_interfaces(s_id):
     logger.debug('Start.')
     server_detail = servers.getServerDetail(s_id)
     # get mac address list from server details
@@ -197,7 +252,7 @@ def getAllServerInterfaces(s_id):
     return list(set(ports_id_list))
 
 
-def getAnyInstanceIdInSameHost(host_id):
+def __get_any_instance_id_in_same_host(host_id):
     logger.debug('Start.')
     host_list = hypervisors.getHostsList()
     host_name = ''
@@ -215,104 +270,50 @@ def getAnyInstanceIdInSameHost(host_id):
     return None
 
 
-def getVmManPortsName(s_id):
+def __get_vm_mng_ports_name(s_id):
     logger.debug('Start.')
-    # port used managing vm 
-    man_port_id_list = getServerInterfacesIdListByNetName(s_id, private_net_name)
+    # port used managing vm
+    man_port_id_list = __get_server_interfaces_id_list_by_net_name(s_id, private_net_name)
     if len(man_port_id_list) == 0:
         return None
     man_port_name = openstack_para.makePortNameInOvsById(man_port_id_list[0])
-        
+
     return man_port_name
 
 
-def getVmDataInAndOutPortsName(s_id):
+def __attaching_server_volume_list(sv_list):
     logger.debug('Start.')
-    ports_name_list = []
-    # TODO:重要！！！进出端口排列问题！！！
-    # port getting data into vm 
-    in_port_id_list = getServerInterfacesIdListByNetName(s_id, data_in_net_name)
-    if len(in_port_id_list) == 0:
-        return None
-    ports_name_list.append(
-                openstack_para.makePortNameInOvsById(in_port_id_list[0]))
-    # port throwing data out of vm
-    out_port_id_list = getServerInterfacesIdListByNetName(s_id, data_out_net_name)
-    if len(out_port_id_list) == 0:
-        return None
-    ports_name_list.append(
-                openstack_para.makePortNameInOvsById(out_port_id_list[0]))
-        
-    return ports_name_list
+    new_list = []
+    logger.debug("Attaching...")
+    for i in range(len(sv_list)):
+        s = servers.getServerDetail(sv_list[i]["serverId"])
+        if s["status"] == "ACTIVE":
+            ret, res = servers.attachVolume(
+                    sv_list[i]["serverId"], sv_list[i]["volumeId"])
+            if ret == False:
+                logger.error(res)
+                new_list.append(sv_list[i])
+        else:
+            new_list.append(sv_list[i])
+    return new_list
 
-########## SFC ##########
-def addVm(vcpus, ram, disk, image_id, host_id):
-    logger.debug('Start.')
-    sv = addServerInstance(vcpus, ram, disk, image_id, host_id)
-    if sv == None:
-        return None
-    
-    # attaching servers to volumes by list
-    tmp = attachingServerVolumeList([sv])
-    while len(tmp):
-        for sv_pair in tmp:
-            logger.debug(("serverId: ", sv_pair["serverId"]))
-            logger.debug(("volumeId: ", sv_pair["volumeId"]))
-        tmp = attachingServerVolumeList(tmp)
-        if len(tmp) != 0:
-            time.sleep(SLEEP_SECONDS_IN_ATTACHING)
-    man_port = getVmManPortsName(sv['serverId'])
-    sv['manPortName'] = man_port
-    ports_list = getVmDataInAndOutPortsName(sv['serverId'])
-    sv['dataPortsNameList'] = ports_list
-    return sv
 
-def delVm(server_id):
-    logger.debug('Start.')
-    ret = delServerInstance(server_id)
-    # TODO: 错误处理
-    return ret
-
-def addVmsList(para_list=[]):
-    """
-    para_list = [
-        {
-            "vcpus": 1,
-            "ram": 256,
-            "disk": 1,
-            "image_id": "xxxx-xx-xx-xxxx",
-            "same_host": "xxxx-xx-xx-xxxx"
-        },{...},{...}
-    ]
-    """
-    logger.debug('Start.')
-    sv_list = []
-    for para in para_list:
-        sv = addServerInstance(
-                para["vcpus"],
-                para["ram"],
-                para["disk"],
-                para["image_id"],
-                para["host_id"])
-        if sv == -1:
-            logger.error("Add Server Instance.")
-            continue
-        para["server_id"] = sv["serverId"]
-        para["volume_id"] = sv["volumeId"]
-        sv_list.append(sv)
-
-    # attaching servers to volumes by list
-    tmp = attachingServerVolumeList(sv_list)
-    while len(tmp):
-        for sv_pair in tmp:
-            logger.debug(("serverId: ", sv_pair["serverId"]))
-            logger.debug(("volumeId: ", sv_pair["volumeId"]))
-        tmp = attachingServerVolumeList(tmp)
-        if len(tmp) != 0:
-            time.sleep(SLEEP_SECONDS_IN_ATTACHING)
-
-    return para_list
-
+# def attachingServerPortList(sv_list, ports_list):
+#     logger.debug('Start.')
+#     key_list = range(len(sv_list))
+#     tmp = []
+#     while len(key_list):
+#         for i in key_list:
+#             p_id = ports_list.pop()
+#             para_json = openstack_para.composeInterfacePortsPara(p_id)
+#             ret = servers.attachPortInterfaces(
+#                     sv_list[i]["serverId"], para_json)
+#             if ret == -1:
+#                 logger.debug("Failed to Attach Ports to Server. Maybe try next time.")
+#                 tmp.append(i)
+#                 ports_list.append(p_id)
+#         key_list = tmp
+#     return ports_list
 
 
 if __name__ == '__main__':

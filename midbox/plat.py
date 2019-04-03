@@ -11,6 +11,7 @@ from midbox import central_unit
 
 app = Flask(__name__)
 
+
 @app.route("/nfvcmd", methods=['POST'])
 def manage():
     logger.debug('Start.')
@@ -26,5 +27,6 @@ def manage():
 
     return jsonify(ret), 201
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     app.run()

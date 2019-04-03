@@ -8,6 +8,7 @@ import datetime
 
 from midbox._config import debug_rotating_log_dir, error_log_dir
 
+
 def log_init():
     logger = logging.getLogger('midbox')
     logger.setLevel(logging.DEBUG)

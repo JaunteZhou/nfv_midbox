@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #_config.py
 
-
 ##### docker registry config #####
 DOCKER_REGISTRY_IP = '10.1.1.7'
 DOCKER_REGISTRY_PORT = '5001'
@@ -13,6 +12,8 @@ DOCKER_REGISTRY_WORK_DIRECTORY = '/home/nfv30/registry'
 # physical port name should be the same on every host
 IN_PORT   ='eno3'
 OUT_PORT  ='eno3'
+
+DATA_PLANE_OVS_NAME = 'sw1'
 ##### physical port name config end #####
 
 ##### log config #####
@@ -43,6 +44,8 @@ TYPE_OPENSTACK  = 2
 
 
 ##### openstack config #####
+SERVERS_ID_PREFIX = "S"
+FLAVORS_ID_PREFIX = "F"
 # user info
 user_name           = "admin"
 user_id             = "c7f6506acf8a4204b07cc412f426d2b3"

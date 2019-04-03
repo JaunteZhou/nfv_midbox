@@ -1,190 +1,209 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#chain.py
+# chain.py
 import logging
+
 logger = logging.getLogger(__name__)
 
-from midbox import flows
+from midbox.southbound.ovs import ovs_services
 from midbox.db import db_services
-from midbox._config import TYPE_DOCKER, TYPE_OPENSTACK,IN_PORT,OUT_PORT
+from midbox._config import TYPE_DOCKER, TYPE_OPENSTACK, IN_PORT, OUT_PORT
 from midbox.southbound.openstack.openstack_services import getVmDataInAndOutPortsName
-"""
-para:
-{
-    "func_ids": "xxxxxxxx-yyyyyyyy-zzzzzzzzz",
-    "match_field": "",
-    "priority": INT,
-    "chain_id": "xxxxxxxx"
-}
-"""
-#TODO:添加上层参数出错处理。（如match_field不合法：检查ovs返回信息，若为空则说明合法）
-# 返回值：返回值为tuple，包含一个指示执行结果的值（0成功，1失败）和字符串。
-def setChain(para):
-    #必须初始化这两个端口名为有效的名称
-    if IN_PORT=='default' or OUT_PORT=='default':
-        return [1,"Error: Physical port name has not been initialized"]
-    logger.debug('Start.')
-    # function ids
-    ids = para["func_ids"]
-    # match field
-    matchfield = para["match_field"] 
-    # priority of flow_table
-    priority = para["priority"]
-    # chain id
-    id = para["chain_id"]
 
-    db,cursor=db_services.connect_db()
-    id_list=ids.split('-')
-    port_names_temp={0:("phy","phy")}
-    
-    if not __checkValid(db,cursor,id_list):
-        return [1,"'Error:Function(s) don't  exist."]
-    
-    for i in id_list:
-        func_type = db_services.select_table(db, cursor, "t_function", "type", i)
-        # 获得虚拟机端口名的方法
-        if func_type == TYPE_DOCKER:
-            port_names_temp[i]=("br-c"+i+"-in","br-c"+i+"-out")
-        elif func_type == TYPE_OPENSTACK:
-            func_local_id = db_services.select_table(db, cursor, "t_function", "func_local_id", i)
-            port_names_temp[i] = getVmDataInAndOutPortsName(func_local_id)
-        else:
-            return [1,"Error:Function don't have correct type"]
-    
+
+def setChain(para):
+    """
+    配置功能链接
+    :param para: 包含以下四个元素的字典
+                {
+                    "func_ids": "xxxxxxxx-yyyyyyyy-zzzzzzzzz",
+                    "match_field": "",
+                    "priority": INT,
+                    "chain_id": "xxxxxxxx"
+                }
+    :return: 二元组，包含一个指示执行结果的值（0成功，1失败）和字符串
+    """
+    # 必须初始化这两个端口名为有效的名称
+    if IN_PORT == 'default' or OUT_PORT == 'default':
+        logger.error("Physical Port Name has not been Initialized!")
+        return 1, "Error: Physical Port Name has not been Initialized!"
+    logger.debug('Start.')
+    # 多个功能id
+    func_ids = para["func_ids"]
+    # 匹配域
+    match_field = para["match_field"]
+    # 流表优先级
+    priority = para["priority"]
+    # 链id
+    chain_id = para["chain_id"]
+    # 连接数据库
+    db, cursor = db_services.connect_db()
+
+    # 将字符串的功能id序列转换为列表，并且查找对应功能端口名
+    ret_code, ret_data = __get_port_pair_list_of_func_list(db, cursor, func_ids)
+    if ret_code == 1:
+        return ret_code, ret_data
+    func_id_list = ret_data[0]
+    port_names_temp = ret_data[1]
+
     n = 0
     flag = 0
-    #list结尾附一个0，使得循环达到最后一个功能时n+1不会溢出
-    id_list.append('0')
+    # list结尾附一个0，使得循环达到最后一个功能时n+1不会溢出
+    func_id_list.append('0')
     while 1:
-        if n==len(id_list)-1:
+        if n == len(func_id_list) - 1:
             aft = 0
             break
-        __addRefCount(db,cursor,id_list[n])
+        __add_ref_count(db, cursor, func_id_list[n])
         bef = 0
-        aft = 0        
+        aft = 0
         if flag == 0:
             bef = 0
             flag = 1
         else:
-            bef = id_list[n-1]
-        if __diffHost(db,cursor,id_list[n],id_list[n+1]):
+            bef = func_id_list[n - 1]
+        if __diff_host(db, cursor, func_id_list[n], func_id_list[n + 1]):
             aft = 0
             flag = 0
         else:
-            aft=id_list[n+1]
-        
-        host_id = db_services.select_table(db, cursor, "t_function", "host_id", id_list[n])
-        ip = db_services.select_table(db,cursor,"t_host","ip",host_id)
-        password = db_services.select_table(db,cursor,"t_host","pwd",host_id)
-        port_names = [port_names_temp[bef][0],port_names_temp[bef][1],\
-            port_names_temp[id_list[n]][0],port_names_temp[id_list[n]][1],\
-            port_names_temp[aft][0],port_names_temp[aft][1]]
-                
-        flows.flowDeploy(ip,password,port_names,\
-            str(priority),matchfield,IN_PORT,OUT_PORT)
-        n=n+1
-    db_services.insert_flow(db,cursor,id,ids,matchfield)
-    db_services.close_db(db,cursor)
-    return [0,"Function Chain set completed,id:"+str(id)]
+            aft = func_id_list[n + 1]
+
+        ip, password = __get_host_ip_and_pwd_by_func_id(db, cursor, func_id_list[n])
+        port_names = [port_names_temp[bef][0], port_names_temp[bef][1],
+                      port_names_temp[func_id_list[n]][0], port_names_temp[func_id_list[n]][1],
+                      port_names_temp[aft][0], port_names_temp[aft][1]]
+        ovs_services.deployFlow(ip, password, port_names,
+                                str(priority), match_field, IN_PORT, OUT_PORT)
+
+        n = n + 1
+    # end while
+    db_services.insert_flow(db, cursor, chain_id, func_ids, match_field)
+    db_services.close_db(db, cursor)
+    return 0, "Success: Set Chain Successfully by OVS." + " Chain ID: " + str(chain_id)
 
 
-
-"""
-para:
-{
-    "chain_id": "xxxxxxx"
-}
-"""
 def delChain(para):
-    #必须初始化这两个端口名为有效的名称
-    if IN_PORT=='default' or OUT_PORT=='default':
-        return [1,"Error: Physical port name has not been initialized"]
+    """
+    删除功能链接
+    :param para: 包含以下一个元素的字典
+                {
+                    "chain_id": "xxxxxxx"
+                }
+    :return: 二元组，包含一个指示执行结果的值（0成功，1失败）和字符串
+    """
     logger.debug('Start.')
-    #chain's id
-    chain_id=para['chain_id']
+    # 必须初始化这两个端口名为有效的名称
+    if IN_PORT == 'default' or OUT_PORT == 'default':
+        return 1, "Error: Physical Port Name has not been Initialized"
 
-    db,cursor=db_services.connect_db()
-    id_list=db_services.select_table(db,cursor,"t_flow","chain", chain_id)
-    if id_list == None:
-        return [0,"Chain Donnot Exist."]
-    id_list=id_list.split('-')
-    port_names_temp={0:("phy","phy")}
-    
-    if not __checkValid(db,cursor,id_list):
-        return [1,"Error:Container(s) don't exist."]
-    matchfield=db_services.select_table(db,cursor,"t_flow","match_field", chain_id)
-    n=0
-    flag=0
-    
-    for i in id_list:
-        func_type = db_services.select_table(db,cursor,"t_function","type", i)
-        if func_type == TYPE_DOCKER:
-            port_names_temp[i]=("br-c"+i+"-in","br-c"+i+"-out")
-        elif func_type == TYPE_OPENSTACK:
-            func_local_id = db_services.select_table(db, cursor, "t_function", "func_local_id", i)
-            port_names_temp[i] = getVmDataInAndOutPortsName(func_local_id)
-            pass
-        else:
-            return [1,"Error:Function don't have correct type"]
-    
-    #同上
-    id_list.append('0')
+    chain_id = para['chain_id']
+
+    db, cursor = db_services.connect_db()
+    func_ids = db_services.select_table(db, cursor, "t_flow", "chain", chain_id)
+    if func_ids is None:
+        return 1, "Error: Chain don't Exist!"
+
+    # 将字符串的功能id序列转换为列表，并且查找对应功能端口名
+    ret_code, ret_data = __get_port_pair_list_of_func_list(db, cursor, func_ids)
+    if ret_code == 1:
+        return ret_code, ret_data
+    func_id_list = ret_data[0]
+    port_names_temp = ret_data[1]
+
+    match_field = db_services.select_table(db, cursor, "t_flow", "match_field", chain_id)
+    n = 0
+    flag = 0
+    # list结尾附一个0，使得循环达到最后一个功能时n+1不会溢出
+    func_id_list.append('0')
     while 1:
-        if n==len(id_list)-1:
-            aft=0
+        if n == len(func_id_list) - 1:
+            aft = 0
             break
-        err=__decRefCount(db,cursor,id_list[n])
-        if err<0:
-            return [1,"Error:over deleted"]
-        elif err==1:
-            shutdownflag=1
+        err = __dec_ref_count(db, cursor, func_id_list[n])
+        if err < 0:
+            logger.error("Over Deleted!")
+            return 1, "Error: Over Deleted!"
+        elif err == 1:
+            shutdown_flag = 1
         else:
-            shutdownflag=0
-        bef=0
-        
-        if flag==0:
-            bef=0
-            flag=1
+            shutdown_flag = 0
+        bef = 0
+
+        if flag == 0:
+            bef = 0
+            flag = 1
         else:
-            bef=id_list[n-1]
-        if __diffHost(db,cursor,id_list[n],id_list[n+1]):
-            flag=0
-        host_id=db_services.select_table(db,cursor,"t_function","host_id",id_list[n])
-        ip=db_services.select_table(db,cursor,"t_host","ip",host_id)
-        password=db_services.select_table(db,cursor,"t_host","pwd",host_id)
-        port_names=[port_names_temp[bef][0],port_names_temp[bef][1],\
-            port_names_temp[id_list[n]][0],port_names_temp[id_list[n]][1]]
-        
-        flows.flowUndeploy(ip,password,port_names,str(shutdownflag),matchfield,IN_PORT)
-        n=n+1
-    db_services.delete_table(db,cursor,"t_flow", chain_id)
-    db_services.close_db(db,cursor)
-    return [0,"Function chain deleted complete."]
+            bef = func_id_list[n - 1]
+        if __diff_host(db, cursor, func_id_list[n], func_id_list[n + 1]):
+            flag = 0
+
+        ip, password = __get_host_ip_and_pwd_by_func_id(db, cursor, func_id_list[n])
+        port_names = [port_names_temp[bef][0], port_names_temp[bef][1],
+                      port_names_temp[func_id_list[n]][0], port_names_temp[func_id_list[n]][1]]
+        ovs_services.undeployFlow(ip, password, port_names, str(shutdown_flag), match_field, IN_PORT)
+
+        n = n + 1
+    # end while
+    db_services.delete_table(db, cursor, "t_flow", chain_id)
+    db_services.close_db(db, cursor)
+    return 0, "Success: Delete Chain Successfully by OVS."
 
 
-def __checkValid(db,cursor,id_list):
+def __check_valid(db, cursor, id_list):
     for id in id_list:
-        if db_services.select_table(db,cursor,"t_function","host_id",id)=="None":
+        if db_services.select_table(db, cursor, "t_function", "host_id", id) == "None":
             return False
     return True
 
-def __addRefCount(db,cursor,id): 
-    refcount=db_services.select_table(db,cursor,"t_function","ref_count",id)
-    db_services.update_table(db,cursor,"t_function","ref_count",refcount+1,id)
+
+def __add_ref_count(db, cursor, id):
+    refcount = db_services.select_table(db, cursor, "t_function", "ref_count", id)
+    db_services.update_table(db, cursor, "t_function", "ref_count", refcount + 1, id)
     return 0
 
-def __diffHost(db,cursor,id1,id2):
-    if db_services.select_table(db,cursor,"t_function","host_id",id1) != \
-        db_services.select_table(db,cursor,"t_function","host_id",id2):
+
+def __diff_host(db, cursor, id1, id2):
+    if db_services.select_table(db, cursor, "t_function", "host_id", id1) != \
+            db_services.select_table(db, cursor, "t_function", "host_id", id2):
         return True
     else:
         return False
 
-def __decRefCount(db,cursor,id): 
-    refcount=db_services.select_table(db,cursor,"t_function","ref_count",id)
-    if refcount<0:
+
+def __dec_ref_count(db, cursor, id):
+    refcount = db_services.select_table(db, cursor, "t_function", "ref_count", id)
+    if refcount < 0:
         return -1
-    db_services.update_table(db,cursor,"t_function","ref_count",refcount-1,id)
-    if refcount==0:
+    db_services.update_table(db, cursor, "t_function", "ref_count", refcount - 1, id)
+    if refcount == 0:
         return 1
     return 0
+
+
+def __get_port_pair_list_of_func_list(db, cursor, func_ids):
+    func_id_list = func_ids.split('-')
+    port_names_temp = {0: ("phy", "phy")}
+
+    if not __check_valid(db, cursor, func_id_list):
+        logger.error("Function(s) don't Exist!")
+        return 1, "Error: Function(s) don't Exist!"
+
+    for f_id in func_id_list:
+        func_type = db_services.select_table(db, cursor, "t_function", "type", f_id)
+        # 获得虚拟机端口名的方法
+        if func_type == TYPE_DOCKER:
+            port_names_temp[f_id] = ("br-c" + f_id + "-in", "br-c" + f_id + "-out")
+        elif func_type == TYPE_OPENSTACK:
+            func_local_id = db_services.select_table(db, cursor, "t_function", "func_local_id", f_id)
+            port_names_temp[f_id] = getVmDataInAndOutPortsName(func_local_id)
+        else:
+            logger.error("Function don't have Correct Type!")
+            return 1, "Error: Function don't have Correct Type!"
+    return 0, (func_id_list, port_names_temp)
+
+
+def __get_host_ip_and_pwd_by_func_id(db, cursor, func_id):
+    host_id = db_services.select_table(db, cursor, "t_function", "host_id", func_id)
+    ip = db_services.select_table(db, cursor, "t_host", "ip", host_id)
+    password = db_services.select_table(db, cursor, "t_host", "pwd", host_id)
+    return ip, password
