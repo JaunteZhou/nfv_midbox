@@ -5,38 +5,6 @@
 from midbox._config import MYSQL_USER, MYSQL_PASSWD, MAIN_DB_NAME, DB_SOURCE_SQL, TYPE_DOCKER, TYPE_OPENSTACK
 import pexpect
 
-# map_images = {
-#     1: {
-#         'image_id': 1,
-#         'func': 'baseim',
-#         'image_local_id': '1',
-#         'type': TYPE_DOCKER
-#     },
-#     2: {
-#         'image_id': 2,
-#         'func': 'docker-snort',
-#         'image_local_id': '2',
-#         'type': TYPE_DOCKER
-#     },
-#     3: {
-#         'image_id': 3,
-#         'func': 'vm-iptables',
-#         'image_local_id': '3ba86015-8b57-4a2c-ab7d-105a7f4e9fe2',
-#         'type': TYPE_OPENSTACK
-#     },
-#     4: {
-#         'image_id': 4,
-#         'func': 'vm-tcpdump',
-#         'image_local_id': '3ba86015-8b57-4a2c-ab7d-105a7f4e9fe2',
-#         'type': TYPE_OPENSTACK
-#     },
-#     5: {
-#         'image_id': 5,
-#         'func': 'vm-snort',
-#         'image_local_id': '3ba86015-8b57-4a2c-ab7d-105a7f4e9fe2',
-#         'type': TYPE_OPENSTACK
-#     }
-# }
 
 DB_ITEM_DICT = {
     't_host': [
@@ -127,18 +95,6 @@ if __name__ == "__main__":
         mysql.sendline('source ' + DB_SOURCE_SQL + ';')
         imported = mysql.expect(['OK', 'ERROR', ])
         if imported == 0:
-            # mysql.sendline(
-            #     'INSERT INTO t_host (host_id, host_name, ip, pwd, cpu, ram, disk) VALUES (1, "host1", "10.1.1.18", "123456", 8, 32, 100);')
-            # inserted = mysql.expect(['OK', 'ERROR', ])
-            # if inserted == 1:
-            #     print("insert host failed")
-            #
-            # mysql.sendline(
-            #     'INSERT INTO t_host (host_id, host_name, ip, pwd, cpu, ram, disk) VALUES (2, "host2", "10.1.1.7", "123456", 8, 32, 100);')
-            # inserted = mysql.expect(['OK', 'ERROR', ])
-            # if inserted == 1:
-            #     print("insert host failed")
-
             for table_name in DB_ITEM_DICT:
                 for item_dic in DB_ITEM_DICT[table_name]:
                     cmd = __edit_cmd_of_insert_to_db(item_dic)
@@ -147,19 +103,6 @@ if __name__ == "__main__":
                     inserted = mysql.expect(['OK', 'ERROR', ])
                     if inserted == 1:
                         print("insert " + table_name + " failed")
-
-            # for i in map_images.keys():
-            #     cmd = 'INSERT INTO t_image (image_id, image_local_id, func, type) VALUES (' + \
-            #           str(DB_ITEM_DICT['t_image'][i]['image_id']) + ', ' + \
-            #           '"' + DB_ITEM_DICT['t_image'][i]['image_local_id'] + '", ' + \
-            #           '"' + DB_ITEM_DICT['t_image'][i]['func'] + '", ' + \
-            #           str(DB_ITEM_DICT['t_image'][i]['type']) + ');'
-            #     print(cmd)
-            #     mysql.sendline(cmd)
-            #     inserted = mysql.expect(['OK', 'ERROR', ])
-            #     if inserted == 1:
-            #         print("insert image failed")
-
             mysql.sendline('exit')
         elif imported == 1:
             print("import database failed")
