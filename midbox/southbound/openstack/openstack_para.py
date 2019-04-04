@@ -58,6 +58,18 @@ def composeFlavorPara(id, name, vcpus, ram, disk):
     return json.dumps(req_dic)
 
 
+def composeCreateServerImagePara(new_image_name, metadata=None):
+    # TODO:
+    req_dic = {
+        "createImage": {
+            "name": new_image_name
+        }
+    }
+    if metadata:
+        req_dic["createImage"]["metadata"] = metadata
+    return req_dic
+
+
 # def composeServerPara_oldVersion(
 #         name, image_ref, flavor_ref, nets):
 #     """Compose JSON Param of Server Creatation."""

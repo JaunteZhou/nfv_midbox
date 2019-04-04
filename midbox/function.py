@@ -31,7 +31,22 @@ def add_docker_func(db, cursor, para, host_ip, host_pwd):
     return 0, "Success: Set Container Function Successfully by Docker."
 
 
-def add_open_stack_func(db, cursor, para, host_ip, host_pwd):
+def del_docker_func(db, cursor, para):
+    host_id = db_services.select_table(db, cursor,
+                                      't_function', 'host_id', para['func_id'])
+    host_ip = db_services.select_table(db, cursor, 't_host', 'ip', host_id)
+    if len(host_ip) == 0:
+        logger.error("Delete container Failed because Host doesn't Exist by Docker!")
+        return 1, "Error: Delete container Function Failed because Host doesn't Exist by Docker!"
+    host_pwd = db_services.select_table(db, cursor, 't_host', 'pwd', host_id)
+
+    docker_services.delContainer(host_ip, host_pwd, para['func_id'])
+    db_services.delete_table(db, cursor, 't_function', para["func_id"])
+
+    return 0, "Success: Delete Container Function Successfully by Docker."
+
+
+def add_openstack_func(db, cursor, para, host_ip, host_pwd):
     # 从数据库中根据镜像id获取镜像在openstack中的id
     image_local_id = db_services.select_table(db, cursor,
                                               't_image', 'image_local_id', para['image_id'])
@@ -65,22 +80,7 @@ def add_open_stack_func(db, cursor, para, host_ip, host_pwd):
     return 0, "Success: Set VM Function Successfully by OpenStack."
 
 
-def del_docker_func(db, cursor, para):
-    host_id = db_services.select_table(db, cursor,
-                                      't_function', 'host_id', para['func_id'])
-    host_ip = db_services.select_table(db, cursor, 't_host', 'ip', host_id)
-    if len(host_ip) == 0:
-        logger.error("Delete container Failed because Host doesn't Exist by Docker!")
-        return 1, "Error: Delete container Function Failed because Host doesn't Exist by Docker!"
-    host_pwd = db_services.select_table(db, cursor, 't_host', 'pwd', host_id)
-
-    docker_services.delContainer(host_ip, host_pwd, para['func_id'])
-    db_services.delete_table(db, cursor, 't_function', para["func_id"])
-
-    return 0, "Success: Delete Container Function Successfully by Docker."
-
-
-def del_open_stack_func(db, cursor, para):
+def del_openstack_func(db, cursor, para):
     # get func_local_id from t_func table
     func_local_id = db_services.select_table(db, cursor,
                                              't_function', 'func_local_id', para['func_id'])
@@ -93,14 +93,31 @@ def del_open_stack_func(db, cursor, para):
     return 0, "Success: Delete VM Function Successfully by OpenStack."
 
 
+def move_openstack_func(db, cursor, para):
+    # get func_local_id from t_func table
+    func_local_id = db_services.select_table(db, cursor,
+                                             't_function', 'func_local_id', para['func_id'])
+    ret = openstack_services.moveVm(
+        func_local_id, para['cpu'], para['ram'], para['disk'], para['host_id']
+    )
+    if ret is None:
+        logger.error("Move VM Function Failed by OpenStack!")
+        return 1, "Error: Move VM Function Failed by OpenStack!"
+    # TODO:
+    return 0, ""
+
+
 MAP_PLATFORM_TO_FUNC = {
     "add": {
-        "openstack": add_open_stack_func,
+        "openstack": add_openstack_func,
         "docker": add_docker_func
     },
     "del": {
-        TYPE_OPENSTACK: del_open_stack_func,
+        TYPE_OPENSTACK: del_openstack_func,
         TYPE_DOCKER: del_docker_func
+    },
+    'move': {
+        "openstack": move_openstack_func
     }
 
 }

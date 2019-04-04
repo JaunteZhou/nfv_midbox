@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-#servers.py
+# servers.py
 """This module provides a series of openstack compute APIs"""
 import json
 import requests
 import logging
+
 logger = logging.getLogger(__name__)
 
 from midbox.southbound.openstack.openstack_rest_api import rest_requests
@@ -36,15 +37,14 @@ VERIFY_RESIZE. System is awaiting confirmation that the server is operational af
 
 
 def getServersList():
-    """Get list of servers.\n
-    Param:\n
-    Normal Return:\n
-    [
-        {
-            "id": "22c91117-08de-4894-9aa9-6ef382400985",
-            "name": "new-server-test"
-        },{...},{...}
-    ]
+    """
+    Get list of servers.
+    :return:[
+                {
+                    "id": "22c91117-08de-4894-9aa9-6ef382400985",
+                    "name": "new-server-test"
+                },{...},{...}
+            ]
     """
     code, res = rest_requests.get(servers_url)
     if code != requests.codes.ok:
@@ -57,6 +57,7 @@ def getServersList():
     return sl
     # Normal response codes: 200
     # Error response codes: badRequest(400), unauthorized(401), forbidden(403)
+
 
 def getServersListDetails():
     """
@@ -71,6 +72,7 @@ def getServersListDetails():
         sl[i].pop("links")
     return sl
 
+
 def getServerDetail(s_id):
     """Get server by id with details."""
     code, res = rest_requests.get(servers_url + "/" + s_id)
@@ -81,6 +83,7 @@ def getServerDetail(s_id):
     sl.pop("links")
     return sl
 
+
 def createServer(para_json):
     """Create a new server with json-formed para."""
     code, res = rest_requests.post(servers_url, para_json)
@@ -88,6 +91,7 @@ def createServer(para_json):
         logger.error((code, res))
         return -1
     return res["server"]
+
 
 def deleteServer(s_id):
     """
@@ -104,6 +108,17 @@ def deleteServer(s_id):
     # Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
 
+### Create Image ###
+def createImage(s_id, para_json):
+    code, res = rest_requests.post(servers_url + "/" + s_id + "/action", para_json)
+    if code != requests.codes.accepted:
+        logger.error((code, res))
+        return -1
+    # TODO:
+    print(res)
+    return res["image_id"]
+
+
 ### Volume Attachments ###
 def getVolumeAttachments(s_id):
     """Get Volume Attachment to Server by id."""
@@ -112,6 +127,7 @@ def getVolumeAttachments(s_id):
         logger.error((code, res))
         return []
     return res["volumeAttachments"]
+
 
 def attachVolume(s_id, vol_id):
     """
@@ -126,23 +142,24 @@ def attachVolume(s_id, vol_id):
     }
     """
     para_dic = {
-        "volumeAttachment":{
+        "volumeAttachment": {
             "volumeId": vol_id
         }
     }
     para_json = json.dumps(para_dic)
     code, res = rest_requests.post(
-            servers_url + "/" + s_id + "/os-volume_attachments",
-            para_json)
+        servers_url + "/" + s_id + "/os-volume_attachments",
+        para_json)
     if code != requests.codes.ok:
         logger.error((code, res))
         return False, res
     return True, res["volumeAttachment"]
 
+
 def detachVolume(s_id, vol_id):
     """Detach Volume to Server by id."""
     code, res = rest_requests.delete(
-            servers_url + "/" + s_id + "/os-volume_attachments/" + vol_id)
+        servers_url + "/" + s_id + "/os-volume_attachments/" + vol_id)
     if code != requests.codes.accepted:
         logger.error((code, res))
         return False
@@ -152,33 +169,36 @@ def detachVolume(s_id, vol_id):
 ### Ports interfaces ###
 def getPortInterfaces(s_id):
     code, res = rest_requests.get(
-            servers_url + "/" + s_id + "/os-interface")
+        servers_url + "/" + s_id + "/os-interface")
     if code != requests.codes.ok:
         logger.error((code, res))
         return res
     return res["interfaceAttachments"]
 
+
 def attachPortInterfaces(s_id, para_json):
     code, res = rest_requests.post(
-            servers_url + "/" + s_id + "/os-interface",
-            para_json)
+        servers_url + "/" + s_id + "/os-interface",
+        para_json)
     if code != requests.codes.ok:
         logger.error((code, res))
         return -1
     # print (res)
     return res["interfaceAttachment"]
 
+
 def getPortInterfacesDetails(s_id, p_id):
     code, res = rest_requests.get(
-            servers_url + "/" + s_id + "/os-interface/" + p_id)
+        servers_url + "/" + s_id + "/os-interface/" + p_id)
     if code != requests.codes.ok:
         logger.error((code, res))
         return res
     return res["interfaceAttachments"]
 
+
 def detachPortInterfaces(s_id, p_id):
     code, res = rest_requests.delete(
-            servers_url + "/" + s_id + "/os-interface/" + p_id)
+        servers_url + "/" + s_id + "/os-interface/" + p_id)
     if code != requests.codes.accepted:
         logger.error((code, res))
         return res
@@ -186,7 +206,7 @@ def detachPortInterfaces(s_id, p_id):
 
 
 if __name__ == '__main__':
-    print ("port interfaces list: ", getPortInterfaces("ca17b74c-3ee9-4fbc-bea6-c21ce7d16abf"))
+    print("port interfaces list: ", getPortInterfaces("ca17b74c-3ee9-4fbc-bea6-c21ce7d16abf"))
     # print ("server ip addr:", s.getServerIP('85bdb339-6dc7-4de0-8fa1-1dce6bd942eb'))
 
     # print ("flavors list: ", f.getFlavorsList())
@@ -196,6 +216,6 @@ if __name__ == '__main__':
 
     # h = hypervisor()
     # print ("hosts list: ", h.get_hosts_detail())
-    
+
     # su = SimpleUsage()
     # print(su.getAllSimpleTenantUsage(1))

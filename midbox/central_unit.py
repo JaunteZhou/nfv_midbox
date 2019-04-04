@@ -24,11 +24,14 @@ F_MAP = {
 
 def proc(para):
     """
-    功能：核心处理函数，完成函数之间的映射
-    参数：
-        item：字符串，请求处理的元素，有资源状态、功能、链等等
-        method：字符串，请求处理的方式，有GET,POST,DELETE，可添加UPDATE
-        para：字典类型，具体服务输入参数
+    核心处理函数，完成函数之间的映射
+    :param para: 字典类型，包含以下内容
+            {
+                'item'：字符串，请求处理的元素，有资源状态、功能、链等等
+                'method'：字符串，请求处理的方式，有GET,POST,DELETE，可添加UPDATE
+                'json'：字典类型，具体服务输入参数
+            }
+    :return:
     """
     logger.debug('Start.')
 

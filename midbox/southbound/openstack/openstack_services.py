@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 # openstack_services.py
 import logging
+
 logger = logging.getLogger(__name__)
 
-from midbox.southbound.openstack.openstack_rest_api import servers, flavor, image, networking, ports, volume, floating_ips, hypervisors
-from midbox._config import private_net_id, private_net_name, data_in_net_id, data_in_net_name, data_out_net_id, data_out_net_name, SLEEP_SECONDS_IN_ATTACHING
+from midbox.southbound.openstack.openstack_rest_api import servers, flavor, image, networking, ports, volume, \
+    floating_ips, hypervisors
+from midbox._config import private_net_id, private_net_name, data_in_net_id, data_in_net_name, data_out_net_id, \
+    data_out_net_name, SLEEP_SECONDS_IN_ATTACHING
 from midbox.southbound.openstack import openstack_para
 import time
 
@@ -38,6 +41,16 @@ def delVm(server_id):
     return ret
 
 
+def moveVm(server_id, vcpus, ram, disk, new_host_id):
+    logger.debug('Start.')
+    new_image_id = create_server_instance_image(server_id)
+    if new_image_id is None:
+        return None
+    ret = addVm(vcpus, ram, disk, new_image_id, new_host_id)
+    # TODO:
+    return ret
+
+
 def add_server_instance(vcpus, ram, disk, image_id, host_id):
     logger.debug('Start.')
     # get Flavor ID
@@ -49,15 +62,15 @@ def add_server_instance(vcpus, ram, disk, image_id, host_id):
     same_host = __get_any_instance_id_in_same_host(host_id)
 
     para_json = openstack_para.composeServerPara(
-            openstack_para.makeServerName(),
-            image_id,
-            f_id,
-            [
-                {"uuid":private_net_id},
-                {"uuid":data_in_net_id},
-                {"uuid":data_out_net_id}
-            ],
-            same_host)
+        openstack_para.makeServerName(),
+        image_id,
+        f_id,
+        [
+            {"uuid": private_net_id},
+            {"uuid": data_in_net_id},
+            {"uuid": data_out_net_id}
+        ],
+        same_host)
 
     s_ret = servers.createServer(para_json)
     if s_ret == -1:
@@ -107,8 +120,8 @@ def del_server_instance(s_id, vol_clear=True):
         ret = ports.deletePort(port)
         logger.debug(("Return of Delete Port: ", ret))
         if ret is not True:
-            err_list.append({port:ret})
-    
+            err_list.append({port: ret})
+
     # delete all volumes
     if vol_clear is True:
         logger.debug("Start Clear Volume !")
@@ -118,11 +131,21 @@ def del_server_instance(s_id, vol_clear=True):
             ret = volume.deleteVolume(vol_list[i]["volumeId"])
             logger.debug(("Return of Delete Volume: ", ret))
             if ret is not True:
-                err_list.append({vol_list[i]["volumeId"]:ret})
+                err_list.append({vol_list[i]["volumeId"]: ret})
 
     if len(err_list) != 0:
         return False
     return True
+
+
+def create_server_instance_image(s_id):
+    para_json = openstack_para.composeCreateServerImagePara(s_id)
+    new_image_id = servers.createImage(s_id, para_json)
+    if new_image_id == -1:
+        logger.error("Create Server Image.")
+        return None
+
+    return new_image_id
 
 
 def add_flavor(vcpus, ram, disk):
@@ -154,14 +177,14 @@ def getVmDataInAndOutPortsName(s_id):
     if len(in_port_id_list) == 0:
         return None
     ports_name_list.append(
-                openstack_para.makePortNameInOvsById(in_port_id_list[0]))
+        openstack_para.makePortNameInOvsById(in_port_id_list[0]))
     # vm在外部端口编号
     out_port_id_list = __get_server_interfaces_id_list_by_net_name(s_id, data_out_net_name)
     if len(out_port_id_list) == 0:
         return None
     ports_name_list.append(
-                openstack_para.makePortNameInOvsById(out_port_id_list[0]))
-        
+        openstack_para.makePortNameInOvsById(out_port_id_list[0]))
+
     return ports_name_list
 
 
@@ -289,7 +312,7 @@ def __attaching_server_volume_list(sv_list):
         s = servers.getServerDetail(sv_list[i]["serverId"])
         if s["status"] == "ACTIVE":
             ret, res = servers.attachVolume(
-                    sv_list[i]["serverId"], sv_list[i]["volumeId"])
+                sv_list[i]["serverId"], sv_list[i]["volumeId"])
             if ret == False:
                 logger.error(res)
                 new_list.append(sv_list[i])
@@ -327,20 +350,16 @@ if __name__ == '__main__':
     # # p_list.append(para2)
     # logger.debug(addVmsList(para_list=p_list))
 
-
     # ret = ports.getPortsList()
     # logger.debug(ret)
-
 
     # delServerInstance("e728988d-2ff1-46e5-83dc-ea11dad2f86f")
     # ret = ports.deletePort('5ddbf8e0-105b-4169-8ac5-2be6d362a083')
     # logger.debug("return of delete port: ", ret)
 
-
     # logger.debug(volume.createVolume(1))
     # logger.debug(volume.getVolumesList())
     # logger.debug(volume.deleteVolume('076eb635-8a47-4053-bc3e-a7b3e7c65c58'))
-
 
     # logger.debug(floating_ips.deleteFloatingIp("0f8cd16b-364c-44ca-ba80-c10e243b96f7"))
     # logger.debug(floating_ips.getFloatingIpsList())
