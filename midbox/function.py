@@ -109,15 +109,15 @@ def move_openstack_func(db, cursor, para):
 
 MAP_PLATFORM_TO_FUNC = {
     "add": {
-        "openstack": add_openstack_func,
-        "docker": add_docker_func
+        "vm": add_openstack_func,
+        "container": add_docker_func
     },
     "del": {
         TYPE_OPENSTACK: del_openstack_func,
         TYPE_DOCKER: del_docker_func
     },
     'move': {
-        "openstack": move_openstack_func
+        "vm": move_openstack_func
     }
 
 }
