@@ -128,16 +128,16 @@ def setFunction(para):
     增加功能实例
     :param para: 字典结构，如下
             {
-                "vnf_type":"<虚拟化网络功能类型>",
-                "vnf_id":"<分配的虚拟化网络功能编号>",
+                "func_type":"<虚拟化网络功能类型>",
+                "func_id":"<分配的虚拟化网络功能编号>",
                 "host_id":"<指定的虚拟化网络功能部署位置的物理计算节点编号>",
                 "image_id":"<虚拟化网络功能使用的镜像编号>",
-                "vnf_ip":"<为虚拟化网络功能实体分配的IP地址>",
-                "vnf_mng":{
-                    "vnf_user":"<虚拟化网络功能实体中设定的用于管理的用户名>",
-                    "vnf_pwd":"<虚拟化网络功能实体管理用户登录的密码，若为容器则应使用默认密码>"
+                "func_ip":"<为虚拟化网络功能实体分配的IP地址>",
+                "func_mng":{
+                    "func_user":"<虚拟化网络功能实体中设定的用于管理的用户名>",
+                    "func_pwd":"<虚拟化网络功能实体管理用户登录的密码，若为容器则应使用默认密码>"
                 },
-                "vnf_config":{
+                "func_config":{
                     "cpu":"<虚拟化网络功能所使用的CPU信息，不同的虚拟化平台对这一参数的单位定义有所不同，
                             例如OpenStack使用数量单位个，而Docker使用百分比>",
                     "ram":"<功能内存限制>"
@@ -161,7 +161,7 @@ def setFunction(para):
         logger.error("Host's Password doesn't Exist!")
         return 1, "Error: Host's Password doesn't Exist!"
 
-    ret_code, ret_data = MAP_PLATFORM_TO_FUNC["add"][para["vnf_type"]](db, cursor, para, host_ip, host_pwd)
+    ret_code, ret_data = MAP_PLATFORM_TO_FUNC["add"][para["func_type"]](db, cursor, para, host_ip, host_pwd)
 
     db_services.close_db(db, cursor)
     return ret_code, ret_data + " IP:" + para['func_ip']
