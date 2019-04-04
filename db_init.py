@@ -104,7 +104,7 @@ def __edit_cmd_of_insert_to_db(item_dic):
         if type(item_dic[item_name]) is str:
             cmd += '"' + item_dic[item_name] + '",'
         else:
-            cmd += item_dic[item_name] + ','
+            cmd += str(item_dic[item_name]) + ','
     cmd = cmd[:-1]
     cmd += ');'
     return cmd
