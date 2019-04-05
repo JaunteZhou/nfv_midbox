@@ -22,6 +22,9 @@ def get(url, payload=None):
 def post(url, body):
     headers["X-Auth-Token"] = at.getToken()
     r = requests.post(url, body, headers=headers)
+    if not r.text:
+        print("Responed is None!")
+        return r.status_code, {}
     return r.status_code, r.json()
 
 def put(url, body):
