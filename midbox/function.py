@@ -108,6 +108,7 @@ def move_openstack_func(db, cursor, para, host_ip, host_pwd):
     if ret is None:
         logger.error("Set VM Function Failed by OpenStack!")
         return 1, "Error: Set VM Function Failed by OpenStack!"
+
     # 端口转移
     remote_ssh.remote_ssh(host_ip, host_pwd,
                           'ovs-vsctl del-port br-int ' + ret['manPortName'] + ' && '
@@ -230,12 +231,14 @@ def moveFunction(para):
         logger.error("Function doesn't Exist!")
         return 1, "Error: Function doesn't Exist!"
 
-    host_ip = db_services.select_table(db, cursor, 't_host', 'ip', para['host_id'])
+    host_id = db_services.select_table(db, cursor,
+                                       't_function', 'host_id', para['func_id'])
+    host_ip = db_services.select_table(db, cursor, 't_host', 'ip', host_id)
     if not host_ip:
         # host_ip为空，表示未查询到对应条目
         logger.error("Host's IP doesn't Exist!")
         return 1, "Error: Host's IP doesn't Exist!"
-    host_pwd = db_services.select_table(db, cursor, 't_host', 'pwd', para['host_id'])
+    host_pwd = db_services.select_table(db, cursor, 't_host', 'pwd', host_id)
     if not host_pwd:
         # host_ip为空，表示未查询到对应条目
         logger.error("Host's Password doesn't Exist!")
