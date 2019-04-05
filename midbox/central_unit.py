@@ -13,7 +13,8 @@ F_MAP = {
     },
     "FUNCTION": {
         "POST": function.setFunction,
-        "DELETE": function.delFunction
+        "DELETE": function.delFunction,
+        "MOVE": function.moveFunction
     },
     "CHAIN": {
         "POST": chain.setChain,

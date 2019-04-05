@@ -97,14 +97,26 @@ def move_openstack_func(db, cursor, para):
     # get func_local_id from t_func table
     func_local_id = db_services.select_table(db, cursor,
                                              't_function', 'func_local_id', para['func_id'])
-    ret = openstack_services.moveVm(
-        func_local_id, para['cpu'], para['ram'], para['disk'], para['host_id']
-    )
-    if ret is None:
+    new_image_id = openstack_services.createServerInstanceImage(func_local_id)
+    if new_image_id is None:
         logger.error("Move VM Function Failed by OpenStack!")
         return 1, "Error: Move VM Function Failed by OpenStack!"
-    # TODO:
-    return 0, ""
+    # 在指定主机上创建虚拟机
+    ret = openstack_services.addVm(para['cpu'], para['ram'], para['disk'],
+                                   new_image_id, para['new_host_id'])
+    if ret is None:
+        logger.error("Set VM Function Failed by OpenStack!")
+        return 1, "Error: Set VM Function Failed by OpenStack!"
+    server_id = ret['serverId']
+    # 删除旧虚拟机
+    ret = openstack_services.delVm(func_local_id)
+    if ret is False:
+        logger.error("Delete VM Function Failed by OpenStack!")
+        return 1, "Error: Delete VM Function Failed by OpenStack!"
+    # 更新数据库
+    # TODO：
+    db_services.update_table(db, cursor, 't_function', 'func_local_id', server_id, para['func_id'])
+    return 0, "Success: Move VM Function Successfully by OpenStack."
 
 
 MAP_PLATFORM_TO_FUNC = {
@@ -191,4 +203,17 @@ def delFunction(para):
     return ret_code, ret_data
 
 
+def moveFunction(para):
+    logger.debug('Start.')
+    db, cursor = db_services.connect_db()
+    # TODO:
+    func_type = db_services.select_table(db, cursor, 't_function', 'type', para['func_id'])
+    if not func_type:
+        # func_type为空，表示未查询到对应条目
+        logger.error("Function doesn't Exist!")
+        return 1, "Error: Function doesn't Exist!"
 
+    ret_code, ret_data = MAP_PLATFORM_TO_FUNC["move"][func_type](db, cursor, para)
+
+    db_services.close_db(db, cursor)
+    return ret_code, ret_data

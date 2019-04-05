@@ -125,6 +125,15 @@ jsonContent = [
             "method": "GET",
             "json": {"": ""}
         }
+    ],
+    [
+        {
+            "item": "FUNCTION",
+            "method": "MOVE",
+            "json": {"func_id": "6", "new_host_id": "1",
+                     "func_ip": "", "func_pwd": "",
+                     "cpu": "1", "ram": "1024", "disk": "20"}
+        }
     ]
 ]
 

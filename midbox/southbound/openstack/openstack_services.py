@@ -41,16 +41,6 @@ def delVm(server_id):
     return ret
 
 
-def moveVm(server_id, vcpus, ram, disk, new_host_id):
-    logger.debug('Start.')
-    new_image_id = create_server_instance_image(server_id)
-    if new_image_id is None:
-        return None
-    ret = addVm(vcpus, ram, disk, new_image_id, new_host_id)
-    # TODO:
-    return ret
-
-
 def add_server_instance(vcpus, ram, disk, image_id, host_id):
     logger.debug('Start.')
     # get Flavor ID
@@ -138,7 +128,7 @@ def del_server_instance(s_id, vol_clear=True):
     return True
 
 
-def create_server_instance_image(s_id):
+def createServerInstanceImage(s_id):
     para_json = openstack_para.composeCreateServerImagePara(s_id)
     new_image_id = servers.createImage(s_id, para_json)
     if new_image_id == -1:
