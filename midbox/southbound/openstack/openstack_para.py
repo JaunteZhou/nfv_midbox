@@ -71,7 +71,7 @@ def composeCreateServerImagePara(new_image_name, metadata=None):
     }
     if metadata:
         req_dic["createImage"]["metadata"] = metadata
-    return req_dic
+    return json.dumps(req_dic)
 
 
 # def composeServerPara_oldVersion(
