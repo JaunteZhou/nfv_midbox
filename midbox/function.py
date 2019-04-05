@@ -227,8 +227,8 @@ def moveFunction(para):
         logger.error("Function doesn't Exist!")
         return 1, "Error: Function doesn't Exist!"
 
-    host_id = db_services.select_table(db, cursor,
-                                       't_function', 'host_id', para['func_id'])
+    # TODO:
+    host_id = para['new_host_id']
     host_ip = db_services.select_table(db, cursor, 't_host', 'ip', host_id)
     if not host_ip:
         # host_ip为空，表示未查询到对应条目
