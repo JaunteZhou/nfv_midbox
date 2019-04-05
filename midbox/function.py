@@ -118,15 +118,18 @@ def move_openstack_func(db, cursor, para, host_ip, host_pwd):
 
     __move_vm_ports(host_ip, host_pwd, ret)
 
-    server_id = ret['serverId']
+    # 更新数据库
+    db_services.update_table(db, cursor, 't_function', 'func_local_id', ret['serverId'], para['func_id'])
+
     # 删除旧虚拟机
     ret = openstack_services.delVm(func_local_id)
     if ret is False:
+        print("Delete VM Function Failed by OpenStack!")
         logger.error("Delete VM Function Failed by OpenStack!")
-        return 1, "Error: Delete VM Function Failed by OpenStack!"
-    # 更新数据库
-    # TODO：
-    db_services.update_table(db, cursor, 't_function', 'func_local_id', server_id, para['func_id'])
+    ret = openstack_services.delImage(new_image_id)
+    if ret is False:
+        print("Delete VM Image Failed by OpenStack!")
+        logger.error("Delete VM Image Failed by OpenStack!")
     return 0, "Success: Move VM Function Successfully by OpenStack."
 
 
@@ -142,7 +145,6 @@ MAP_PLATFORM_TO_FUNC = {
     'move': {
         TYPE_OPENSTACK: move_openstack_func
     }
-
 }
 
 

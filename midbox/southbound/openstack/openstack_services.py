@@ -41,6 +41,12 @@ def delVm(server_id):
     return ret
 
 
+def delImage(image_id):
+    logger.debug('Start.')
+    ret = image.deleteImage(image_id)
+    return ret
+
+
 def add_server_instance(vcpus, ram, disk, image_id, host_id):
     logger.debug('Start.')
     # get Flavor ID
@@ -245,6 +251,9 @@ def __get_net_id_by_net_name(net_name):
 def __get_server_interfaces_id_list_by_net_name(s_id, net_name):
     logger.debug('Start.')
     server_detail = servers.getServerDetail(s_id)
+
+    print(server_detail)
+
     # get mac address list from server details
     mac_list = []
     for iface in server_detail["addresses"][net_name]:
