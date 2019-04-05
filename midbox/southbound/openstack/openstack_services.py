@@ -138,12 +138,18 @@ def createServerInstanceImage(s_id):
     new_image_id = ""
     while not new_image_id:
         image_list = image.getImagesList()
-        print(image_list)
         for image_info in image_list:
             if image_info["name"] == new_image_name:
                 new_image_id = image_info["id"]
+                if image_info["status"] == "active":
+                    return new_image_id
                 break
         time.sleep(SLEEP_SECONDS_IN_WAITING)
+    image_info = image.getImage(new_image_id)
+    while image_info["status"] != "active":
+        print(image_info)
+        time.sleep(SLEEP_SECONDS_IN_WAITING)
+        image_info = image.getImage(new_image_id)
     return new_image_id
 
 
