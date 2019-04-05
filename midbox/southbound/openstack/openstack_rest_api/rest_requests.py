@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-#rest_requests.py
+# rest_requests.py
 import json
 import requests
 
@@ -14,10 +14,12 @@ headers = {
     "X-Auth-Token": at.getToken()
 }
 
+
 def get(url, payload=None):
     headers["X-Auth-Token"] = at.getToken()
     r = requests.get(url, headers=headers, params=payload)
     return r.status_code, r.json()
+
 
 def post(url, body):
     headers["X-Auth-Token"] = at.getToken()
@@ -27,10 +29,12 @@ def post(url, body):
         return r.status_code, {}
     return r.status_code, r.json()
 
+
 def put(url, body):
     headers["X-Auth-Token"] = at.getToken()
     r = requests.put(url, body, headers=headers)
     return r.status_code, r.json()
+
 
 def delete(url):
     headers["X-Auth-Token"] = at.getToken()

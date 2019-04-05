@@ -147,7 +147,6 @@ def createServerInstanceImage(s_id):
         time.sleep(SLEEP_SECONDS_IN_WAITING)
     image_info = image.getImage(new_image_id)
     while image_info["status"] != "active":
-        print(image_info)
         time.sleep(SLEEP_SECONDS_IN_WAITING)
         image_info = image.getImage(new_image_id)
     return new_image_id

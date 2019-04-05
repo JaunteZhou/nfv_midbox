@@ -13,6 +13,7 @@ from midbox._config import TYPE_DOCKER, TYPE_OPENSTACK
 
 
 def add_docker_func(db, cursor, para, host_ip, host_pwd):
+    # TODO: check id
     # 从数据库中根据镜像id获取镜像名称
     image_name = db_services.select_table(db, cursor, 't_image', 'func', para['image_id'])
     # 在指定主机上创建容器
@@ -93,7 +94,7 @@ def del_openstack_func(db, cursor, para):
     return 0, "Success: Delete VM Function Successfully by OpenStack."
 
 
-def move_openstack_func(db, cursor, para):
+def move_openstack_func(db, cursor, para, host_ip, host_pwd):
     # get func_local_id from t_func table
     func_local_id = db_services.select_table(db, cursor,
                                              't_function', 'func_local_id', para['func_id'])
@@ -107,6 +108,22 @@ def move_openstack_func(db, cursor, para):
     if ret is None:
         logger.error("Set VM Function Failed by OpenStack!")
         return 1, "Error: Set VM Function Failed by OpenStack!"
+    # 端口转移
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ovs-vsctl del-port br-int ' + ret['manPortName'] + ' && '
+                          + 'ovs-vsctl add-port sw-man ' + ret['manPortName'])
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][0] + ' && '
+                          + 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][0])
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][1] + ' && '
+                          + 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][1])
+    # 开启端口
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ifconfig ' + ret['manPortName'] + ' up && '
+                          + 'ifconfig ' + ret['dataPortsNameList'][0] + ' up && '
+                          + 'ifconfig ' + ret['dataPortsNameList'][1] + ' up')
+
     server_id = ret['serverId']
     # 删除旧虚拟机
     ret = openstack_services.delVm(func_local_id)
@@ -213,7 +230,18 @@ def moveFunction(para):
         logger.error("Function doesn't Exist!")
         return 1, "Error: Function doesn't Exist!"
 
-    ret_code, ret_data = MAP_PLATFORM_TO_FUNC["move"][func_type](db, cursor, para)
+    host_ip = db_services.select_table(db, cursor, 't_host', 'ip', para['host_id'])
+    if not host_ip:
+        # host_ip为空，表示未查询到对应条目
+        logger.error("Host's IP doesn't Exist!")
+        return 1, "Error: Host's IP doesn't Exist!"
+    host_pwd = db_services.select_table(db, cursor, 't_host', 'pwd', para['host_id'])
+    if not host_pwd:
+        # host_ip为空，表示未查询到对应条目
+        logger.error("Host's Password doesn't Exist!")
+        return 1, "Error: Host's Password doesn't Exist!"
+
+    ret_code, ret_data = MAP_PLATFORM_TO_FUNC["move"][func_type](db, cursor, para, host_ip, host_pwd)
 
     db_services.close_db(db, cursor)
     return ret_code, ret_data
