@@ -129,7 +129,7 @@ MAP_PLATFORM_TO_FUNC = {
         TYPE_DOCKER: del_docker_func
     },
     'move': {
-        "vm": move_openstack_func
+        TYPE_OPENSTACK: move_openstack_func
     }
 
 }

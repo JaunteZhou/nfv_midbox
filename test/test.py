@@ -126,6 +126,7 @@ jsonContent = [
             "json": {"": ""}
         }
     ],
+    # MoveFunction (test.py)
     [
         {
             "item": "FUNCTION",
@@ -152,12 +153,13 @@ while True:
     print("3: DeployChain")
     print("4: DeleteChain")
     print("5: ShowStatus")
+    print("6: MoveFunction")
     test_num = input("Input number of test item :")
     test_num = int(test_num)
 
     if test_num == 0:
         break
-    elif test_num > 5:
+    elif test_num > len(jsonContent):
         print("Error Input !")
         continue
     test_num -= 1
