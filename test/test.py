@@ -7,49 +7,49 @@ import requests
 jsonContent = [
     # DeployFunction (test.py)
     [
-        # {
-        #     "item": "FUNCTION",
-        #     "method": "POST",
-        #     "json": {
-        #         "func_type": "container", "func_id": "1", "host_id": "1",
-        #         "image_id": "1", "func_ip": "10.2.7.230/24",
-        #         "func_pwd": "123456", "cpu": "20", "ram": "128", "disk": "0"
-        #     }
-        # },
-        # {
-        #     "item": "FUNCTION",
-        #     "method": "POST",
-        #     "json": {
-        #         "func_type": "container", "func_id": "2", "host_id": "1",
-        #         "image_id": "2", "func_ip": "10.2.7.231/24",
-        #         "func_pwd": "123456", "cpu": "20", "ram": "128", "disk": "0"
-        #     }
-        # },
-        # {
-        #     "item": "FUNCTION",
-        #     "method": "POST",
-        #     "json": {
-        #         "func_type": "container", "func_id": "3", "host_id": "2",
-        #         "image_id": "2", "func_ip": "10.2.7.232/24",
-        #         "func_pwd": "123456", "cpu": "20", "ram": "128", "disk": "0"
-        #     }
-        # },
-        # {
-        #     "item": "FUNCTION",
-        #     "method": "POST",
-        #     "json": {
-        #         "func_type": "vm", "func_id": "4", "host_id": "1", "image_id": "3",
-        #         "func_ip": "", "func_pwd": "", "cpu": "1", "ram": "1024", "disk": "20"
-        #     }
-        # },
-        # {
-        #     "item": "FUNCTION",
-        #     "method": "POST",
-        #     "json": {
-        #         "func_type": "vm", "func_id": "5", "host_id": "1", "image_id": "4",
-        #         "func_ip": "", "func_pwd": "", "cpu": "1", "ram": "1024", "disk": "20"
-        #     }
-        # },
+        {
+            "item": "FUNCTION",
+            "method": "POST",
+            "json": {
+                "func_type": "container", "func_id": "1", "host_id": "1",
+                "image_id": "1", "func_ip": "10.2.7.230/24",
+                "func_pwd": "123456", "cpu": "20", "ram": "128", "disk": "0"
+            }
+        },
+        {
+            "item": "FUNCTION",
+            "method": "POST",
+            "json": {
+                "func_type": "container", "func_id": "2", "host_id": "1",
+                "image_id": "2", "func_ip": "10.2.7.231/24",
+                "func_pwd": "123456", "cpu": "20", "ram": "128", "disk": "0"
+            }
+        },
+        {
+            "item": "FUNCTION",
+            "method": "POST",
+            "json": {
+                "func_type": "container", "func_id": "3", "host_id": "2",
+                "image_id": "2", "func_ip": "10.2.7.232/24",
+                "func_pwd": "123456", "cpu": "20", "ram": "128", "disk": "0"
+            }
+        },
+        {
+            "item": "FUNCTION",
+            "method": "POST",
+            "json": {
+                "func_type": "vm", "func_id": "4", "host_id": "1", "image_id": "3",
+                "func_ip": "", "func_pwd": "", "cpu": "1", "ram": "1024", "disk": "20"
+            }
+        },
+        {
+            "item": "FUNCTION",
+            "method": "POST",
+            "json": {
+                "func_type": "vm", "func_id": "5", "host_id": "1", "image_id": "4",
+                "func_ip": "", "func_pwd": "", "cpu": "1", "ram": "1024", "disk": "20"
+            }
+        },
         {
             "item": "FUNCTION",
             "method": "POST",
@@ -61,31 +61,31 @@ jsonContent = [
     ],
     # DeleteFunction (test.py)
     [
-        # {
-        #     "item": "FUNCTION",
-        #     "method": "DELETE",
-        #     "json": {"func_id": "1"}
-        # },
-        # {
-        #     "item": "FUNCTION",
-        #     "method": "DELETE",
-        #     "json": {"func_id": "2"}
-        # },
-        # {
-        #     "item": "FUNCTION",
-        #     "method": "DELETE",
-        #     "json": {"func_id": "3"}
-        # },
-        # {
-        #     "item": "FUNCTION",
-        #     "method": "DELETE",
-        #     "json": {"func_id": "4"}
-        # },
-        # {
-        #     "item": "FUNCTION",
-        #     "method": "DELETE",
-        #     "json": {"func_id": "5"}
-        # },
+        {
+            "item": "FUNCTION",
+            "method": "DELETE",
+            "json": {"func_id": "1"}
+        },
+        {
+            "item": "FUNCTION",
+            "method": "DELETE",
+            "json": {"func_id": "2"}
+        },
+        {
+            "item": "FUNCTION",
+            "method": "DELETE",
+            "json": {"func_id": "3"}
+        },
+        {
+            "item": "FUNCTION",
+            "method": "DELETE",
+            "json": {"func_id": "4"}
+        },
+        {
+            "item": "FUNCTION",
+            "method": "DELETE",
+            "json": {"func_id": "5"}
+        },
         {
             "item": "FUNCTION",
             "method": "DELETE",

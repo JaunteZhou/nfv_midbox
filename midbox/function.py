@@ -12,6 +12,25 @@ from midbox.db import db_services
 from midbox._config import TYPE_DOCKER, TYPE_OPENSTACK
 
 
+def __move_vm_ports(host_ip, host_pwd, para):
+    # 端口转移
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ovs-vsctl del-port br-int ' + para['manPortName'] + ' && ' +
+                          'ovs-vsctl add-port sw-man ' + para['manPortName'])
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ovs-vsctl del-port br-int ' + para['dataPortsNameList'][0] + ' && ' +
+                          'ovs-vsctl add-port sw1 ' + para['dataPortsNameList'][0])
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ovs-vsctl del-port br-int ' + para['dataPortsNameList'][1] + ' && ' +
+                          'ovs-vsctl add-port sw1 ' + para['dataPortsNameList'][1])
+    # 开启端口
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ifconfig ' + para['manPortName'] + ' up && ' +
+                          'ifconfig ' + para['dataPortsNameList'][0] + ' up && ' +
+                          'ifconfig ' + para['dataPortsNameList'][1] + ' up')
+    return True
+
+
 def add_docker_func(db, cursor, para, host_ip, host_pwd):
     # TODO: check id
     # 从数据库中根据镜像id获取镜像名称
@@ -34,7 +53,7 @@ def add_docker_func(db, cursor, para, host_ip, host_pwd):
 
 def del_docker_func(db, cursor, para):
     host_id = db_services.select_table(db, cursor,
-                                      't_function', 'host_id', para['func_id'])
+                                       't_function', 'host_id', para['func_id'])
     host_ip = db_services.select_table(db, cursor, 't_host', 'ip', host_id)
     if len(host_ip) == 0:
         logger.error("Delete container Failed because Host doesn't Exist by Docker!")
@@ -57,21 +76,9 @@ def add_openstack_func(db, cursor, para, host_ip, host_pwd):
     if ret is None:
         logger.error("Set VM Function Failed by OpenStack!")
         return 1, "Error: Set VM Function Failed by OpenStack!"
-    # 端口转移
-    remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port br-int ' + ret['manPortName'] + ' && '
-                          + 'ovs-vsctl add-port sw-man ' + ret['manPortName'])
-    remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][0] + ' && '
-                          + 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][0])
-    remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][1] + ' && '
-                          + 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][1])
-    # 开启端口
-    remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ifconfig ' + ret['manPortName'] + ' up && '
-                          + 'ifconfig ' + ret['dataPortsNameList'][0] + ' up && '
-                          + 'ifconfig ' + ret['dataPortsNameList'][1] + ' up')
+
+    __move_vm_ports(host_ip, host_pwd, ret)
+
     # 在数据库中写入记录
     db_services.insert_function(db, cursor,
                                 para["func_id"], para["image_id"], para["host_id"], ret['serverId'],
@@ -109,21 +116,7 @@ def move_openstack_func(db, cursor, para, host_ip, host_pwd):
         logger.error("Set VM Function Failed by OpenStack!")
         return 1, "Error: Set VM Function Failed by OpenStack!"
 
-    # 端口转移
-    remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port br-int ' + ret['manPortName'] + ' && '
-                          + 'ovs-vsctl add-port sw-man ' + ret['manPortName'])
-    remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][0] + ' && '
-                          + 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][0])
-    remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port br-int ' + ret['dataPortsNameList'][1] + ' && '
-                          + 'ovs-vsctl add-port sw1 ' + ret['dataPortsNameList'][1])
-    # 开启端口
-    remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ifconfig ' + ret['manPortName'] + ' up && '
-                          + 'ifconfig ' + ret['dataPortsNameList'][0] + ' up && '
-                          + 'ifconfig ' + ret['dataPortsNameList'][1] + ' up')
+    __move_vm_ports(host_ip, host_pwd, ret)
 
     server_id = ret['serverId']
     # 删除旧虚拟机
