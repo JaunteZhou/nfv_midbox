@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 from midbox.southbound.openstack.openstack_rest_api import servers, flavor, image, networking, ports, volume, \
     floating_ips, hypervisors
 from midbox._config import private_net_id, private_net_name, data_in_net_id, data_in_net_name, data_out_net_id, \
-    data_out_net_name, SLEEP_SECONDS_IN_ATTACHING
+    data_out_net_name, SLEEP_SECONDS_IN_ATTACHING, SLEEP_SECONDS_IN_WAITING
 from midbox.southbound.openstack import openstack_para
 import time
 
@@ -129,12 +129,20 @@ def del_server_instance(s_id, vol_clear=True):
 
 
 def createServerInstanceImage(s_id):
-    para_json = openstack_para.composeCreateServerImagePara(s_id)
-    new_image_id = servers.createImage(s_id, para_json)
-    if new_image_id == -1:
+    new_image_name = openstack_para.makeNewImageName()
+    para_json = openstack_para.composeCreateServerImagePara(new_image_name)
+    ret = servers.createImage(s_id, para_json)
+    if ret == -1:
         logger.error("Create Server Image.")
         return None
-
+    new_image_id = ""
+    while not new_image_id:
+        image_list = image.getImagesList()
+        for image_info in image_list:
+            if image_info["name"] == new_image_name:
+                new_image_id = image_info["id"]
+                break
+        time.sleep(SLEEP_SECONDS_IN_WAITING)
     return new_image_id
 
 

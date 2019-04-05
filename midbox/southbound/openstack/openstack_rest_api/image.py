@@ -19,6 +19,7 @@ def getImagesList():
         return None
     return res["images"]
 
+
 def getImage(image_id):
     """Show a image."""
     logger.debug('Start.')
@@ -27,6 +28,7 @@ def getImage(image_id):
         logger.error((code, res))
         return None
     return res
+
 
 def deleteImage(image_id):
     """Delete a Image."""

@@ -4,7 +4,7 @@
 
 import json
 import time
-from midbox._config import SERVERS_ID_PREFIX, FLAVORS_ID_PREFIX
+from midbox._config import SERVERS_NAME_PREFIX, FLAVORS_ID_PREFIX, IMAGE_NAME_PREFIX
 
 
 def __get_time_stamp():
@@ -19,7 +19,11 @@ def makeFlavorId(vcpus, ram, disk):
 
 
 def makeServerName():
-    return SERVERS_ID_PREFIX + "-" + __get_time_stamp()
+    return SERVERS_NAME_PREFIX + "-" + __get_time_stamp()
+
+
+def makeNewImageName():
+    return IMAGE_NAME_PREFIX + "-" + __get_time_stamp()
 
 
 def makePortNameInOvsById(port_id):

@@ -114,9 +114,7 @@ def createImage(s_id, para_json):
     if code != requests.codes.accepted:
         logger.error((code, res))
         return -1
-    # TODO:
-    print(res)
-    return res["image_id"]
+    return code
 
 
 ### Volume Attachments ###

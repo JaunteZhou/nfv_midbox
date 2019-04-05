@@ -44,8 +44,9 @@ TYPE_OPENSTACK  = 2
 
 
 ##### openstack config #####
-SERVERS_ID_PREFIX = "S"
-FLAVORS_ID_PREFIX = "F"
+SERVERS_NAME_PREFIX = "S"
+FLAVORS_ID_PREFIX   = "F"
+IMAGE_NAME_PREFIX   = "I"
 # user info
 user_name           = "admin"
 user_id             = "c7f6506acf8a4204b07cc412f426d2b3"
@@ -92,5 +93,6 @@ private_net_id      = "47027190-71bb-49a3-a585-1f330531216f"
 private_net_name    = "private-net"
 
 # sleep time in attaching
+SLEEP_SECONDS_IN_WAITING = 1
 SLEEP_SECONDS_IN_ATTACHING = 2
 ##### openstack config end #####
