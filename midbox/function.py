@@ -113,8 +113,9 @@ def move_openstack_func(db, cursor, para, host_ip, host_pwd):
     ret = openstack_services.addVm(para['cpu'], para['ram'], para['disk'],
                                    new_image_id, para['new_host_id'])
     if ret is None:
+        print("Error: Set VM Function Failed by OpenStack!")
         logger.error("Set VM Function Failed by OpenStack!")
-        return 1, "Error: Set VM Function Failed by OpenStack!"
+        # return 1, "Error: Set VM Function Failed by OpenStack!"
 
     __move_vm_ports(host_ip, host_pwd, ret)
 
@@ -124,11 +125,11 @@ def move_openstack_func(db, cursor, para, host_ip, host_pwd):
     # 删除旧虚拟机
     ret = openstack_services.delVm(func_local_id)
     if ret is False:
-        print("Delete VM Function Failed by OpenStack!")
+        print("Error: Delete VM Function Failed by OpenStack!")
         logger.error("Delete VM Function Failed by OpenStack!")
     ret = openstack_services.delImage(new_image_id)
     if ret is False:
-        print("Delete VM Image Failed by OpenStack!")
+        print("Error: Delete VM Image Failed by OpenStack!")
         logger.error("Delete VM Image Failed by OpenStack!")
     return 0, "Success: Move VM Function Successfully by OpenStack."
 

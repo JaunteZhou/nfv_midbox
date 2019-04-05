@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1c382907-3ab4-4160-8add-9b2e93af2206" name="Default Changelist" comment="" />
+    <list default="true" id="1c382907-3ab4-4160-8add-9b2e93af2206" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/midbox/function.py" beforeDir="false" afterPath="$PROJECT_DIR$/midbox/function.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,20 +31,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/midbox/function.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="110" column="64" lean-forward="true" selection-start-line="110" selection-start-column="64" selection-end-line="110" selection-end-column="64" />
+            <state relative-caret-position="285">
+              <caret line="131" column="13" selection-start-line="131" selection-start-column="8" selection-end-line="131" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="748">
-              <caret line="44" column="26" lean-forward="true" selection-start-line="44" selection-start-column="26" selection-end-line="44" selection-end-column="26" />
+            <state relative-caret-position="251">
+              <caret line="252" column="49" selection-start-line="252" selection-start-column="49" selection-end-line="252" selection-end-column="49" />
             </state>
           </provider>
         </entry>
@@ -125,6 +128,7 @@
       <find>vnf</find>
       <find>Error: Move VM Function Failed by OpenStack!</find>
       <find>time.sleep</find>
+      <find>print</find>
     </findStrings>
     <replaceStrings>
       <replace>DATA_PLANE_OVS_NAME</replace>
@@ -168,8 +172,8 @@
         <option value="$PROJECT_DIR$/midbox/southbound/openstack/openstack_para.py" />
         <option value="$PROJECT_DIR$/test/test.py" />
         <option value="$PROJECT_DIR$/midbox/southbound/openstack/openstack_rest_api/rest_requests.py" />
-        <option value="$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py" />
         <option value="$PROJECT_DIR$/midbox/function.py" />
+        <option value="$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py" />
       </list>
     </option>
   </component>
@@ -477,17 +481,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py">
+    <entry file="file://$PROJECT_DIR$/midbox/function.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="748">
-          <caret line="44" column="26" lean-forward="true" selection-start-line="44" selection-start-column="26" selection-end-line="44" selection-end-column="26" />
+        <state relative-caret-position="285">
+          <caret line="131" column="13" selection-start-line="131" selection-start-column="8" selection-end-line="131" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/midbox/function.py">
+    <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="110" column="64" lean-forward="true" selection-start-line="110" selection-start-column="64" selection-end-line="110" selection-end-column="64" />
+        <state relative-caret-position="251">
+          <caret line="252" column="49" selection-start-line="252" selection-start-column="49" selection-end-line="252" selection-end-column="49" />
         </state>
       </provider>
     </entry>

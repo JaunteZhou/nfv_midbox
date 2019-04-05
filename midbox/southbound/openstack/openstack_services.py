@@ -251,9 +251,6 @@ def __get_net_id_by_net_name(net_name):
 def __get_server_interfaces_id_list_by_net_name(s_id, net_name):
     logger.debug('Start.')
     server_detail = servers.getServerDetail(s_id)
-
-    print(server_detail)
-
     # get mac address list from server details
     mac_list = []
     for iface in server_detail["addresses"][net_name]:
