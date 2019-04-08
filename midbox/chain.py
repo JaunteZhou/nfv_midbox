@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # chain.py
+
 import logging
 
 logger = logging.getLogger(__name__)

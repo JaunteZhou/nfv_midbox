@@ -9,7 +9,7 @@ import re
 import sys
 import logging
 from midbox.southbound.remote_ssh import *
-from midbox._config import DOCKER_REGISTRY_IP, DOCKER_REGISTRY_PORT
+from midbox._config import DOCKER_REGISTRY_IP, DOCKER_REGISTRY_PORT, CTRL_PLANE_SW_NAME, DATA_PLANE_SW_NAME
 
 
 def addContainer(ip, password, cpu, mem, image_name, containerid, cip='192.168.1.1/24'):
@@ -47,7 +47,8 @@ def addContainer(ip, password, cpu, mem, image_name, containerid, cip='192.168.1
     print('PID:' + pid)
 
     ret_code, ret_data = remote_ssh(ip, password,
-                                    'ovs-vsctl add-br sw1 && ovs-vsctl add-br sw-man')
+                                    'ovs-vsctl add-br ' + DATA_PLANE_SW_NAME + ' && ' +
+                                    'ovs-vsctl add-br ' + CTRL_PLANE_SW_NAME)
     ret_code, ret_data = remote_ssh(ip, password,
                                     'ip link add in type veth peer name br-c' +
                                     containerid + '-in ' +
@@ -69,27 +70,27 @@ def addContainer(ip, password, cpu, mem, image_name, containerid, cip='192.168.1
 
     # 容器内网络配置
     ret_code, ret_data = remote_ssh(ip, password,
-                                    'docker exec c' + containerid + ' ovs-vsctl add-br sw ' +
-                                    '&& docker exec c' + containerid + ' ovs-vsctl add-port sw in ' +
-                                    '&& docker exec c' + containerid + ' ovs-vsctl add-port sw out')
+                                    'docker exec c' + containerid + ' ovs-vsctl add-br sw && ' +
+                                    'docker exec c' + containerid + ' ovs-vsctl add-port sw in && ' +
+                                    'docker exec c' + containerid + ' ovs-vsctl add-port sw out')
     logger.info(ret_data)
 
     # 注意：容器镜像内必须安装OVS2.9以上版本！！
     # 断掉回路，等容器启用时再up该接口
     ret_code, ret_data = remote_ssh(ip, password,
-                                    'ifconfig br-c' + containerid + '-in down ' +
-                                    '&& ovs-vsctl add-port sw1 br-c' + containerid + '-in ' +
-                                    '&& ovs-vsctl add-port sw1 br-c' + containerid + '-out')
+                                    'ifconfig br-c' + containerid + '-in down && ' +
+                                    'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' br-c' + containerid + '-in && ' +
+                                    'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' br-c' + containerid + '-out')
     logger.info(ret_data)
     ret_code, ret_data = remote_ssh(ip, password,
-                                    'ip link add ceth0 type veth peer name br-c' + containerid + ' ' +
-                                    '&& ip link set ceth0 netns ' + pid + ' ' +
-                                    '&& ip link set br-c' + containerid + ' up')
+                                    'ip link add ceth0 type veth peer name br-c' + containerid + ' && ' +
+                                    'ip link set ceth0 netns ' + pid + ' && ' +
+                                    'ip link set br-c' + containerid + ' up')
     logger.info(ret_data)
     ret_code, ret_data = remote_ssh(ip, password,
-                                    'ovs-vsctl add-port sw-man br-c' + containerid + ' ' +
-                                    '&& ip netns exec ' + pid + ' ip link set ceth0 up ' +
-                                    '&& docker exec c' + containerid + ' ifconfig ceth0 ' + cip + ' up')
+                                    'ovs-vsctl add-port ' + CTRL_PLANE_SW_NAME + ' br-c' + containerid + ' && ' +
+                                    'ip netns exec ' + pid + ' ip link set ceth0 up && ' +
+                                    'docker exec c' + containerid + ' ifconfig ceth0 ' + cip + ' up')
     logger.info(ret_data)
     return 0
 
@@ -121,9 +122,9 @@ def delContainer(ip, password, containerid):
                                     'rm -rf /var/run/netns/$' + pid)
     logger.info(ret_data)
     ret_code, ret_data = remote_ssh(ip, password,
-                                    'ovs-vsctl del-port sw1 br-c' + containerid + '-in && ' +
-                                    'ovs-vsctl del-port sw1 br-c' + containerid + '-out && ' +
-                                    'ovs-vsctl del-port sw-man br-c' + containerid)
+                                    'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' br-c' + containerid + '-in && ' +
+                                    'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' br-c' + containerid + '-out && ' +
+                                    'ovs-vsctl del-port ' + CTRL_PLANE_SW_NAME + ' br-c' + containerid)
     logger.info(ret_data)
 
     return 0

@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from midbox.southbound.remote_ssh import remote_ssh
-from midbox._config import DATA_PLANE_OVS_NAME
+from midbox._config import DATA_PLANE_SW_NAME
 
 
 def deployFlow(ip, password, port_names,
@@ -32,14 +32,14 @@ def deployFlow(ip, password, port_names,
         ft_item = __edit_flow_table_item(port_names[1], match_field, priority, "output:" + port_names[2])
     else:
         ft_item = __edit_flow_table_item(phy_in, match_field, priority, "output:" + port_names[2])
-    ret_code, ret_data = __add_flow_to_ovs(ip, password, DATA_PLANE_OVS_NAME, ft_item)
+    ret_code, ret_data = __add_flow_to_ovs(ip, password, DATA_PLANE_SW_NAME, ft_item)
     logger.info((ret_code, ret_data))
 
     if port_names[4] == "phy":
         ft_item = __edit_flow_table_item(port_names[3], match_field, priority, "output:" + phy_out)
     else:
         ft_item = __edit_flow_table_item(port_names[3], match_field, priority, "output:" + port_names[4])
-    ret_code, ret_data = __add_flow_to_ovs(ip, password, DATA_PLANE_OVS_NAME, ft_item)
+    ret_code, ret_data = __add_flow_to_ovs(ip, password, DATA_PLANE_SW_NAME, ft_item)
     logger.info((ret_code, ret_data))
 
     # 不再需要drop，只需保证OVS无NORMAL流表项即可，注释此行，确定无误后删除
@@ -74,11 +74,11 @@ def undeployFlow(ip, password, port_names, shutdown_flag, match_field="", phy_in
         ft_item = __edit_flow_table_item(port_names[1], match_field)
     else:
         ft_item = __edit_flow_table_item(phy_in, match_field)
-    ret_code, ret_data = __del_ovs_flow(ip, password, DATA_PLANE_OVS_NAME, ft_item)
+    ret_code, ret_data = __del_ovs_flow(ip, password, DATA_PLANE_SW_NAME, ft_item)
     logger.info((ret_code, ret_data))
 
     ft_item = __edit_flow_table_item(port_names[3], match_field)
-    ret_code, ret_data = __del_ovs_flow(ip, password, DATA_PLANE_OVS_NAME, ft_item)
+    ret_code, ret_data = __del_ovs_flow(ip, password, DATA_PLANE_SW_NAME, ft_item)
     logger.info((ret_code, ret_data))
 
     return 0
