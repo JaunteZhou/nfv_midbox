@@ -11,21 +11,8 @@ from midbox._config import TYPE_DOCKER, TYPE_OPENSTACK, STR_TYPE_TO_NUM_TYPE
 from midbox.southbound.openstack import openstack_api
 from midbox.southbound.docker import docker_api
 
-# MAP_PLATFORM_TO_FUNC = {
-#     "add": {
-#         "vm": add_openstack_func,
-#         "container": add_docker_func
-#     },
-#     "del": {
-#         TYPE_OPENSTACK: del_openstack_func,
-#         TYPE_DOCKER: del_docker_func
-#     },
-#     'move': {
-#         TYPE_OPENSTACK: move_openstack_func
-#     }
-# }
 
-MAP_PLATFORM_TO_FUNC = {
+PLATFORM_MAPPER = {
     TYPE_OPENSTACK: openstack_api,
     TYPE_DOCKER: docker_api
 }
@@ -72,7 +59,7 @@ def setFunction(para):
     para["host_ip"] = host_ip
     para["host_pwd"] = host_pwd
     func_type = STR_TYPE_TO_NUM_TYPE[para["func_type"]]
-    ret_code, ret_data = MAP_PLATFORM_TO_FUNC[func_type].addFunc(para)
+    ret_code, ret_data = PLATFORM_MAPPER[func_type].addFunc(para)
 
     db_services.close_db(db, cursor)
     return ret_code, ret_data + " IP:" + para['func_ip']
@@ -96,7 +83,7 @@ def delFunction(para):
         logger.error("Function doesn't Exist!")
         return 1, "Error: Function doesn't Exist!"
 
-    ret_code, ret_data = MAP_PLATFORM_TO_FUNC[func_type].delFunc(para)
+    ret_code, ret_data = PLATFORM_MAPPER[func_type].delFunc(para)
 
     db_services.close_db(db, cursor)
     return ret_code, ret_data
@@ -127,7 +114,7 @@ def moveFunction(para):
 
     para["host_ip"] = host_ip
     para["host_pwd"] = host_pwd
-    ret_code, ret_data = MAP_PLATFORM_TO_FUNC[func_type].moveFunc(para)
+    ret_code, ret_data = PLATFORM_MAPPER[func_type].moveFunc(para)
 
     db_services.close_db(db, cursor)
     return ret_code, ret_data

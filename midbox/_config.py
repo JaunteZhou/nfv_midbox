@@ -52,27 +52,27 @@ SERVERS_NAME_PREFIX = "S"
 FLAVORS_ID_PREFIX = "F"
 IMAGE_NAME_PREFIX = "I"
 # openstack用户信息
-user_name = "admin"
-user_id = "c7f6506acf8a4204b07cc412f426d2b3"
-password = "openstack"
+USER_NAME = "admin"
+USER_ID = "c7f6506acf8a4204b07cc412f426d2b3"
+USER_PWD = "openstack"
 # openstack项目（租户）信息
-tenant_name = "admin"
-tenant_id = "b4b90ce3692c4592af6ccb40ac1f0785"
+TENANT_NAME = "admin"
+TENANT_ID = "b4b90ce3692c4592af6ccb40ac1f0785"
 # openstack控制节点服务器IP地址
 service_ip = "10.1.1.18"
 # openstack service restful api url
 # openstack相关基础服务的RESTful API URL
 service_base_url = "http://" + service_ip
-block_url = service_base_url + "/volume/v3/" + tenant_id
+block_url = service_base_url + "/volume/v3/" + TENANT_ID
 compute_url = service_base_url + "/compute/v2.1"
-compute_legacy_url = service_base_url + "/compute/v2/" + tenant_id
+compute_legacy_url = service_base_url + "/compute/v2/" + TENANT_ID
 identity_url = service_base_url + "/identity"
 image_url = service_base_url + "/image/v2"
 networking_url = service_base_url + ":9696/v2.0"
 placement_url = service_base_url + "/placement"
-volume_url = service_base_url + "/volume/v1/" + tenant_id
-volumev2_url = service_base_url + "/volume/v2/" + tenant_id
-volumev3_url = service_base_url + "/volume/v3/" + tenant_id
+volume_url = service_base_url + "/volume/v1/" + TENANT_ID
+volumev2_url = service_base_url + "/volume/v2/" + TENANT_ID
+volumev3_url = service_base_url + "/volume/v3/" + TENANT_ID
 # openstack相关具体服务RESTful API URL
 auth_token_url = identity_url + "/v3/auth/tokens"
 volumes_url = volumev3_url + "/volumes"

@@ -1,15 +1,16 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-#identity.py
+# identity.py
 import json
 import requests
 import logging
 import datetime
 logger = logging.getLogger(__name__)
 
-from midbox._config import user_id, password, tenant_id, auth_token_url
+from midbox._config import USER_ID, USER_PWD, TENANT_ID, auth_token_url
 
 THRESHOLD_TIME_FOR_UPDATE = 600
+
 
 class AuthToken:
     def __init__(self):
@@ -42,7 +43,7 @@ class AuthToken:
     def getToken(self):
         if (self.expires_time - datetime.datetime.now()).total_seconds() < THRESHOLD_TIME_FOR_UPDATE:
             logger.debug('Start Get Token.')
-            para_json = self.composeAuthPara(user_id, password, tenant_id)
+            para_json = self.composeAuthPara(USER_ID, USER_PWD, TENANT_ID)
             headers = {
                 "Content-type": "application/json",
                 "Accept": "application/json"
@@ -61,4 +62,4 @@ class AuthToken:
 
 
 if __name__ == '__main__':
-    print (auth_token)
+    pass
