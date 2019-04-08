@@ -125,6 +125,8 @@ def moveFunction(para):
         logger.error("Host's Password doesn't Exist!")
         return 1, "Error: Host's Password doesn't Exist!"
 
+    para["host_ip"] = host_ip
+    para["host_pwd"] = host_pwd
     ret_code, ret_data = MAP_PLATFORM_TO_FUNC[func_type].moveFunc(para)
 
     db_services.close_db(db, cursor)
