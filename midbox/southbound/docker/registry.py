@@ -18,6 +18,8 @@ def registry_start():
         ip = db_services.select_table(db,cursor,"t_host","ip",host_id)
         pwd = db_services.select_table(db,cursor,"t_host","pwd",host_id)
         exitstatus,rdata=remote_ssh(ip,pwd,r"sed -i -e \'s/ExecStart=.*dockerd .*\\s-H/ExecStart=\\/usr\\/bin\\/dockerd --insecure-registry="+DOCKER_REGISTRY_IP+r":"+DOCKER_REGISTRY_PORT+r" -H/\' "+DOCKER_SERVICE_FILE_PATH)
+        exitstatus,rdata=remote_ssh(ip,pwd,r"systemctl daemon-reload && systemctl restart docker.service")
+        logger.info("Registry config initial info:"+rdata)
 
     child=pexpect.spawn('docker run -d -p '+DOCKER_REGISTRY_PORT+':5000 --restart always -v '+DOCKER_REGISTRY_WORK_DIRECTORY+':/var/lib/registry --name myrepo registry ')
     exit=child.exitstatus
