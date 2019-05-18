@@ -9,8 +9,8 @@ import re
 import threading
 from midbox.db import db_services
 from midbox.southbound.docker import remote_ssh
-from midbox.southbound.openstack.openstack_rest_api.hypervisors import getHostsListDetails
-from midbox.southbound.openstack.openstack_rest_api.servers import getServersListDetails
+#from midbox.southbound.openstack.openstack_rest_api.hypervisors import getHostsListDetails
+#from midbox.southbound.openstack.openstack_rest_api.servers import getServersListDetails
 
 #return a jsonified file including all NFs status;0 refers to successful execution.
 
@@ -50,20 +50,20 @@ def showAllStatus(para):
     logger.debug('Start.')
 
     res = {}
-    # db, cursor = db_services.connect_db()
-    # host_id_list = db_services.select_id(db, cursor, 't_host')
+    db, cursor = db_services.connect_db()
+    host_id_list = db_services.select_id(db, cursor, 't_host')
     
-    # get hosts info
-    hosts_info = getHostsListDetails()
+#    # get hosts info
+#    hosts_info = getHostsListDetails()
 
-    for hinfo in hosts_info:
-        hid = hinfo['id']
-        hname = hinfo['hypervisor_hostname']
+    for hid in host_id_list:
+#        hid = hinfo['id']
+#        hname = hinfo['hypervisor_hostname']
         # get host info
         res[str(hid)]={}
-        res[str(hid)]['host'] = hinfo
-        # get vms info
-        res[str(hid)]['openstack'] = showVmStatus(hname)
+        res[str(hid)]['host'] = hid
+#        # get vms info
+#        res[str(hid)]['openstack'] = showVmStatus(hname)
         # get containers info
         res[str(hid)]['docker'] = showContainerStatus(hid)
 
@@ -127,31 +127,9 @@ def showContainerStatus(host_id):
     return res
 
 
-def showVmStatus(host_name):
-    logger.debug('Start.')
-
-    # get vms info
-    all_vms_info = getServersListDetails()
-    res = {}
-    for vm_info in all_vms_info:
-        if vm_info['OS-EXT-SRV-ATTR:host'] == host_name:
-
-            flavor = vm_info['flavor']['id']
-            # eq: flavor.id = F-1-256-1 means vcpus=1, ram=256MB, disk=1GB
-            resources_info = flavor.split('-')
-            if len(resources_info) < 4:
-                continue
-            needs_vm_info = {
-                'cpu': resources_info[1],
-                'ram': resources_info[2],
-                'disk': resources_info[3],
-                'status': vm_info['status']
-            }
-            res[vm_info['id']] = needs_vm_info
-    return res
 
 def __getTraffic(ip,pwd,cid):
-    exitstatus,rdata = remote_ssh.remote_ssh(ip,pwd,'bash /gettraffic.sh br-c'+cid+'-in')
+    exitstatus,rdata = remote_ssh.remote_ssh(ip,pwd,'bash /gettraffic.sh br-c'+cid+'-out')
     global port_traff
     port_traff[str(cid)] = rdata
     return rdata;

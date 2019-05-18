@@ -4,12 +4,21 @@
 
 import pexpect
 import re
-from midbox._config import DOCKER_REGISTRY_IP,DOCKER_REGISTRY_PORT,DOCKER_REGISTRY_WORK_DIRECTORY
-import midbox.db.db_services
+from midbox._config import DOCKER_REGISTRY_IP,DOCKER_REGISTRY_PORT,DOCKER_REGISTRY_WORK_DIRECTORY,DOCKER_SERVICE_FILE_PATH
+from midbox.db import db_services
+from midbox.southbound.docker.remote_ssh import *
 import logging
 
 def registry_start():
     logger=logging.getLogger(__name__)
+
+    db,cursor=db_services.connect_db()
+    host_id_list=db_services.select_id(db,cursor,'t_host')
+    for host_id in host_id_list:
+        ip = db_services.select_table(db,cursor,"t_host","ip",host_id)
+        pwd = db_services.select_table(db,cursor,"t_host","pwd",host_id)
+        exitstatus,rdata=remote_ssh(ip,pwd,r"sed -i -e \'s/ExecStart=.*dockerd .*\\s-H/ExecStart=\\/usr\\/bin\\/dockerd --insecure-registry="+DOCKER_REGISTRY_IP+r":"+DOCKER_REGISTRY_PORT+r" -H/\' "+DOCKER_SERVICE_FILE_PATH)
+
     child=pexpect.spawn('docker run -d -p '+DOCKER_REGISTRY_PORT+':5000 --restart always -v '+DOCKER_REGISTRY_WORK_DIRECTORY+':/var/lib/registry --name myrepo registry ')
     exit=child.exitstatus
     rdata=child.read().decode()
@@ -25,3 +34,4 @@ def registry_start():
         else:
             return [1,'Registry start error'];
     child.close(force=True)
+    db_services.close_db(db,cursor)
