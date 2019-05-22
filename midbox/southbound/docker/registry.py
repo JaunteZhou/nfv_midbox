@@ -4,7 +4,7 @@
 
 import pexpect
 import re
-from midbox._config import DOCKER_REGISTRY_IP,DOCKER_REGISTRY_PORT,DOCKER_REGISTRY_WORK_DIRECTORY,DOCKER_SERVICE_FILE_PATH
+from midbox._config import DOCKER_REGISTRY_IP,DOCKER_REGISTRY_PORT,DOCKER_REGISTRY_WORK_DIRECTORY,DOCKER_SERVICE_FILE_PATH,IN_PORT,OUT_PORT
 from midbox.db import db_services
 from midbox.southbound.docker.remote_ssh import *
 import logging
@@ -20,6 +20,9 @@ def registry_start():
         exitstatus,rdata=remote_ssh(ip,pwd,r"sed -i -e \'s/ExecStart=.*dockerd .*\\s-H/ExecStart=\\/usr\\/bin\\/dockerd --insecure-registry="+DOCKER_REGISTRY_IP+r":"+DOCKER_REGISTRY_PORT+r" -H/\' "+DOCKER_SERVICE_FILE_PATH)
         exitstatus,rdata=remote_ssh(ip,pwd,r"systemctl daemon-reload && systemctl restart docker.service")
         logger.info("Registry config initial info:"+rdata)
+
+        #顺便做点初始化工作
+        exitstatus,rdata=remote_ssh(ip,pwd,r"ovs-vsctl add-br sw1 && ovs-vsctl add-port sw1 "+IN_PORT+" && ovs-vsctl add-port sw1 "+OUT_PORT)
 
     child=pexpect.spawn('docker run -d -p '+DOCKER_REGISTRY_PORT+':5000 --restart always -v '+DOCKER_REGISTRY_WORK_DIRECTORY+':/var/lib/registry --name myrepo registry ')
     exit=child.exitstatus

@@ -4,7 +4,7 @@
 
 import pexpect
 def remote_ssh(ip,password,cmd,username='root'):
-    ssh=pexpect.spawn('ssh '+username+'@'+ip+' '+cmd)
+    ssh=pexpect.spawn('ssh '+username+'@'+ip+' '+cmd,timeout=None)
     try:
         i=ssh.expect(['password:','yes/no'],timeout=5)
         if i==0:
