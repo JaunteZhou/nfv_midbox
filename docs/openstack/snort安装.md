@@ -24,17 +24,7 @@ cd daq-2.0.6
 make && sudo make install
 ```
 
-### 安装snort
 
-```
-tar xvzf snort-2.9.13.tar.gz
-                      
-cd snort-2.9.13
-./configure --enable-sourcefire
-make && sudo make install
-```
-
-## 问题与解决方案
 
 ### 问题0
 
@@ -45,8 +35,26 @@ configure: error: no acceptable C compiler found in $PATH
 ### 解决0
 
 ```
-# yum install gcc gcc-c++
+# yum install gcc
 ```
+
+
+
+
+
+
+
+### 安装snort
+
+```
+tar xvzf snort-2.9.13.tar.gz
+                      
+cd snort-2.9.13
+./configure --enable-sourcefire
+make && sudo make install
+```
+
+
 
 ### 问题1
 
@@ -58,7 +66,7 @@ Get it from http://www.pcre.org
 ### 解决1
 
 ```
-# yum install pcre-devel
+# yum install pcre-devel -y
 ```
 
 ### 问题2
@@ -72,7 +80,7 @@ options, if you have it installed in an unusual place
 ### 解决2
 
 ```
-# yum install libdnet-devel
+# yum install libdnet-devel -y
 ```
 
 ### 问题3
@@ -100,13 +108,14 @@ Then, include daq-modules-config in the path.
 ### 问题4
 
 ```
-ERROR! zlib header not found.
+ERROR! zlib header not found, go get it from
+http://www.zlib.net
 ```
 
 ### 解决4
 
 ```
-# yum install zlib-devel
+# yum install zlib-devel -y
 ```
 
 ### 问题5
@@ -122,12 +131,6 @@ configure: error: “Fatal!”
 https://blog.csdn.net/rdgfdd/article/details/83420811
 
 ```
-# ./configure --disable-open-appid
-```
-
-### 问题6
-
-```
-安装flex和bison
+# ./configure --enable-sourcefire --disable-open-appid
 ```
 
