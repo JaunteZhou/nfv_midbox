@@ -7,7 +7,7 @@ import re
 
 from midbox._config import DOCKER_REGISTRY_IP,DOCKER_REGISTRY_PORT,DOCKER_REGISTRY_WORK_DIRECTORY,DOCKER_SERVICE_FILE_PATH,IN_PORT,OUT_PORT
 from midbox.db import db_services
-from midbox.southbound.docker.remote_ssh import *
+from midbox.southbound.remote_ssh import *
 
 import logging
 
