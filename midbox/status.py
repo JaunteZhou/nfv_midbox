@@ -8,9 +8,10 @@ logger = logging.getLogger(__name__)
 import re
 import threading
 from midbox.db import db_services
+
 from midbox.southbound import remote_ssh
 from midbox.southbound.openstack.openstack_rest_api.hypervisors import getHostsListDetails
-from midbox.southbound.openstack.openstack_rest_api.servers import getServersListDetails
+
 
 # 容器端口-流量映射字典，用于在线程执行函数与showContainerStatus之间传递端口流量值
 port_traff = {}
@@ -48,20 +49,23 @@ def showAllStatus(para):
     logger.debug('Start.')
 
     res = {}
-    # db, cursor = db_services.connect_db()
-    # host_id_list = db_services.select_id(db, cursor, 't_host')
+
+    db, cursor = db_services.connect_db()
+    host_id_list = db_services.select_id(db, cursor, 't_host')
 
     # get hosts info
     hosts_info = getHostsListDetails()
 
-    for hinfo in hosts_info:
+    for hid in host_id_list:
         hid = hinfo['id']
         hname = hinfo['hypervisor_hostname']
         # get host info
+
         res[str(hid)] = {}
         res[str(hid)]['host'] = hinfo
         # get vms info
         res[str(hid)]['openstack'] = show_vm_status(hname)
+
         # get containers info
         res[str(hid)]['docker'] = show_container_status(hid)
 
@@ -156,3 +160,4 @@ def __get_traffic(ip, pwd, cid):
 
 if __name__ == '__main__':
     showAllStatus(None)
+
