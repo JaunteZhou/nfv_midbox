@@ -50,7 +50,7 @@ class AuthToken:
             }
             r = requests.post(auth_token_url, self.json_para, headers=headers)
             if r.status_code != requests.codes.created:
-                logger.error((r.status_code, r.json()))
+                logger.error(r.status_code)
                 return ""
             # expires_at = '2019-03-13T14:59:49.000000Z'
             expires_at = r.json()["token"]["expires_at"]
