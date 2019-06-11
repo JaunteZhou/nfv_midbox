@@ -11,10 +11,17 @@ from midbox.db import db_services
 
 from midbox.southbound import remote_ssh
 from midbox.southbound.openstack.openstack_rest_api.hypervisors import getHostsListDetails
-
+from midbox.southbound.openstack.openstack_rest_api.servers import getServersListDetails
 
 # 容器端口-流量映射字典，用于在线程执行函数与showContainerStatus之间传递端口流量值
 port_traff = {}
+
+
+def __get_traffic(ip, pwd, cid):
+    ret_code, ret_data = remote_ssh.remote_ssh(ip, pwd, 'bash /gettraffic.sh br-c' + cid + '-out')
+    global port_traff
+    port_traff[str(cid)] = ret_data
+    return ret_data
 
 
 def showAllStatus(para):
@@ -54,17 +61,18 @@ def showAllStatus(para):
     host_id_list = db_services.select_id(db, cursor, 't_host')
 
     # get hosts info
-    hosts_info = getHostsListDetails()
+    # hosts_info = getHostsListDetails()
 
     for hid in host_id_list:
-        hid = hinfo['id']
-        hname = hinfo['hypervisor_hostname']
-        # get host info
+        # hid = hid['id']
+        # hname = hid['hypervisor_hostname']
 
+        # get host info
         res[str(hid)] = {}
-        res[str(hid)]['host'] = hinfo
+        res[str(hid)]['host'] = hid
+
         # get vms info
-        res[str(hid)]['openstack'] = show_vm_status(hname)
+        res[str(hid)]['openstack'] = show_vm_status(hid['hypervisor_hostname'])
 
         # get containers info
         res[str(hid)]['docker'] = show_container_status(hid)
@@ -93,21 +101,21 @@ def show_container_status(host_id):
             t.start()
 
     # 由于remote_ssh的传参为字符串，shell执行时也识别字符串，故必须保证remote传过去的参数就含有反斜杠，保证shell解释时不会去掉引号
-    ret_code, ret_data = remote_ssh.remote_ssh(
+    exitstatus, rdata = remote_ssh.remote_ssh(
         ip, pwd, 'docker stats --format \\"table {{.Name}} {{.CPUPerc}} {{.MemUsage}}\\" --no-stream')
 
     # 由于容器名均以c开头，故pattern使用了c开头去掉第一行表头，以及可能会有的仓库容器
     pat = '^c.*$'
     # 获取全部行
-    reg_result = re.findall(pat, ret_data, re.M)
+    reg_result = re.findall(pat, rdata, re.M)
 
-    line_num = 0
+    lineno = 0
     # return_list = []
     res = {}
     exp = re.compile(r'c(\d*) (\d.*%) (\d.*?[MG]iB)')
     for row_iter in reg_result:
         # 从每行获取所需数据
-        temp = exp.search(reg_result[line_num])
+        temp = exp.search(reg_result[lineno])
         # cid 取字符串
         cid = temp.group(1)
         # 必须保证对应线程已退出，成功获取了端口流量
@@ -121,7 +129,7 @@ def show_container_status(host_id):
         }
         # return_list.append([id,cpu,mem])
         res[cid] = needs_docker_info
-        line_num = line_num + 1
+        lineno = lineno + 1
 
     db_services.close_db(db, cursor)
     # return return_list
@@ -151,13 +159,5 @@ def show_vm_status(host_name):
     return res
 
 
-def __get_traffic(ip, pwd, cid):
-    ret_code, ret_data = remote_ssh.remote_ssh(ip, pwd, 'bash /gettraffic.sh br-c' + cid + '-in')
-    global port_traff
-    port_traff[str(cid)] = ret_data
-    return ret_data
-
-
 if __name__ == '__main__':
     showAllStatus(None)
-
