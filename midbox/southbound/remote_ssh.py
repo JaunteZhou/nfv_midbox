@@ -8,7 +8,7 @@ import pexpect
 def remote_ssh(ip, password, cmd, username='root'):
     ssh = pexpect.spawn('ssh ' + username + '@' + ip + ' ' + cmd)
     try:
-        i = ssh.expect(['password:', 'yes/no'], timeout=5)
+        i = ssh.expect(['password:', 'yes/no'], timeout=None)
         if i == 0:
             ssh.sendline(password)
         elif i == 1:
