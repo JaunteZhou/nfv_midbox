@@ -14,9 +14,9 @@ from midbox._config import TYPE_OPENSTACK, OPENSTACK_SW_NAME, \
 
 
 def __move_vm_ports(host_ip, host_pwd, para):
-    remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl add-br ' + DATA_PLANE_SW_NAME + ' && ' +
-                          'ovs-vsctl add-br ' + CTRL_PLANE_SW_NAME)
+    # remote_ssh.remote_ssh(host_ip, host_pwd,
+    #                       'ovs-vsctl add-br ' + DATA_PLANE_SW_NAME + ' && ' +
+    #                       'ovs-vsctl add-br ' + CTRL_PLANE_SW_NAME)
     # 端口转移
     remote_ssh.remote_ssh(host_ip, host_pwd,
                           'ovs-vsctl del-port ' + OPENSTACK_SW_NAME + ' ' +
@@ -38,6 +38,28 @@ def __move_vm_ports(host_ip, host_pwd, para):
                           'ifconfig ' + para['manPortName'] + ' up && ' +
                           'ifconfig ' + para['dataPortsNameList'][0] + ' up && ' +
                           'ifconfig ' + para['dataPortsNameList'][1] + ' up')
+    return True
+
+
+def __moveback_vm_ports(host_ip, host_pwd, para):
+    # remote_ssh.remote_ssh(host_ip, host_pwd,
+    #                       'ovs-vsctl add-br ' + DATA_PLANE_SW_NAME + ' && ' +
+    #                       'ovs-vsctl add-br ' + CTRL_PLANE_SW_NAME)
+    # 端口转移
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ovs-vsctl del-port ' + CTRL_PLANE_SW_NAME + ' ' +
+                          para['manPortName'])
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' ' +
+                          para['dataPortsNameList'][0])
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' ' +
+                          para['dataPortsNameList'][1])
+    # 开启端口
+    remote_ssh.remote_ssh(host_ip, host_pwd,
+                          'ip link del ' + para['manPortName'] + ' up && ' +
+                          'ip link del ' + para['dataPortsNameList'][0] + ' up && ' +
+                          'ip link del ' + para['dataPortsNameList'][1] + ' up')
     return True
 
 
@@ -76,9 +98,12 @@ def delFunc(para):
                                              'func_local_id', para['func_id'])
     # delete vm by vm_id = func_local_id
     ret = openstack_services.delVm(func_local_id)
-    if ret is False:
+    if not ret:
         logger.error("Delete VM Function Failed by OpenStack!")
         return 1, "Error: Delete VM Function Failed by OpenStack!"
+
+    __moveback_vm_ports(para["host_ip"], para["host_pwd"], ret)
+
     db_services.delete_table(db, cursor, 't_function', para["func_id"])
 
     db_services.close_db(db, cursor)

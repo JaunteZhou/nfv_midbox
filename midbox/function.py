@@ -83,6 +83,21 @@ def delFunction(para):
         logger.error("Function doesn't Exist!")
         return 1, "Error: Function doesn't Exist!"
 
+    host_id = db_services.select_table(db,cursor,'t_function','host_id', para['func_id'])
+    host_ip = db_services.select_table(db, cursor, 't_host', 'ip', host_id)
+    if not host_ip:
+        # host_ip为空，表示未查询到对应条目
+        logger.error("Host's IP doesn't Exist!")
+        return 1, "Error: Host's IP doesn't Exist!"
+    host_pwd = db_services.select_table(db, cursor, 't_host', 'pwd', host_id)
+    if not host_pwd:
+        # host_ip为空，表示未查询到对应条目
+        logger.error("Host's Password doesn't Exist!")
+        return 1, "Error: Host's Password doesn't Exist!"
+
+    para["host_ip"] = host_ip
+    para["host_pwd"] = host_pwd
+
     ret_code, ret_data = PLATFORM_MAPPER[func_type].delFunc(para)
 
     db_services.close_db(db, cursor)

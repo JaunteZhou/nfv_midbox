@@ -37,8 +37,18 @@ def addVm(vcpus, ram, disk, image_id, host_id):
 
 def delVm(server_id):
     logger.debug('Start.')
+
+    sv = {}
+    man_port = __get_vm_mng_ports_name(server_id)
+    sv['manPortName'] = man_port
+    ports_list = getVmDataInAndOutPortsName(server_id)
+    sv['dataPortsNameList'] = ports_list
+
     ret = del_server_instance(server_id)
-    return ret
+    if ret:
+        return sv
+    else:
+        return {}
 
 
 def delImage(image_id):
