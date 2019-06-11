@@ -41,21 +41,9 @@ DB_ITEM_DICT = {
             'type': TYPE_DOCKER
         },
         {
-            'image_id': 3,
-            'func': 'vm-iptables',
-            'image_local_id': '3ba86015-8b57-4a2c-ab7d-105a7f4e9fe2',
-            'type': TYPE_OPENSTACK
-        },
-        {
-            'image_id': 4,
-            'func': 'vm-tcpdump',
-            'image_local_id': '3ba86015-8b57-4a2c-ab7d-105a7f4e9fe2',
-            'type': TYPE_OPENSTACK
-        },
-        {
-            'image_id': 5,
-            'func': 'vm-snort',
-            'image_local_id': '3ba86015-8b57-4a2c-ab7d-105a7f4e9fe2',
+            'id': 3,
+            'func_name': 'vm-all-in-one',
+            'local_id': 'aef1f873-2ae9-456c-914a-dc4c030bcd0b',
             'type': TYPE_OPENSTACK
         }
     ]
