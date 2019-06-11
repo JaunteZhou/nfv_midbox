@@ -75,6 +75,9 @@ def addContainer(ip, password, cpu, mem, image_name, containerid, cip='192.168.1
                                     'docker exec c' + containerid + ' ovs-vsctl add-port sw out')
     logger.info(ret_data)
 
+    ret_code, ret_data = remote_ssh(ip, password,'docker start c'+containerid)
+    logger.info(ret_data)
+
     # 注意：容器镜像内必须安装OVS2.9以上版本！！
     # 断掉回路，等容器启用时再up该接口
     ret_code, ret_data = remote_ssh(ip, password,
