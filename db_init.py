@@ -41,9 +41,9 @@ DB_ITEM_DICT = {
             'type': TYPE_DOCKER
         },
         {
-            'id': 3,
-            'func_name': 'vm-all-in-one',
-            'local_id': 'aef1f873-2ae9-456c-914a-dc4c030bcd0b',
+            'image_id': 3,
+            'func': 'vm-all-in-one',
+            'image_local_id': 'aef1f873-2ae9-456c-914a-dc4c030bcd0b',
             'type': TYPE_OPENSTACK
         }
     ]
