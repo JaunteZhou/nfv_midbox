@@ -65,18 +65,19 @@ def add_server_instance(vcpus, ram, disk, image_id, host_id):
         logger.error("Add or Get Flavor.")
         return None
 
-    same_host = __get_any_instance_id_in_same_host(host_id)
-
-    para_json = openstack_para.composeServerPara(
-        openstack_para.makeServerName(),
-        image_id,
-        f_id,
-        [
-            {"uuid": private_net_id},
-            {"uuid": data_in_net_id},
-            {"uuid": data_out_net_id}
-        ],
-        same_host)
+    # same_host = getAnyInstanceIdInSameHost(host_id)
+    az = "az" + str(host_id)
+    para_json = openstack_para.composeServerParaWithAZ(
+            openstack_para.makeServerName(),
+            image_id,
+            f_id,
+            az,
+            [
+                {"uuid": private_net_id},
+                {"uuid": data_in_net_id},
+                {"uuid": data_out_net_id}
+            ])
+            # same_host)
 
     s_ret = servers.createServer(para_json)
     if s_ret == -1:

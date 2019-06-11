@@ -48,6 +48,21 @@ def composeServerPara(
     return json.dumps(para)
 
 
+def composeServerParaWithAZ(
+        name, image_ref, flavor_ref, az, nets):
+    """Compose JSON Param of Server Creatation."""
+    para = {
+        "server": {
+            "name": name,
+            "imageRef": image_ref,
+            "flavorRef": flavor_ref,
+            "availability_zone": az,
+            "networks": nets
+        }
+    }
+    return json.dumps(para)
+
+
 def composeFlavorPara(id, name, vcpus, ram, disk):
     """Compose Param for Flavor Creatation."""
     req_dic = {
