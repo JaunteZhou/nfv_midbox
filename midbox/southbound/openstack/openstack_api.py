@@ -41,7 +41,7 @@ def __move_vm_ports(host_ip, host_pwd, para):
     return True
 
 
-def __moveback_vm_ports(host_ip, host_pwd, para):
+def __remove_vm_ports(host_ip, host_pwd, para):
     # remote_ssh.remote_ssh(host_ip, host_pwd,
     #                       'ovs-vsctl add-br ' + DATA_PLANE_SW_NAME + ' && ' +
     #                       'ovs-vsctl add-br ' + CTRL_PLANE_SW_NAME)
@@ -57,9 +57,9 @@ def __moveback_vm_ports(host_ip, host_pwd, para):
                           para['dataPortsNameList'][1])
     # 删除端口
     remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ip link del ' + para['manPortName'] + ' up && ' +
-                          'ip link del ' + para['dataPortsNameList'][0] + ' up && ' +
-                          'ip link del ' + para['dataPortsNameList'][1] + ' up')
+                          'ip link del ' + para['manPortName'] + ' && ' +
+                          'ip link del ' + para['dataPortsNameList'][0] + ' && ' +
+                          'ip link del ' + para['dataPortsNameList'][1] + ' ')
     return True
 
 
@@ -102,7 +102,7 @@ def delFunc(para):
         logger.error("Delete VM Function Failed by OpenStack!")
         return 1, "Error: Delete VM Function Failed by OpenStack!"
 
-    __moveback_vm_ports(para["host_ip"], para["host_pwd"], ret)
+    __remove_vm_ports(para["host_ip"], para["host_pwd"], ret)
 
     db_services.delete_table(db, cursor, 't_function', para["func_id"])
 

@@ -13,6 +13,8 @@ error_log_dir = base_dir + '/' + error_log_filename
 # 睡眠时间大小
 SLEEP_SECONDS_IN_WAITING = 2
 SLEEP_SECONDS_IN_ATTACHING = 2
+TRY_NUM = 60
+SLEEP_TIME_OF_TRY = 5
 
 # physical port name config
 # 当前设计中，每个服务器的物理端口名称必须相同

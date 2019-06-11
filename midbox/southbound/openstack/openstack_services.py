@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 from midbox.southbound.openstack.openstack_rest_api import servers, flavor, image, networking, ports, volume, \
     floating_ips, hypervisors
 from midbox._config import private_net_id, private_net_name, data_in_net_id, data_in_net_name, data_out_net_id, \
-    data_out_net_name, SLEEP_SECONDS_IN_ATTACHING, SLEEP_SECONDS_IN_WAITING
+    data_out_net_name, SLEEP_SECONDS_IN_ATTACHING, SLEEP_SECONDS_IN_WAITING, TRY_NUM, SLEEP_TIME_OF_TRY
 from midbox.southbound.openstack import openstack_para
 import time
 
@@ -133,15 +133,20 @@ def del_server_instance(s_id, vol_clear=True):
     if vol_clear is True:
         logger.debug("Start Clear Volume !")
 
-        for i in range(len(vol_list)):
-            logger.debug(("Volume Id: ", vol_list[i]["volumeId"]))
-            ret = volume.deleteVolume(vol_list[i]["volumeId"])
-            logger.debug(("Return of Delete Volume: ", ret))
-            if ret is not True:
-                err_list.append({vol_list[i]["volumeId"]: ret})
+        try_num = 0
+        deleting_list = vol_list
+        while len(deleting_list) and try_num < TRY_NUM:
+            tmp_list = []
+            for i in range(len(deleting_list)):
+                logger.debug(("Volume Id: ", deleting_list[i]["volumeId"]))
+                ret = volume.deleteVolume(deleting_list[i]["volumeId"])
+                logger.debug(("Return of Delete Volume: ", ret))
+                if ret is not True:
+                    tmp_list.append({"volumeId": deleting_list[i]["volumeId"], "error_info": ret})
+            deleting_list = tmp_list
+            try_num += 1
+            time.sleep(SLEEP_TIME_OF_TRY)
 
-    if len(err_list) != 0:
-        return False
     return True
 
 
