@@ -7,7 +7,7 @@ import logging
 import datetime
 logger = logging.getLogger(__name__)
 
-from midbox._config import USER_ID, USER_PWD, TENANT_ID, auth_token_url
+from midbox._config import USER_ID, USER_PWD, PROJECT_ID, auth_token_url
 
 THRESHOLD_TIME_FOR_UPDATE = 600
 
@@ -15,6 +15,7 @@ THRESHOLD_TIME_FOR_UPDATE = 600
 class AuthToken:
     def __init__(self):
         self.auth_token = ""
+        self.json_para = self.composeAuthPara(USER_ID, USER_PWD, PROJECT_ID)
         self.expires_time = datetime.datetime.now()
 
     def composeAuthPara(self, user_id, password, proj_id):
@@ -43,12 +44,11 @@ class AuthToken:
     def getToken(self):
         if (self.expires_time - datetime.datetime.now()).total_seconds() < THRESHOLD_TIME_FOR_UPDATE:
             logger.debug('Start Get Token.')
-            para_json = self.composeAuthPara(USER_ID, USER_PWD, TENANT_ID)
             headers = {
                 "Content-type": "application/json",
                 "Accept": "application/json"
             }
-            r = requests.post(auth_token_url, para_json, headers=headers)
+            r = requests.post(auth_token_url, self.json_para, headers=headers)
             if r.status_code != requests.codes.created:
                 logger.error((r.status_code, r.json()))
                 return ""

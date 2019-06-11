@@ -55,7 +55,7 @@ def __moveback_vm_ports(host_ip, host_pwd, para):
     remote_ssh.remote_ssh(host_ip, host_pwd,
                           'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' ' +
                           para['dataPortsNameList'][1])
-    # 开启端口
+    # 删除端口
     remote_ssh.remote_ssh(host_ip, host_pwd,
                           'ip link del ' + para['manPortName'] + ' up && ' +
                           'ip link del ' + para['dataPortsNameList'][0] + ' up && ' +

@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1c382907-3ab4-4160-8add-9b2e93af2206" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/midbox/function.py" beforeDir="false" afterPath="$PROJECT_DIR$/midbox/function.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/midbox/_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/midbox/_config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/midbox/southbound/openstack/openstack_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/midbox/southbound/openstack/openstack_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/midbox/southbound/openstack/openstack_rest_api/identity.py" beforeDir="false" afterPath="$PROJECT_DIR$/midbox/southbound/openstack/openstack_rest_api/identity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,8 +18,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/midbox/_config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="312">
-              <caret line="24" selection-start-line="24" selection-end-line="24" />
+            <state relative-caret-position="273">
+              <caret line="62" selection-start-line="62" selection-end-line="62" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_rest_api/identity.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="640">
+              <caret line="50" column="60" selection-start-line="50" selection-start-column="60" selection-end-line="50" selection-end-column="60" />
             </state>
           </provider>
         </entry>
@@ -45,10 +54,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/midbox/function.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
+            <state relative-caret-position="1122">
               <caret line="95" column="57" selection-start-line="95" selection-start-column="57" selection-end-line="95" selection-end-column="57" />
               <folding>
                 <element signature="e#440#1269#1" />
@@ -61,8 +70,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_api.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="650">
-              <caret line="99" column="32" lean-forward="true" selection-start-line="99" selection-start-column="32" selection-end-line="99" selection-end-column="32" />
+            <state relative-caret-position="549">
+              <caret line="57" column="8" selection-start-line="57" selection-start-column="8" selection-end-line="57" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="222">
+              <caret line="157" column="9" lean-forward="true" selection-start-line="157" selection-start-column="9" selection-end-line="157" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -107,7 +125,6 @@
     <findStrings>
       <find>&quot;sw1&quot;</find>
       <find>shutdownflag</find>
-      <find>:</find>
       <find>hostpwd</find>
       <find>id_list</find>
       <find>exitstatus</find>
@@ -125,6 +142,8 @@
       <find>print</find>
       <find>openstack</find>
       <find>systemctl</find>
+      <find>:</find>
+      <find>project_id</find>
     </findStrings>
     <replaceStrings>
       <replace>DATA_PLANE_OVS_NAME</replace>
@@ -139,6 +158,8 @@
       <replace>func</replace>
       <replace>systemctl restart openstack</replace>
       <replace>sudo systemctl</replace>
+      <replace>:</replace>
+      <replace>PROJECT_ID</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -166,15 +187,15 @@
         <option value="$PROJECT_DIR$/midbox/southbound/docker/docker_services.py" />
         <option value="$PROJECT_DIR$/midbox/southbound/docker/docker_api.py" />
         <option value="$PROJECT_DIR$/midbox/chain.py" />
-        <option value="$PROJECT_DIR$/midbox/_config.py" />
-        <option value="$PROJECT_DIR$/midbox/southbound/openstack/openstack_rest_api/identity.py" />
-        <option value="$PROJECT_DIR$/test/test.py" />
         <option value="$PROJECT_DIR$/test/eee" />
         <option value="$PROJECT_DIR$/midbox/southbound/docker/registry.py" />
         <option value="$PROJECT_DIR$/db_init.py" />
-        <option value="$PROJECT_DIR$/midbox/southbound/openstack/openstack_api.py" />
         <option value="$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py" />
         <option value="$PROJECT_DIR$/midbox/function.py" />
+        <option value="$PROJECT_DIR$/midbox/southbound/openstack/openstack_api.py" />
+        <option value="$PROJECT_DIR$/test/test.py" />
+        <option value="$PROJECT_DIR$/midbox/_config.py" />
+        <option value="$PROJECT_DIR$/midbox/southbound/openstack/openstack_rest_api/identity.py" />
       </list>
     </option>
   </component>
@@ -379,21 +400,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_rest_api/identity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="13" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/eee" />
-    <entry file="file://$PROJECT_DIR$/test/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2006">
-          <caret line="119" column="36" selection-start-line="119" selection-start-column="36" selection-end-line="119" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/midbox/chain.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -475,31 +482,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/midbox/_config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/midbox/central_unit.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="15" column="27" selection-start-line="15" selection-start-column="27" selection-end-line="15" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_api.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
-          <caret line="99" column="32" lean-forward="true" selection-start-line="99" selection-start-column="32" selection-end-line="99" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="42" column="6" selection-start-line="42" selection-start-column="4" selection-end-line="42" selection-end-column="6" />
         </state>
       </provider>
     </entry>
@@ -510,14 +496,49 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_services.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="586">
+          <caret line="42" column="6" selection-start-line="42" selection-start-column="4" selection-end-line="42" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/midbox/function.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
+        <state relative-caret-position="1122">
           <caret line="95" column="57" selection-start-line="95" selection-start-column="57" selection-end-line="95" selection-end-column="57" />
           <folding>
             <element signature="e#440#1269#1" />
             <element signature="e#2136#2293#1" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_api.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="549">
+          <caret line="57" column="8" selection-start-line="57" selection-start-column="8" selection-end-line="57" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="157" column="9" lean-forward="true" selection-start-line="157" selection-start-column="9" selection-end-line="157" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/midbox/_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="273">
+          <caret line="62" selection-start-line="62" selection-end-line="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/midbox/southbound/openstack/openstack_rest_api/identity.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="640">
+          <caret line="50" column="60" selection-start-line="50" selection-start-column="60" selection-end-line="50" selection-end-column="60" />
         </state>
       </provider>
     </entry>
