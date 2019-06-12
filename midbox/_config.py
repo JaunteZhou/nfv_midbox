@@ -90,9 +90,9 @@ floating_url        = networking_url + "/floatingips"
 ports_url           = networking_url + "/ports"
 
 # openstack中networks名称与ID
-private_net_id      = "47027190-71bb-49a3-a585-1f330531216f"
+private_net_id      = "1467b2c5-d976-49b1-858b-786ac788f236"
 private_net_name    = "private-net"
-data_in_net_id      = "46355ffe-3c0c-4041-b6d3-3f73a696085f"
+data_in_net_id      = "7372f98d-79e5-4cef-9711-7a50f299fb99"
 data_in_net_name    = "data-in-net"
-data_out_net_id     = "e2b132f2-7f29-4bd6-b526-1c497fda6be7"
+data_out_net_id     = "88209712-b7b1-4df4-ba08-78dd346f9bb0"
 data_out_net_name   = "data-out-net"

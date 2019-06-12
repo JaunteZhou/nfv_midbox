@@ -43,7 +43,7 @@ DB_ITEM_DICT = {
         {
             'image_id': 3,
             'func': 'vm-all-in-one',
-            'image_local_id': 'aef1f873-2ae9-456c-914a-dc4c030bcd0b',
+            'image_local_id': 'f1bec947-fc5c-4a2c-8660-bdefcfb33f0a',
             'type': TYPE_OPENSTACK
         }
     ]
