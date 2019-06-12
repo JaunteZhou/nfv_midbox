@@ -26,6 +26,7 @@ OUT_PORT = 'eno3'
 DATA_PLANE_SW_NAME = 'sw1'
 CTRL_PLANE_SW_NAME = 'sw-man'
 OPENSTACK_SW_NAME = 'br-int'
+OPENSTACK_PORT_NAME_HEAD = "qvo"
 
 # db config
 # 数据库配置

@@ -4,7 +4,7 @@
 
 import json
 import time
-from midbox._config import SERVERS_NAME_PREFIX, FLAVORS_ID_PREFIX, IMAGE_NAME_PREFIX
+from midbox._config import SERVERS_NAME_PREFIX, FLAVORS_ID_PREFIX, IMAGE_NAME_PREFIX, OPENSTACK_PORT_NAME_HEAD
 
 
 def __get_time_stamp():
@@ -27,7 +27,7 @@ def makeNewImageName():
 
 
 def makePortNameInOvsById(port_id):
-    return "tap" + port_id[0:11]
+    return OPENSTACK_PORT_NAME_HEAD + port_id[0:11]
 
 
 def composeServerPara(
