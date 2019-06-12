@@ -5,7 +5,7 @@
 import pexpect
 import re
 
-from midbox._config import DOCKER_REGISTRY_IP,DOCKER_REGISTRY_PORT,DOCKER_REGISTRY_WORK_DIRECTORY,DOCKER_SERVICE_FILE_PATH,IN_PORT,OUT_PORT
+from midbox._config import DOCKER_REGISTRY_IP,DOCKER_REGISTRY_PORT,DOCKER_REGISTRY_WORK_DIRECTORY,DOCKER_SERVICE_FILE_PATH,IN_PORT,OUT_PORT,MAN_PORT
 from midbox.db import db_services
 from midbox.southbound.remote_ssh import *
 
@@ -17,6 +17,10 @@ def registry_start():
 
     db,cursor=db_services.connect_db()
     host_id_list=db_services.select_id(db,cursor,'t_host')
+    chains=db_services.select_id(db,cursor,'t_flow')
+    flag=0
+    if chains==[]:
+        flag=1
     for host_id in host_id_list:
         ip = db_services.select_table(db,cursor,"t_host","ip",host_id)
         pwd = db_services.select_table(db,cursor,"t_host","pwd",host_id)
@@ -25,7 +29,13 @@ def registry_start():
         logger.info("Registry config initial info:"+rdata)
 
         #顺便做点初始化工作
-        exitstatus,rdata=remote_ssh(ip,pwd,r"ovs-vsctl add-br sw1 && ovs-vsctl add-port sw1 "+IN_PORT+" && ovs-vsctl add-port sw1 "+OUT_PORT)
+        exitstatus,rdata=remote_ssh(ip,pwd,r"ovs-vsctl add-br sw1")
+        exitstatus,rdata=remote_ssh(ip,pwd, r"ovs-vsctl add-port sw1 "+IN_PORT)
+        exitstatus,rdata=remote_ssh(ip,pwd,r" ovs-vsctl add-port sw1 "+OUT_PORT)
+        exitstatus,rdata=remote_ssh(ip,pwd,r"ovs-vsctl add-br sw-man")
+        exitstatus,rdata=remote_ssh(ip,pwd,"ovs-vsctl add-port sw-man "+MAN_PORT)
+        if flag==1:
+            exitstatus,rdata=remote_ssh(ip,pwd,"ovs-ofctl del-flows sw1")
 
     child=pexpect.spawn('docker run -d -p '+DOCKER_REGISTRY_PORT+':5000 --restart always -v '+DOCKER_REGISTRY_WORK_DIRECTORY+':/var/lib/registry --name myrepo registry ')
     exit=child.exitstatus
