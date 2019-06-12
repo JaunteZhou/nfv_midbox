@@ -18,8 +18,8 @@ SLEEP_TIME_OF_TRY = 5
 
 # physical port name config
 # 当前设计中，每个服务器的物理端口名称必须相同
-IN_PORT = 'eno3'
-OUT_PORT = 'eno3'
+IN_PORT = 'ens4'
+OUT_PORT = 'ens4'
 
 # virtual switch name config
 # 虚拟交换机名的配置
