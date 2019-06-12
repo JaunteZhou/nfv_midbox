@@ -58,21 +58,21 @@ def showAllStatus(para):
     res = {}
 
     db, cursor = db_services.connect_db()
-    host_id_list = db_services.select_id(db, cursor, 't_host')
+    # host_id_list = db_services.select_id(db, cursor, 't_host')
 
     # get hosts info
-    # hosts_info = getHostsListDetails()
+    hosts_info_list = getHostsListDetails()
 
-    for hid in host_id_list:
-        # hid = hid['id']
-        # hname = hid['hypervisor_hostname']
+    for host_info in hosts_info_list:
+        hid = host_info['id']
+        hname = host_info['hypervisor_hostname']
 
         # get host info
         res[str(hid)] = {}
-        res[str(hid)]['host'] = hid
+        res[str(hid)]['host'] = host_info
 
         # get vms info
-        res[str(hid)]['openstack'] = show_vm_status(hid['hypervisor_hostname'])
+        res[str(hid)]['openstack'] = show_vm_status(hname)
 
         # get containers info
         res[str(hid)]['docker'] = show_container_status(hid)
