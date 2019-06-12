@@ -47,6 +47,7 @@ def composeServerPara(
         }
     return json.dumps(para)
 
+
 def composeServerParaWithAZ(
         name, image_ref, flavor_ref, az, nets):
     """Compose JSON Param of Server Creatation."""
@@ -60,6 +61,7 @@ def composeServerParaWithAZ(
         }
     }
     return json.dumps(para)
+
 
 def composeFlavorPara(id, name, vcpus, ram, disk):
     """Compose Param for Flavor Creatation."""

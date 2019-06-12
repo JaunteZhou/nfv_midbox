@@ -5,6 +5,7 @@
 from midbox._config import MYSQL_USER, MYSQL_PASSWD, MAIN_DB_NAME, DB_SOURCE_SQL, TYPE_DOCKER, TYPE_OPENSTACK
 import pexpect
 
+
 DB_ITEM_DICT = {
     't_host': [
         {
