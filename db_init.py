@@ -11,7 +11,7 @@ DB_ITEM_DICT = {
         {
             'host_id': 1,
             'host_name': "host1",
-            'ip': "10.1.1.18",
+            'ip': "10.0.30.51",
             'pwd': "123456",
             'cpu': 8,
             'ram': 32,
@@ -20,7 +20,7 @@ DB_ITEM_DICT = {
         {
             'host_id': 2,
             'host_name': "host2",
-            'ip': "10.1.1.7",
+            'ip': "10.0.30.52",
             'pwd': "123456",
             'cpu': 8,
             'ram': 32,
