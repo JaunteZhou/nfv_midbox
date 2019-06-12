@@ -55,13 +55,13 @@ def setFunction(para):
         # host_ip为空，表示未查询到对应条目
         logger.error("Host's Password doesn't Exist!")
         return 1, "Error: Host's Password doesn't Exist!"
+    db_services.close_db(db, cursor)
 
     para["host_ip"] = host_ip
     para["host_pwd"] = host_pwd
     func_type = STR_TYPE_TO_NUM_TYPE[para["func_type"]]
     ret_code, ret_data = PLATFORM_MAPPER[func_type].addFunc(para)
 
-    db_services.close_db(db, cursor)
     return ret_code, ret_data + " IP:" + para['func_ip']
 
 
@@ -94,13 +94,13 @@ def delFunction(para):
         # host_ip为空，表示未查询到对应条目
         logger.error("Host's Password doesn't Exist!")
         return 1, "Error: Host's Password doesn't Exist!"
+    db_services.close_db(db, cursor)
 
     para["host_ip"] = host_ip
     para["host_pwd"] = host_pwd
 
     ret_code, ret_data = PLATFORM_MAPPER[func_type].delFunc(para)
 
-    db_services.close_db(db, cursor)
     return ret_code, ret_data
 
 
