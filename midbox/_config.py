@@ -20,7 +20,7 @@ SLEEP_TIME_OF_TRY = 5
 # 当前设计中，每个服务器的物理端口名称必须相同
 IN_PORT = 'ens4'
 OUT_PORT = 'ens4'
-MAN_PORT='ens5'
+MAN_PORT = 'ens5'
 
 # virtual switch name config
 # 虚拟交换机名的配置

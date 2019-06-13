@@ -8,8 +8,10 @@
 import re
 import sys
 import logging
-from midbox.southbound.remote_ssh import *
+from midbox.southbound.remote_ssh import remote_ssh
 from midbox._config import DOCKER_REGISTRY_IP, DOCKER_REGISTRY_PORT, CTRL_PLANE_SW_NAME, DATA_PLANE_SW_NAME
+
+logger = logging.getLogger(__name__)
 
 
 def addContainer(ip, password, cpu, mem, image_name, containerid, cip='192.168.1.1/24'):
@@ -24,47 +26,70 @@ def addContainer(ip, password, cpu, mem, image_name, containerid, cip='192.168.1
     :param cip: 上层分配给功能实例的ip地址，附带网络掩码
     :return:
     """
+    logger.debug('Start.')
+
     cpu = str(int(int(cpu) * 1000000 / 100))
     mem = str(mem)
     image_name = DOCKER_REGISTRY_IP + ':' + DOCKER_REGISTRY_PORT + '/' + image_name
 
-    logger = logging.getLogger(__name__)
-
-    args = 'docker run -d -m ' + mem + 'M -v /home/dockertest/:/data --cap-add=NET_ADMIN --cpu-period=1000000 --cpu-quota=' + cpu + ' --net=none --name c' + containerid + ' ' + image_name + ' '
+    args = ('docker run -d -m ' + mem +
+            'M -v /home/dockertest/:/data --cap-add=NET_ADMIN --cpu-period=1000000 --cpu-quota=' + cpu +
+            ' --net=none --name c' + containerid + ' ' + image_name + ' ')
     exitstatus, rdata = remote_ssh(ip, password, args)
     logger.info(rdata)
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'pid=$(docker inspect -f \'{{.State.Pid}}\' c' + containerid + ') && mkdir -p /var/run/netns && ln -s /proc/$pid/ns/net /var/run/netns/$pid && echo $pid')
+                                   'pid=$(docker inspect -f \'{{.State.Pid}}\' c' + containerid + ') && ' +
+                                   'mkdir -p /var/run/netns && ' +
+                                   'ln -s /proc/$pid/ns/net /var/run/netns/$pid && ' +
+                                   'echo $pid')
     logger.info(rdata)
     pid = rdata
     pid = re.findall('\d+', pid)[0]
     print('PID:' + pid)
 
-    exitstatus, rdata = remote_ssh(ip, password, 'ovs-vsctl add-br sw1 && ovs-vsctl add-br sw-man')
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'ip link add in type veth peer name br-c' + containerid + '-in && ip link add out type veth peer name br-c' + containerid + '-out')
+                                   'ovs-vsctl add-br ' + DATA_PLANE_SW_NAME + ' && ' +
+                                   'ovs-vsctl add-br ' + CTRL_PLANE_SW_NAME)
     logger.info(rdata)
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'ip link set in netns ' + pid + ' && ip link set out netns ' + pid + ' && ip link set br-c' + containerid + '-in up && ip link set br-c' + containerid + '-out up')
+                                   'ip link add in type veth peer name br-c' + containerid + '-in && ' +
+                                   'ip link add out type veth peer name br-c' + containerid + '-out')
     logger.info(rdata)
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'ip netns exec ' + pid + ' ip link set in up && ip netns exec ' + pid + ' ip link set out up')
+                                   'ip link set in netns ' + pid + ' && ' +
+                                   'ip link set out netns ' + pid + ' && ' +
+                                   'ip link set br-c' + containerid + '-in up && ' +
+                                   'ip link set br-c' + containerid + '-out up')
     logger.info(rdata)
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'docker exec c' + containerid + ' ovs-vsctl add-br sw && docker exec c' + containerid + ' ovs-vsctl add-port sw in &&docker exec c' + containerid + ' ovs-vsctl add-port sw out')  # 容器内网络配置
+                                   'ip netns exec ' + pid + ' ip link set in up && ' +
+                                   'ip netns exec ' + pid + ' ip link set out up')
+    logger.info(rdata)
+    # 容器内网络配置
+    exitstatus, rdata = remote_ssh(ip, password,
+                                   'docker exec c' + containerid + ' ovs-vsctl add-br sw && ' +
+                                   'docker exec c' + containerid + ' ovs-vsctl add-port sw in && ' +
+                                   'docker exec c' + containerid + ' ovs-vsctl add-port sw out')
     logger.info(rdata)
     exitstatus, rdata = remote_ssh(ip, password, 'docker start c' + containerid)
     logger.info(rdata)
 
     # 注意：容器镜像内必须安装OVS2.9以上版本！！
+    # 断掉回路，等容器启用时再up该接口
     exitstatus, rdata = remote_ssh(ip, password,
-                                   ' ifconfig br-c' + containerid + '-in down && ovs-vsctl add-port sw1 br-c' + containerid + '-in && ovs-vsctl add-port sw1 br-c' + containerid + '-out')  # 断掉回路，等容器启用时再up该接口
+                                   'ifconfig br-c' + containerid + '-in down && ' +
+                                   'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' br-c' + containerid + '-in && ' +
+                                   'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' br-c' + containerid + '-out')
     logger.info(rdata)
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'ip link add ceth0 type veth peer name br-c' + containerid + ' && ip link set ceth0 netns ' + pid + ' && ip link set br-c' + containerid + ' up')
+                                   'ip link add ceth0 type veth peer name br-c' + containerid + ' && ' +
+                                   'ip link set ceth0 netns ' + pid + ' && ' +
+                                   'ip link set br-c' + containerid + ' up')
     logger.info(rdata)
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'ovs-vsctl add-port sw-man br-c' + containerid + ' && ip netns exec ' + pid + ' ip link set ceth0 up && docker exec c' + containerid + ' ifconfig ceth0 ' + cip + ' up')
+                                   'ovs-vsctl add-port ' + CTRL_PLANE_SW_NAME + ' br-c' + containerid + ' && ' +
+                                   'ip netns exec ' + pid + ' ip link set ceth0 up && ' +
+                                   'docker exec c' + containerid + ' ifconfig ceth0 ' + cip + ' up')
     logger.info(rdata)
     return 0
 
@@ -81,19 +106,24 @@ def delContainer(ip, password, containerid):
     :param containerid: 容器的id
     :return:
     """
-    logger = logging.getLogger(__name__)
+    logger.debug('Start.')
 
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'pid=$(docker inspect -f \'{{.State.Pid}}\' c' + containerid + ') && echo $pid')
+                                   'pid=$(docker inspect -f \'{{.State.Pid}}\' c' + containerid + ') && ' +
+                                   'echo $pid')
     logger.info(rdata)
     pid = str(rdata)
     pid = re.findall('\d+', pid)[0]
     print('PID:' + pid)
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'docker stop c' + containerid + ' && docker rm c' + containerid + ' && rm -rf /var/run/netns/$' + pid)
+                                   'docker stop c' + containerid + ' && ' +
+                                   'docker rm c' + containerid + ' && ' +
+                                   'rm -rf /var/run/netns/$' + pid)
     logger.info(rdata)
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'ovs-vsctl del-port sw1 br-c' + containerid + '-in && ovs-vsctl del-port sw1 br-c' + containerid + '-out && ovs-vsctl del-port sw-man br-c' + containerid)
+                                   'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' br-c' + containerid + '-in && ' +
+                                   'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' br-c' + containerid + '-out && ' +
+                                   'ovs-vsctl del-port ' + CTRL_PLANE_SW_NAME + ' br-c' + containerid)
     logger.info(rdata)
 
     return 0

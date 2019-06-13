@@ -7,69 +7,62 @@ import logging
 logger = logging.getLogger(__name__)
 
 from midbox.db import db_services
-from midbox.southbound import remote_ssh
+from midbox.southbound.remote_ssh import remote_ssh
 from midbox.southbound.openstack import openstack_services
-from midbox._config import TYPE_OPENSTACK, OPENSTACK_SW_NAME, \
-    DATA_PLANE_SW_NAME, CTRL_PLANE_SW_NAME
+from midbox._config import TYPE_OPENSTACK, OPENSTACK_SW_NAME, DATA_PLANE_SW_NAME, CTRL_PLANE_SW_NAME
 
 
 def __move_vm_ports(host_ip, host_pwd, para):
     logger.debug('Start.')
-    # remote_ssh.remote_ssh(host_ip, host_pwd,
+    # remote_ssh(host_ip, host_pwd,
     #                       'ovs-vsctl add-br ' + DATA_PLANE_SW_NAME + ' && ' +
     #                       'ovs-vsctl add-br ' + CTRL_PLANE_SW_NAME)
     # 端口转移
-    ret_code, ret_data = remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port ' + OPENSTACK_SW_NAME + ' ' +
-                          para['manPortName'] + ' && ' +
-                          'ovs-vsctl add-port ' + CTRL_PLANE_SW_NAME + ' ' +
-                          para['manPortName'])
-    logger.info(ret_data)
-    ret_code, ret_data = remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port ' + OPENSTACK_SW_NAME + ' ' +
-                          para['dataPortsNameList'][0] + ' && ' +
-                          'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' ' +
-                          para['dataPortsNameList'][0])
-    logger.info(ret_data)
-    ret_code, ret_data = remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port ' + OPENSTACK_SW_NAME + ' ' +
-                          para['dataPortsNameList'][1] + ' && ' +
-                          'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' ' +
-                          para['dataPortsNameList'][1])
-    logger.info(ret_data)
+    exitstatus, rdata = remote_ssh(host_ip, host_pwd,
+                                   'ovs-vsctl del-port ' + OPENSTACK_SW_NAME + ' ' + para['manPortName'] + ' && ' +
+                                   'ovs-vsctl add-port ' + CTRL_PLANE_SW_NAME + ' ' + para['manPortName'])
+    logger.info(rdata)
+    exitstatus, rdata = remote_ssh(host_ip, host_pwd,
+                                   'ovs-vsctl del-port ' + OPENSTACK_SW_NAME + ' ' + para['dataPortsNameList'][0] + ' && ' +
+                                   'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' ' + para['dataPortsNameList'][0])
+    logger.info(rdata)
+    exitstatus, rdata = remote_ssh(host_ip, host_pwd,
+                                   'ovs-vsctl del-port ' + OPENSTACK_SW_NAME + ' ' + para['dataPortsNameList'][1] + ' && ' +
+                                   'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' ' + para['dataPortsNameList'][1])
+    logger.info(rdata)
     # 开启端口
-    ret_code, ret_data = remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ifconfig ' + para['manPortName'] + ' up && ' +
-                          'ifconfig ' + para['dataPortsNameList'][0] + ' up && ' +
-                          'ifconfig ' + para['dataPortsNameList'][1] + ' up')
-    logger.info(ret_data)
+    exitstatus, rdata = remote_ssh(host_ip, host_pwd,
+                                   'ifconfig ' + para['manPortName'] + ' up && ' +
+                                   'ifconfig ' + para['dataPortsNameList'][0] + ' up && ' +
+                                   'ifconfig ' + para['dataPortsNameList'][1] + ' up')
+    logger.info(rdata)
     return True
 
 
 def __remove_vm_ports(host_ip, host_pwd, para):
     logger.debug('Start.')
-    # remote_ssh.remote_ssh(host_ip, host_pwd,
+    # remote_ssh(host_ip, host_pwd,
     #                       'ovs-vsctl add-br ' + DATA_PLANE_SW_NAME + ' && ' +
     #                       'ovs-vsctl add-br ' + CTRL_PLANE_SW_NAME)
     # 端口转移
-    ret_code, ret_data = remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port ' + CTRL_PLANE_SW_NAME + ' ' +
-                          para['manPortName'])
-    logger.info(ret_data)
-    ret_code, ret_data = remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' ' +
-                          para['dataPortsNameList'][0])
-    logger.info(ret_data)
-    ret_code, ret_data = remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' ' +
-                          para['dataPortsNameList'][1])
-    logger.info(ret_data)
+    exitstatus, rdata = remote_ssh(host_ip, host_pwd,
+                                   'ovs-vsctl del-port ' + CTRL_PLANE_SW_NAME + ' ' +
+                                   para['manPortName'])
+    logger.info(rdata)
+    exitstatus, rdata = remote_ssh(host_ip, host_pwd,
+                                   'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' ' +
+                                   para['dataPortsNameList'][0])
+    logger.info(rdata)
+    exitstatus, rdata = remote_ssh(host_ip, host_pwd,
+                                   'ovs-vsctl del-port ' + DATA_PLANE_SW_NAME + ' ' +
+                                   para['dataPortsNameList'][1])
+    logger.info(rdata)
     # 删除端口
-    ret_code, ret_data = remote_ssh.remote_ssh(host_ip, host_pwd,
-                          'ip link del ' + para['manPortName'] + ' && ' +
-                          'ip link del ' + para['dataPortsNameList'][0] + ' && ' +
-                          'ip link del ' + para['dataPortsNameList'][1] + ' ')
-    logger.info(ret_data)
+    exitstatus, rdata = remote_ssh(host_ip, host_pwd,
+                                   'ip link del ' + para['manPortName'] + ' && ' +
+                                   'ip link del ' + para['dataPortsNameList'][0] + ' && ' +
+                                   'ip link del ' + para['dataPortsNameList'][1] + ' ')
+    logger.info(rdata)
     return True
 
 
