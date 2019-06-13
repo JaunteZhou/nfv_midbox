@@ -33,14 +33,14 @@ def deployFlow(ip, password, port_names,
     else:
         ft_item = __edit_flow_table_item(phy_in, match_field, priority, "output:" + port_names[2])
     ret_code, ret_data = __add_flow_to_ovs(ip, password, DATA_PLANE_SW_NAME, ft_item)
-    logger.info((ret_code, ret_data))
+    logger.info(ret_data)
 
     if port_names[4] == "phy":
         ft_item = __edit_flow_table_item(port_names[3], match_field, priority, "output:" + phy_out)
     else:
         ft_item = __edit_flow_table_item(port_names[3], match_field, priority, "output:" + port_names[4])
     ret_code, ret_data = __add_flow_to_ovs(ip, password, DATA_PLANE_SW_NAME, ft_item)
-    logger.info((ret_code, ret_data))
+    logger.info(ret_data)
 
     # 不再需要drop，只需保证OVS无NORMAL流表项即可，注释此行，确定无误后删除
     # ret_code,ret_data=remote_ssh(ip,password,
@@ -48,7 +48,7 @@ def deployFlow(ip, password, port_names,
 
     # 开启端口
     ret_code, ret_data = remote_ssh(ip, password, 'ifconfig ' + port_names[2] + ' up')
-    logger.info((ret_code, ret_data))
+    logger.info(ret_data)
 
     return 0
 
@@ -68,18 +68,18 @@ def undeployFlow(ip, password, port_names, shutdown_flag, match_field="", phy_in
 
     if shutdown_flag == "1":
         ret_code, ret_data = remote_ssh(ip, password, 'ifconfig ' + port_names[2] + ' down')
-        logger.info((ret_code, ret_data))
+        logger.info(ret_data)
 
     if port_names[0] != "phy":
         ft_item = __edit_flow_table_item(port_names[1], match_field)
     else:
         ft_item = __edit_flow_table_item(phy_in, match_field)
     ret_code, ret_data = __del_ovs_flow(ip, password, DATA_PLANE_SW_NAME, ft_item)
-    logger.info((ret_code, ret_data))
+    logger.info(ret_data)
 
     ft_item = __edit_flow_table_item(port_names[3], match_field)
     ret_code, ret_data = __del_ovs_flow(ip, password, DATA_PLANE_SW_NAME, ft_item)
-    logger.info((ret_code, ret_data))
+    logger.info(ret_data)
 
     return 0
 
@@ -98,14 +98,14 @@ def __edit_flow_table_item(in_port, match_field='', priority='', actions=''):
 def __add_flow_to_ovs(ip, password, sw, ft_item):
     cmd = 'ovs-ofctl add-flow ' + sw + ' ' + ft_item
     ret_code, ret_data = remote_ssh(ip, password, cmd)
-    logger.info((ft_item, ret_data))
+    logger.info(ret_data)
     return ret_code, ret_data
 
 
 def __del_ovs_flow(ip, password, sw, ft_item):
-    cmd = 'ovs-ofctl del-flows ' + sw + '' + ft_item
+    cmd = 'ovs-ofctl del-flows ' + sw + ' ' + ft_item
     ret_code, ret_data = remote_ssh(ip, password, cmd)
-    logger.info(ft_item, ret_data)
+    logger.info(ret_data)
     return ret_code, ret_data
 
 
