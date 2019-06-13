@@ -143,6 +143,9 @@ def moveFunc(para):
     if ret is False:
         print("Error: Delete VM Function Failed by OpenStack!")
         logger.error("Delete VM Function Failed by OpenStack!")
+
+    __remove_vm_ports(para["host_ip"], para["host_pwd"], ret)
+
     ret = openstack_services.delImage(new_image_id)
     if ret is False:
         print("Error: Delete VM Image Failed by OpenStack!")

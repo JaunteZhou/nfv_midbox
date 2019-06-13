@@ -107,14 +107,14 @@ def delFunction(para):
 def moveFunction(para):
     logger.debug('Start.')
     db, cursor = db_services.connect_db()
-    # TODO:
+    # 查询数据库，找到旧VM信息
     func_type = db_services.select_table(db, cursor, 't_function', 'type', para['func_id'])
     if not func_type:
         # func_type为空，表示未查询到对应条目
         logger.error("Function doesn't Exist!")
         return 1, "Error: Function doesn't Exist!"
 
-    # TODO:
+    # 查找host的ip地址和密码
     host_id = para['new_host_id']
     host_ip = db_services.select_table(db, cursor, 't_host', 'ip', host_id)
     if not host_ip:
