@@ -114,21 +114,40 @@ def moveFunction(para):
         logger.error("Function doesn't Exist!")
         return 1, "Error: Function doesn't Exist!"
 
-    # 查找host的ip地址和密码
-    host_id = para['new_host_id']
-    host_ip = db_services.select_table(db, cursor, 't_host', 'ip', host_id)
-    if not host_ip:
-        # host_ip为空，表示未查询到对应条目
+    old_host_id = db_services.select_table(db, cursor, 't_function', 'host_id', para['func_id'])
+    if not old_host_id:
+        # func_type为空，表示未查询到对应条目
+        logger.error("Function doesn't Exist!")
+        return 1, "Error: Function doesn't Exist!"
+    old_host_ip = db_services.select_table(db, cursor, 't_host', 'ip', old_host_id)
+    if not old_host_ip:
+        # old_host_ip为空，表示未查询到对应条目
         logger.error("Host's IP doesn't Exist!")
         return 1, "Error: Host's IP doesn't Exist!"
-    host_pwd = db_services.select_table(db, cursor, 't_host', 'pwd', host_id)
-    if not host_pwd:
-        # host_ip为空，表示未查询到对应条目
+    old_host_pwd = db_services.select_table(db, cursor, 't_host', 'pwd', old_host_id)
+    if not old_host_pwd:
+        # old_host_ip为空，表示未查询到对应条目
         logger.error("Host's Password doesn't Exist!")
         return 1, "Error: Host's Password doesn't Exist!"
 
-    para["host_ip"] = host_ip
-    para["host_pwd"] = host_pwd
+
+    # 查找host的ip地址和密码
+    new_host_id = para['new_host_id']
+    new_host_ip = db_services.select_table(db, cursor, 't_host', 'ip', new_host_id)
+    if not new_host_ip:
+        # new_host_ip为空，表示未查询到对应条目
+        logger.error("Host's IP doesn't Exist!")
+        return 1, "Error: Host's IP doesn't Exist!"
+    new_host_pwd = db_services.select_table(db, cursor, 't_host', 'pwd', new_host_id)
+    if not new_host_pwd:
+        # new_host_ip为空，表示未查询到对应条目
+        logger.error("Host's Password doesn't Exist!")
+        return 1, "Error: Host's Password doesn't Exist!"
+
+    para["old_host_ip"] = old_host_ip
+    para["old_host_pwd"] = old_host_pwd
+    para["new_host_ip"] = new_host_ip
+    para["new_host_pwd"] = new_host_pwd
     ret_code, ret_data = PLATFORM_MAPPER[func_type].moveFunc(para)
 
     db_services.close_db(db, cursor)

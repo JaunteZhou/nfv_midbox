@@ -117,10 +117,10 @@ def moveFunc(para):
     logger.debug('Start.')
     db, cursor = db_services.connect_db()
 
-    # get func_local_id from t_func table
-    func_local_id = db_services.select_table(db, cursor, 't_function',
+    # get old_func_local_id from t_func table
+    old_func_local_id = db_services.select_table(db, cursor, 't_function',
                                              'func_local_id', para['func_id'])
-    new_image_id = openstack_services.createServerInstanceImage(func_local_id)
+    new_image_id = openstack_services.createServerInstanceImage(old_func_local_id)
     if new_image_id is None:
         logger.error("Move VM Function Failed by OpenStack!")
         return 1, "Error: Move VM Function Failed by OpenStack!"
@@ -132,19 +132,19 @@ def moveFunc(para):
         logger.error("Set VM Function Failed by OpenStack!")
         # return 1, "Error: Set VM Function Failed by OpenStack!"
 
-    __move_vm_ports(para["host_ip"], para["host_pwd"], ret)
+    __move_vm_ports(para["new_host_ip"], para["new_host_pwd"], ret)
 
     # 更新数据库
     db_services.update_table(db, cursor, 't_function', 'func_local_id',
                              ret['serverId'], para['func_id'])
 
     # 删除旧虚拟机
-    ret = openstack_services.delVm(func_local_id)
+    ret = openstack_services.delVm(old_func_local_id)
     if ret is False:
         print("Error: Delete VM Function Failed by OpenStack!")
         logger.error("Delete VM Function Failed by OpenStack!")
 
-    __remove_vm_ports(para["host_ip"], para["host_pwd"], ret)
+    __remove_vm_ports(para["old_host_ip"], para["old_host_pwd"], ret)
 
     ret = openstack_services.delImage(new_image_id)
     if ret is False:
