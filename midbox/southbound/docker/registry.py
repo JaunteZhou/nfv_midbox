@@ -20,7 +20,7 @@ def registry_start():
     host_id_list = db_services.select_id(db, cursor, 't_host')
     chains = db_services.select_id(db, cursor, 't_flow')
     flag = 0
-    if chains == []:
+    if not chains:
         flag = 1
     for host_id in host_id_list:
         ip = db_services.select_table(db, cursor, "t_host", "ip", host_id)

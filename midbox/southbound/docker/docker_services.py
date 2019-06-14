@@ -77,7 +77,6 @@ def addContainer(ip, password, cpu, mem, image_name, containerid, cip='192.168.1
     # 注意：容器镜像内必须安装OVS2.9以上版本！！
     # 断掉回路，等容器启用时再up该接口
     exitstatus, rdata = remote_ssh(ip, password,
-                                   'ifconfig br-c' + containerid + '-in down && ' +
                                    'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' br-c' + containerid + '-in && ' +
                                    'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' br-c' + containerid + '-out')
     logger.info(rdata)

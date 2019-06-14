@@ -67,8 +67,9 @@ def undeployFlow(ip, password, port_names, shutdown_flag, match_field="", phy_in
     logger.debug('Start.')
 
     if shutdown_flag == "1":
-        ret_code, ret_data = remote_ssh(ip, password, 'ifconfig ' + port_names[2] + ' down')
-        logger.info(ret_data)
+        pass
+        # ret_code, ret_data = remote_ssh(ip, password, 'ifconfig ' + port_names[2] + ' down')
+        # logger.info(ret_data)
 
     if port_names[0] != "phy":
         ft_item = __edit_flow_table_item(port_names[1], match_field)
@@ -91,7 +92,8 @@ def __edit_flow_table_item(in_port, match_field='', priority='', actions=''):
     item = item + 'in_port=' + in_port
     if match_field:
         item = item + ',' + match_field
-    item = item + ',actions=' + actions
+    if actions:
+        item = item + ',actions=' + actions
     return item
 
 
