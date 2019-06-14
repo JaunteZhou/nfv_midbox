@@ -339,7 +339,7 @@ def __attaching_server_volume_list(sv_list):
         if s["status"] == "ACTIVE":
             ret, res = servers.attachVolume(
                 sv_list[i]["serverId"], sv_list[i]["volumeId"])
-            if ret == False:
+            if ret is False:
                 logger.error(res)
                 new_list.append(sv_list[i])
         else:
