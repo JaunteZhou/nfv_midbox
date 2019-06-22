@@ -1,7 +1,5 @@
 # snort
 
-
-
 ## 安装步骤
 
 [snort官网](https://www.snort.org/)
@@ -24,8 +22,6 @@ cd daq-2.0.6
 make && sudo make install
 ```
 
-
-
 ### 问题0
 
 ```
@@ -38,12 +34,6 @@ configure: error: no acceptable C compiler found in $PATH
 # yum install gcc
 ```
 
-
-
-
-
-
-
 ### 安装snort
 
 ```
@@ -53,8 +43,6 @@ cd snort-2.9.13
 ./configure --enable-sourcefire
 make && sudo make install
 ```
-
-
 
 ### 问题1
 
