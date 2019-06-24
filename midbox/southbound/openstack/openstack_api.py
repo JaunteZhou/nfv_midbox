@@ -30,21 +30,21 @@ def __move_vm_ports(host_ip, host_pwd, para):
     mng_port_name = para['manPortName']
     br_name_of_man_port = __get_br_name_of_port(mng_port_name)
     exitstatus, rdata = remote_ssh(host_ip, host_pwd,
-                                   'ovs-vsctl del-port ' + br_name_of_man_port + ' ' + mng_port_name + ' && ' +
+                                   'brctl delif ' + br_name_of_man_port + ' ' + mng_port_name + ' && ' +
                                    'ovs-vsctl add-port ' + CTRL_PLANE_SW_NAME + ' ' + mng_port_name)
     logger.info(rdata)
 
     in_port_name = para['dataPortsNameList'][0]
     br_name_of_in_port = __get_br_name_of_port(in_port_name)
     exitstatus, rdata = remote_ssh(host_ip, host_pwd,
-                                   'ovs-vsctl del-port ' + br_name_of_in_port + ' ' + in_port_name + ' && ' +
+                                   'brctl delif ' + br_name_of_in_port + ' ' + in_port_name + ' && ' +
                                    'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' ' + in_port_name)
     logger.info(rdata)
 
     out_port_name = para['dataPortsNameList'][1]
     br_name_of_out_port = __get_br_name_of_port(out_port_name)
     exitstatus, rdata = remote_ssh(host_ip, host_pwd,
-                                   'ovs-vsctl del-port ' + br_name_of_out_port + ' ' + out_port_name + ' && ' +
+                                   'brctl delif ' + br_name_of_out_port + ' ' + out_port_name + ' && ' +
                                    'ovs-vsctl add-port ' + DATA_PLANE_SW_NAME + ' ' + out_port_name)
     logger.info(rdata)
     # 开启端口
